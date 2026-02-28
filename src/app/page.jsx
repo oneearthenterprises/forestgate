@@ -4,7 +4,7 @@ import {
   highlights,
   rooms,
   amenities,
-} from './lib/data';
+} from '@/app/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';

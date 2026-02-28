@@ -13,19 +13,19 @@ export function HeroScroll() {
     offset: ["start start", "end end"],
   });
 
-  const imageScale = useTransform(scrollYProgress, [0, 0.8], [0.6, 1]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.8], [0.8, 1]);
   const imageOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
   const imageFilter = useTransform(scrollYProgress, [0, 0.4], ['blur(16px)', 'blur(0px)']);
 
-  const topTextY = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "-120%"]);
-  const bottomTextY = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "120%"]);
+  const topTextY = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "-100%"]);
+  const bottomTextY = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "100%"]);
 
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
 
   return (
     <section
       ref={ref}
-      className="h-[150vh] bg-white overflow-hidden"
+      className="h-[120vh] bg-background overflow-hidden"
     >
         <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
             <div className="relative w-[80vw] max-w-5xl h-full flex flex-col items-center justify-center">
@@ -42,8 +42,9 @@ export function HeroScroll() {
                     <Image
                         src={heroImage.imageUrl}
                         alt={heroImage.description || "THE FOREST GATE"}
-                        fill
-                        className="object-cover rounded-lg"
+                        width={600}
+                        height={400}
+                        className="object-cover rounded-lg shadow-2xl"
                         data-ai-hint={heroImage.imageHint}
                         placeholder="blur"
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
@@ -54,7 +55,7 @@ export function HeroScroll() {
                 {/* Top Text */}
                 <motion.div
                 style={{ y: topTextY }}
-                className="h-1/2 flex items-end pb-12 md:pb-16 z-10"
+                className="h-1/2 flex items-end pb-4 z-10"
                 >
                 <h1 className="text-5xl md:text-8xl font-light text-black uppercase tracking-[0.2em]">
                     THE FOREST
@@ -64,7 +65,7 @@ export function HeroScroll() {
                 {/* Bottom Text */}
                 <motion.div
                 style={{ y: bottomTextY }}
-                className="h-1/2 flex items-start pt-12 md:pt-16 z-10"
+                className="h-1/2 flex items-start pt-4 z-10"
                 >
                 <h1 className="text-5xl md:text-8xl font-light text-black uppercase tracking-[0.2em]">
                     GATE
