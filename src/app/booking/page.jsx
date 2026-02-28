@@ -14,7 +14,7 @@ import Image from 'next/image';
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { rooms } from '@/app/lib/data';
+import { rooms } from '../lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -435,5 +435,3 @@ export default function BookingPage() {
         </Suspense>
     )
 }
-
-    

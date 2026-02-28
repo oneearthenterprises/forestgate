@@ -36,7 +36,7 @@ export function HeroScroll() {
                     opacity: imageOpacity,
                     filter: imageFilter
                 }}
-                className="absolute w-[300px] h-[400px] md:w-[400px] md:h-[550px]"
+                className="absolute w-full max-w-[600px] h-[400px] z-0"
                 >
                 {heroImage && (
                     <Image
