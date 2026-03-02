@@ -404,7 +404,7 @@ function BookingPageContent() {
                                         </CardContent>
                                     </Card>
 
-                                     <Button type="submit" size="lg" className="w-full h-16 rounded-full text-lg font-black uppercase tracking-widest shadow-2xl group transition-all" disabled={form.formState.isSubmitting}>
+                                     <Button type="submit" size="lg" className="w-full h-16 rounded-full text-lg font-black uppercase tracking-widest shadow-none group transition-all" disabled={form.formState.isSubmitting}>
                                         {form.formState.isSubmitting ? 'Finalizing...' : 'Confirm My Reservation'}
                                         <ArrowRight className="ml-2 w-6 h-6 transition-transform group-hover:translate-x-2" />
                                     </Button>
@@ -413,7 +413,7 @@ function BookingPageContent() {
                         </div>
 
                         <aside className="lg:col-span-1">
-                            <Card className="sticky top-24 border-none shadow-2xl overflow-hidden rounded-[3rem] bg-card">
+                            <Card className="sticky top-24 border-none shadow-none overflow-hidden rounded-[3rem] bg-card">
                                 <CardHeader className="bg-[#0b2c3d] text-white p-10">
                                     <CardTitle className="font-headline text-3xl font-bold mb-1">Booking Summary</CardTitle>
                                     <CardDescription className="text-white/60">Review your stay details.</CardDescription>
