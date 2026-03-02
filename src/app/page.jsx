@@ -28,6 +28,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { HeroScroll } from '@/components/shared/HeroScroll';
+import { InteractiveMapSection } from '@/components/shared/InteractiveMapSection';
 
 export default function Home() {
   const deluxeRoom = rooms.find((r) => r.id === 'deluxe-room');
@@ -411,6 +412,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <InteractiveMapSection />
 
         <section id="experiences" className="bg-card">
           <div className="container mx-auto px-4">
