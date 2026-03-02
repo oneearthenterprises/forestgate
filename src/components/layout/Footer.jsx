@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -35,9 +36,9 @@ export function Footer() {
               Luxury Meets Nature in the Heart of Himachal.
             </p>
             <div className="flex gap-4 mt-2">
-                <Link href="#" aria-label="Facebook"><Facebook className="w-6 h-6 text-foreground/80 hover:text-primary transition-colors" /></Link>
-                <Link href="#" aria-label="Instagram"><Instagram className="w-6 h-6 text-foreground/80 hover:text-primary transition-colors" /></Link>
-                <Link href="#" aria-label="Twitter"><Twitter className="w-6 h-6 text-foreground/80 hover:text-primary transition-colors" /></Link>
+                <Link href="#" aria-label="Facebook"><Facebook className="h-6 w-6 text-foreground/80 hover:text-primary transition-colors" /></Link>
+                <Link href="#" aria-label="Instagram"><Instagram className="h-6 w-6 text-foreground/80 hover:text-primary transition-colors" /></Link>
+                <Link href="#" aria-label="Twitter"><Twitter className="h-6 w-6 text-foreground/80 hover:text-primary transition-colors" /></Link>
             </div>
           </div>
           <div>
@@ -50,6 +51,11 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link href="/privacy-policy" className="text-foreground/80 hover:text-primary transition-colors font-medium">
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

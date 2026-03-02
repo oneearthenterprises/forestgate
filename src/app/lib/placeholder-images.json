@@ -1,0 +1,215 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-pool",
+      "description": "A luxury resort swimming pool with lounge chairs and a view of the resort building.",
+      "imageUrl": "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXNvcnQlMjBwb29sfGVufDB8fHx8MTc3MDMyNjY5N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "resort pool"
+    },
+    {
+      "id": "hero-1",
+      "description": "Panoramic view of mountains and a river at sunrise.",
+      "imageUrl": "https://images.unsplash.com/photo-1604484574634-a54f529ff2c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtb3VudGFpbiUyMHJpdmVyfGVufDB8fHx8MTc3MjI2NTAwMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mountain river"
+    },
+    {
+      "id": "room-cottage-1",
+      "description": "Interior of a luxury cottage with a king-sized bed and wooden decor.",
+      "imageUrl": "https://images.unsplash.com/photo-1759759266688-5004fcd9d014?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsdXh1cnklMjBjb3R0YWdlfGVufDB8fHx8MTc3MDI4MTYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "luxury cottage"
+    },
+    {
+      "id": "room-cottage-2",
+      "description": "Balcony view from a luxury cottage overlooking the valley.",
+      "imageUrl": "https://images.unsplash.com/photo-1597086831626-aca8ef5a0046?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxiYWxjb255JTIwdmlld3xlbnwwfHx8fDE3NzAyMzE3MDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "balcony view"
+    },
+    {
+      "id": "room-river-1",
+      "description": "River view room with large windows showing the flowing river.",
+      "imageUrl": "https://images.unsplash.com/photo-1689006741104-19668f5682b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyaXZlciUyMHZpZXd8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "river view"
+    },
+    {
+      "id": "room-river-2",
+      "description": "Cozy seating area inside a river view room.",
+      "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxob3RlbCUyMHJvb218ZW58MHx8fHwxNzcwMjIxMTI4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hotel room"
+    },
+    {
+      "id": "room-suite-1",
+      "description": "Spacious living area of a family suite.",
+      "imageUrl": "https://images.unsplash.com/photo-1645220127528-a4ffca2d2057?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYW1pbHklMjBzdWl0ZXxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "family suite"
+    },
+    {
+      "id": "room-suite-2",
+      "description": "Bedroom in a family suite with two beds.",
+      "imageUrl": "https://images.unsplash.com/photo-1668435528344-b70cedd6df88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxob3RlbCUyMGJlZHJvb218ZW58MHx8fHwxNzcwMjQzMzI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hotel bedroom"
+    },
+    {
+      "id": "room-balcony-1",
+      "description": "A private balcony with a coffee table and two chairs.",
+      "imageUrl": "https://images.unsplash.com/photo-1758551471482-57a3bbc81557?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwcml2YXRlJTIwYmFsY29ueXxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "private balcony"
+    },
+    {
+      "id": "room-balcony-2",
+      "description": "View of the sunrise from a private balcony.",
+      "imageUrl": "https://images.unsplash.com/photo-1561993700-b7b4ca9670cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdW5yaXNlJTIwdmlld3xlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sunrise view"
+    },
+    {
+      "id": "exp-trekking",
+      "description": "A group of people trekking on a mountain trail.",
+      "imageUrl": "https://images.unsplash.com/photo-1660231226843-a24144d4a933?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtb3VudGFpbiUyMHRyZWtraW5nfGVufDB8fHx8MTc3MDIxNjM3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mountain trekking"
+    },
+    {
+      "id": "exp-river-relax",
+      "description": "A person meditating by the river.",
+      "imageUrl": "https://images.unsplash.com/photo-1755173095906-22500ce60b5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxyaXZlciUyMG1lZGl0YXRpb258ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "river meditation"
+    },
+    {
+      "id": "exp-sports",
+      "description": "Someone ziplining through the trees.",
+      "imageUrl": "https://images.unsplash.com/photo-1661636634759-ca84b67798c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx6aXBsaW5pbmclMjBhZHZlbnR1cmV8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ziplining adventure"
+    },
+    {
+      "id": "exp-outdoor-games",
+      "description": "People playing badminton on a green lawn.",
+      "imageUrl": "https://images.unsplash.com/photo-1611153390516-995f4a8c0f2e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxvdXRkb29yJTIwZ2FtZXN8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "outdoor games"
+    },
+    {
+      "id": "exp-kids-zone",
+      "description": "Children playing on a colorful playground.",
+      "imageUrl": "https://images.unsplash.com/photo-1621003464605-d12c07691367?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxraWRzJTIwcGxheWdyb3VuZHxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "kids playground"
+    },
+    {
+      "id": "exp-pet-friendly",
+      "description": "A person playing with a dog in a large open field.",
+      "imageUrl": "https://images.unsplash.com/photo-1668757183096-bc55a8992558?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZG9nJTIwcGFya3xlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dog park"
+    },
+    {
+      "id": "exp-bird-watching",
+      "description": "A colorful bird sitting on a tree branch.",
+      "imageUrl": "https://images.unsplash.com/photo-1682788819202-c8c1ff49b6ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxleG90aWMlMjBiaXJkfGVufDB8fHx8MTc3MDI4MTYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "exotic bird"
+    },
+    {
+      "id": "exp-stargazing",
+      "description": "A clear night sky full of stars over the mountains.",
+      "imageUrl": "https://images.unsplash.com/photo-1528353518104-dbd48bee7bc4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuaWdodCUyMHNreXxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "night sky"
+    },
+    {
+      "id": "amenity-pool",
+      "description": "An infinity pool with a stunning mountain view.",
+      "imageUrl": "https://images.unsplash.com/photo-1500815845799-7748ca339f27?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxpbmZpbml0eSUyMHBvb2x8ZW58MHx8fHwxNzcwMTgwMjk2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "infinity pool"
+    },
+    {
+      "id": "amenity-cinema",
+      "description": "A cozy mini cinema with comfortable recliner seats.",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1572609239482-d3a83f976aa0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxob21lJTIwdGhlYXRlcnxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "home theater"
+    },
+    {
+      "id": "amenity-dining",
+      "description": "An open-sky dining area set up for a romantic dinner.",
+      "imageUrl": "https://images.unsplash.com/photo-1759750576124-34c82a7949d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyb29mdG9wJTIwZGluaW5nfGVufDB8fHx8MTc3MDI4MTYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "rooftop dining"
+    },
+    {
+      "id": "amenity-games",
+      "description": "An indoor games room with a pool table and board games.",
+      "imageUrl": "https://images.unsplash.com/photo-1636488363495-a06805603784?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxnYW1lJTIwcm9vbXxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "game room"
+    },
+    {
+      "id": "amenity-events",
+      "description": "A large decorated space for events and parties.",
+      "imageUrl": "https://images.unsplash.com/photo-1515168833906-d2a3b82b302a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxldmVudCUyMHNwYWNlfGVufDB8fHx8MTc3MDI4MTYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "event space"
+    },
+    {
+      "id": "amenity-bonfire",
+      "description": "A group of people sitting around a bonfire at night.",
+      "imageUrl": "https://images.unsplash.com/photo-1478402151108-ba362d938d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxib25maXJlJTIwbmlnaHR8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bonfire night"
+    },
+    {
+      "id": "gallery-nature-1",
+      "description": "A waterfall in the middle of a lush green forest.",
+      "imageUrl": "https://images.unsplash.com/photo-1647089395036-d1e77fc1013e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmb3Jlc3QlMjB3YXRlcmZhbGx8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "forest waterfall"
+    },
+    {
+      "id": "gallery-nature-2",
+      "description": "A close-up of a vibrant wildflower.",
+      "imageUrl": "https://images.unsplash.com/photo-1635689039317-ea51a7af1488?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3aWxkZmxvd2VyJTIwY2xvc2V1cHxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wildflower closeup"
+    },
+    {
+      "id": "gallery-rooms-1",
+      "description": "A beautifully made bed in a hotel room.",
+      "imageUrl": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGJlZHxlbnwwfHx8fDE3NzAyNTcyMjl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hotel bed"
+    },
+    {
+      "id": "gallery-activities-1",
+      "description": "A person paragliding over a valley.",
+      "imageUrl": "https://images.unsplash.com/photo-1655469795420-31a4cefc79e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYXJhZ2xpZGluZyUyMHZhbGxleXxlbnwwfHx8fDE3NzAyODE2MTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "paragliding valley"
+    },
+    {
+      "id": "gallery-pool-1",
+      "description": "Guests relaxing by the swimming pool.",
+      "imageUrl": "https://images.unsplash.com/photo-1642371591966-4112c0b0f378?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwb29sc2lkZSUyMHJlbGF4aW5nfGVufDB8fHx8MTc3MDI4MTYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "poolside relaxing"
+    },
+    {
+      "id": "gallery-events-1",
+      "description": "A wedding ceremony setup with a mountain backdrop.",
+      "imageUrl": "https://images.unsplash.com/photo-1726508684402-ee6029833696?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtb3VudGFpbiUyMHdlZGRpbmd8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mountain wedding"
+    },
+    {
+      "id": "gallery-night-1",
+      "description": "The resort lit up at night under a starry sky.",
+      "imageUrl": "https://images.unsplash.com/photo-1558387508-e83890617dc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyZXNvcnQlMjBuaWdodHxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "resort night"
+    },
+    {
+      "id": "about-resort",
+      "description": "A beautiful view of the resort nestled in the mountains",
+      "imageUrl": "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtb3VudGFpbiUyMHJlc29ydHxlbnwwfHx8fDE3NzAxOTY2NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mountain resort"
+    },
+    {
+      "id": "map-placeholder",
+      "description": "A stylized map showing the location of The Forest Gate.",
+      "imageUrl": "https://images.unsplash.com/photo-1687552627668-6b9fa2edb60e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxtYXAlMjBsb2NhdGlvbnxlbnwwfHx8fDE3NzAxOTM1MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "map location"
+    },
+    {
+      "id": "banner-privacy",
+      "description": "Atmospheric mountain landscape with a dark mist.",
+      "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZXxlbnwwfHx8fDE3NzA0MzMwMDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mountain landscape"
+    },
+    {
+      "id": "shape-torn",
+      "description": "A white torn paper edge effect.",
+      "imageUrl": "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwYXBlciUyMHRleHR1cmV8ZW58MHx8fHwxNzcwNDMzMDE0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "paper texture"
+    }
+  ]
+}
