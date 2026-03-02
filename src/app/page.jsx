@@ -41,8 +41,6 @@ export default function Home() {
 
   const allRoomsForCarousel = [deluxeRoom, singleRoom, doubleRoom, familyRoom].filter((r) => !!r);
 
-  const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-1');
-
   const highlightsWithImages = highlights.map(highlight => {
     let imageId = '';
     switch (highlight.title) {

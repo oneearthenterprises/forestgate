@@ -4,6 +4,9 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 
 export function HeroScroll() {
   const ref = useRef(null);
@@ -13,67 +16,66 @@ export function HeroScroll() {
     offset: ["start start", "end end"],
   });
 
-  const imageScale = useTransform(scrollYProgress, [0, 0.8], [0.8, 1]);
-  const imageOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-  const imageFilter = useTransform(scrollYProgress, [0, 0.4], ['blur(16px)', 'blur(0px)']);
-
-  const topTextY = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "-100%"]);
-  const bottomTextY = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "100%"]);
+  // Parallax effects
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const textScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
 
   return (
     <section
       ref={ref}
-      className="h-[120vh] bg-background overflow-hidden"
+      className="relative h-screen w-full overflow-hidden"
     >
-        <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-            <div className="relative w-[80vw] max-w-5xl h-full flex flex-col items-center justify-center">
-                
-                <motion.div
-                style={{
-                    scale: imageScale,
-                    opacity: imageOpacity,
-                    filter: imageFilter
-                }}
-                className="absolute w-[600px] h-[400px] z-0"
-                >
-                {heroImage && (
-                    <Image
-                        src={heroImage.imageUrl}
-                        alt={heroImage.description || "THE FOREST GATE"}
-                        width={600}
-                        height={400}
-                        className="object-cover rounded-lg shadow-2xl"
-                        data-ai-hint={heroImage.imageHint}
-                        placeholder="blur"
-                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                    />
-                )}
-                </motion.div>
+      {/* Background Image with Parallax */}
+      <motion.div 
+        style={{ y: imageY }}
+        className="absolute inset-0 z-0 h-[120%]"
+      >
+        {heroImage && (
+          <Image
+            src={heroImage.imageUrl}
+            alt="Himachal Haven Hero"
+            fill
+            priority
+            className="object-cover"
+            data-ai-hint={heroImage.imageHint}
+          />
+        )}
+        <div className="absolute inset-0 bg-black/40 z-10" />
+      </motion.div>
 
-                {/* Top Text */}
-                <motion.div
-                style={{ y: topTextY }}
-                className="h-1/2 flex items-end pb-4 z-10"
-                >
-                <h1 className="text-5xl md:text-8xl font-light text-black uppercase tracking-[0.2em]">
-                    THE FOREST
-                </h1>
-                </motion.div>
+      {/* Centered Content */}
+      <motion.div 
+        style={{ opacity: textOpacity, scale: textScale }}
+        className="relative z-20 flex h-full w-full flex-col items-center justify-center px-4 text-center text-white"
+      >
+        <h1 className="font-headline text-5xl md:text-8xl font-bold uppercase tracking-[0.2em] mb-6">
+          THE FOREST GATE
+        </h1>
+        <p className="max-w-2xl text-lg md:text-xl font-light tracking-wide mb-10 opacity-90">
+          Luxury meets nature in the heart of Himachal. Experience tranquility like never before.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Button asChild size="lg" className="bg-white text-black hover:bg-white/90">
+            <Link href="/booking">Book Your Stay</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white/10">
+            <Link href="/rooms">Explore Rooms</Link>
+          </Button>
+        </div>
 
-                {/* Bottom Text */}
-                <motion.div
-                style={{ y: bottomTextY }}
-                className="h-1/2 flex items-start pt-4 z-10"
-                >
-                <h1 className="text-5xl md:text-8xl font-light text-black uppercase tracking-[0.2em]">
-                    GATE
-                </h1>
-                </motion.div>
-
-            </div>
-      </div>
+        {/* Scroll Indicator */}
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-10 flex flex-col items-center gap-2 opacity-70"
+        >
+          <span className="text-sm uppercase tracking-widest">Scroll to explore</span>
+          <ChevronDown className="h-6 w-6" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
