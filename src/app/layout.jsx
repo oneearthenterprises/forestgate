@@ -2,7 +2,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
-import { ScrollToTop } from '@/components/shared/ScrollToTop';
 import './globals.css';
 import './react-calendar.css';
 
@@ -30,7 +29,6 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
           <WhatsAppButton />
-          <ScrollToTop />
           <Toaster />
       </body>
     </html>
