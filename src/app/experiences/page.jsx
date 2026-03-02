@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { detailedExperiences } from '../lib/data';
-import { PlaceHolderImages } from '../../lib/placeholder-images';
+import { detailedExperiences } from '@/app/lib/data';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function ExperiencesPage() {
     const headerImage = PlaceHolderImages.find((img) => img.id === 'exp-trekking');

@@ -38,15 +38,10 @@ export default function AdminLoginPage() {
     });
 
     async function onLoginSubmit(data) {
-        // Modified login condition to allow easier access for the user
-        // Any email and password that passes validation will now log in successfully
-        if (data.email && data.password) {
-            document.cookie = "admin-auth=true; path=/; max-age=86400;"; 
-            toast({ title: "Login Successful!", description: "Welcome, Admin." });
-            router.push('/admin-dashboard');
-        } else {
-            toast({ variant: "destructive", title: "Login Failed", description: "Invalid credentials." });
-        }
+        // Condition bypassed as requested to allow login
+        document.cookie = "admin-auth=true; path=/; max-age=86400;"; 
+        toast({ title: "Login Successful!", description: "Welcome, Admin." });
+        router.push('/admin-dashboard');
     }
 
     return (
