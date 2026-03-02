@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Check, ChevronRight } from 'lucide-react';
@@ -34,9 +35,19 @@ export default function RoomsPage() {
       <section>
         <div className="container mx-auto px-4">
           <Tabs defaultValue="accommodations" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-12">
-              <TabsTrigger value="accommodations">Accommodations</TabsTrigger>
-              <TabsTrigger value="gallery">Gallery</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-16 h-14 p-1.5 rounded-full bg-muted/50 border border-border/50">
+              <TabsTrigger 
+                value="accommodations" 
+                className="rounded-full h-11 text-base font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:shadow-lg"
+              >
+                Accommodations
+              </TabsTrigger>
+              <TabsTrigger 
+                value="gallery" 
+                className="rounded-full h-11 text-base font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:shadow-lg"
+              >
+                Gallery
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="accommodations" className="mt-0">

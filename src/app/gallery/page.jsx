@@ -1,6 +1,7 @@
+
 import Image from 'next/image';
 import { PageHeader } from '@/components/shared/PageHeader';
-import { galleryImages, rooms } from '../lib/data';
+import { galleryImages } from '../lib/data';
 import { PlaceHolderImages } from '../../lib/placeholder-images';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -23,10 +24,21 @@ export default function GalleryPage() {
             <section>
                 <div className="container mx-auto px-4">
                 <Tabs defaultValue="all" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 mx-auto max-w-5xl h-auto">
-                        <TabsTrigger value="all">All</TabsTrigger>
+                    <TabsList className="flex flex-wrap items-center justify-center gap-2 mx-auto max-w-5xl h-auto p-2 rounded-full bg-muted/50 border border-border/50 mb-12">
+                        <TabsTrigger 
+                            value="all" 
+                            className="rounded-full px-6 py-2.5 text-sm font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:shadow-md"
+                        >
+                            All
+                        </TabsTrigger>
                         {categories.map(category => (
-                             <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
+                             <TabsTrigger 
+                                key={category} 
+                                value={category} 
+                                className="rounded-full px-6 py-2.5 text-sm font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:shadow-md"
+                            >
+                                {category}
+                            </TabsTrigger>
                         ))}
                     </TabsList>
                     
@@ -37,7 +49,7 @@ export default function GalleryPage() {
                                 if (!imageData) return null;
                                 return (
                                     <div key={image.id} className="break-inside-avoid">
-                                        <Image src={imageData.imageUrl} alt={imageData.description} width={500} height={500} className="w-full h-auto rounded-lg shadow-md" data-ai-hint={imageData.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg==" />
+                                        <Image src={imageData.imageUrl} alt={imageData.description} width={500} height={500} className="w-full h-auto rounded-[2rem] shadow-md" data-ai-hint={imageData.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg==" />
                                     </div>
                                 )
                             })}
@@ -54,7 +66,7 @@ export default function GalleryPage() {
                                     if (!imageData) return null;
                                     return (
                                         <div key={image.id} className="break-inside-avoid">
-                                            <Image src={imageData.imageUrl} alt={imageData.description} width={500} height={500} className="w-full h-auto rounded-lg shadow-md" data-ai-hint={imageData.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="/>
+                                            <Image src={imageData.imageUrl} alt={imageData.description} width={500} height={500} className="w-full h-auto rounded-[2rem] shadow-md" data-ai-hint={imageData.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="/>
                                         </div>
                                     )
                                 })}
