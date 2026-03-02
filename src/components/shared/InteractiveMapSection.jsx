@@ -23,82 +23,83 @@ const destinations = [
 
 export function InteractiveMapSection() {
   return (
-    <section className="relative min-h-[700px] overflow-hidden flex items-center bg-[#0b2c3d] py-24">
-      {/* Static Background Image with Signature Gradient */}
-      <div className="absolute inset-0">
+    <section className="relative min-h-[800px] overflow-hidden flex flex-col items-center justify-center bg-[#0b2c3d] py-32 px-4">
+      {/* Cinematic Blurred Background */}
+      <div className="absolute inset-0 z-0">
         <Image
           src="https://images.unsplash.com/photo-1591384387119-c7420bf514d8?auto=format&fit=crop&q=80&w=1920"
           alt="Himachal Background"
           fill
-          className="object-cover opacity-20 blur-[1px]"
+          className="object-cover opacity-40 blur-[8px] scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0b2c3d] via-[#0b2c3d]/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60" />
       </div>
 
-      <div className="container relative z-10 mx-auto px-4 h-full flex flex-col justify-center">
-        {/* Static Title Header */}
-        <div className="mb-20">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#fcb101]/10 border border-[#fcb101]/20 text-[#fcb101] text-xs font-black uppercase tracking-widest mb-6">
-                Discovery Hub
-            </div>
-            <h2 className="font-headline text-5xl md:text-7xl font-bold text-white tracking-tight leading-none">
-                Explore <span className="text-[#fcb101]">Himachal</span> <br/>
-                <span className="italic font-light text-white/50 text-4xl md:text-5xl">Destinations</span>
+      <div className="container relative z-10 mx-auto max-w-7xl h-full flex flex-col items-center">
+        {/* Centered Creative Header */}
+        <div className="text-center mb-24 max-w-4xl mx-auto">
+            <h2 className="font-headline text-5xl md:text-7xl font-bold text-[#fcb101] tracking-tight leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                Explore Himalayan Destinations
             </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-16 w-full">
-          {/* Left: Static Location Points Grid */}
-          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
-            {destinations.map((dest, idx) => (
-                <div key={dest.id} className="space-y-6 group">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-[#fcb101] flex items-center justify-center font-black text-black shadow-xl shadow-[#fcb101]/20 transform transition-transform group-hover:rotate-6">
-                            0{idx + 1}
-                        </div>
-                        <h3 className="font-headline text-3xl font-bold text-white tracking-tight">
-                            {dest.title}
-                        </h3>
-                    </div>
-                    <div className="pl-16 space-y-4 border-l border-white/10">
-                        {dest.points.map((point, i) => (
-                            <div key={i} className="flex items-center gap-3 group/item">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#fcb101] scale-0 group-hover/item:scale-100 transition-transform duration-300" />
-                                <span className="text-lg text-white/60 font-light hover:text-white transition-all duration-300 cursor-default tracking-wide transform group-hover/item:translate-x-1">
-                                    {point}
-                                </span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-12 w-full">
+          {/* Left: Vertical Timeline Style List */}
+          <div className="lg:col-span-6 flex flex-col justify-center">
+            <div className="relative border-l-2 border-white/30 pl-12 py-4 space-y-16">
+                {destinations.map((dest, idx) => (
+                    <div key={dest.id} className="relative group">
+                        {/* Timeline Bullet */}
+                        <div className="absolute -left-[57px] top-2 w-4 h-4 rounded-full bg-white border-4 border-[#0b2c3d] shadow-[0_0_15px_rgba(255,255,255,0.5)] z-20 group-hover:scale-125 transition-transform duration-300" />
+                        
+                        <div className="space-y-4">
+                            <h3 className="font-headline text-4xl font-bold text-white tracking-tight drop-shadow-md">
+                                {dest.title}
+                            </h3>
+                            <div className="space-y-2">
+                                {dest.points.map((point, i) => (
+                                    <div key={i} className="flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#fcb101]" />
+                                        <span className="text-lg text-white/80 font-light tracking-wide">
+                                            {point}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
           </div>
 
-          {/* Right: Static Map Outline with high-end glassmorphism */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+          {/* Right: Glassmorphism Map Outline */}
+          <div className="lg:col-span-6 flex justify-center lg:justify-end">
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
               transition={{ duration: 1.5, ease: "easeOut" }}
               viewport={{ once: true }}
-              className="relative w-full max-w-[500px] aspect-square flex items-center justify-center p-8 bg-white/5 backdrop-blur-3xl rounded-[3rem] border border-white/10"
+              className="relative w-full max-w-[550px] aspect-square flex items-center justify-center p-12 bg-white/5 backdrop-blur-2xl rounded-[4rem] border border-white/10 shadow-2xl overflow-hidden"
             >
               <div className="relative w-full h-full">
                  <Image 
                     src="/assets/images/harnayaimage.png" 
                     alt="Himachal Map Outline" 
                     fill 
-                    className="object-contain filter invert brightness-200 opacity-40 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                    className="object-contain filter invert brightness-200 opacity-60 drop-shadow-[0_0_40px_rgba(255,255,255,0.3)]"
                     data-ai-hint="map outline"
                     onError={(e) => {
-                        e.currentTarget.src = "https://placehold.co/600x600/000000/FFFFFF/png?text=Himachal+Map";
+                        e.currentTarget.src = "https://placehold.co/600x600/000000/FFFFFF/png?text=Map+Location";
                     }}
                  />
-                 {/* Visual markers on the map */}
-                 <div className="absolute top-[35%] left-[55%] w-4 h-4 bg-[#fcb101] rounded-full animate-pulse shadow-[0_0_20px_#fcb101] z-20" />
-                 <div className="absolute top-[45%] left-[45%] w-2 h-2 bg-white rounded-full opacity-50 z-20" />
-                 <div className="absolute top-[30%] left-[40%] w-2 h-2 bg-white rounded-full opacity-50 z-20" />
+                 {/* Visual markers/glow on the map area */}
+                 <div className="absolute top-[40%] left-[50%] w-6 h-6 bg-[#fcb101] rounded-full animate-pulse shadow-[0_0_30px_#fcb101] z-20" />
+                 <div className="absolute top-[35%] left-[45%] w-3 h-3 bg-white rounded-full opacity-40 z-20" />
+                 <div className="absolute top-[50%] left-[55%] w-2 h-2 bg-white rounded-full opacity-40 z-20" />
               </div>
+              
+              {/* Subtle Scanline Overlay for map feel */}
+              <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_2px,3px_100%]" />
             </motion.div>
           </div>
         </div>
