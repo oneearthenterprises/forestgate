@@ -17,7 +17,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Flame, Heart, Star } from 'lucide-react';
+import { Flame, Heart, Star, ArrowRight } from 'lucide-react';
 import { AmenityCard } from '@/components/shared/AmenityCard';
 import { ExperiencesCarousel } from '@/components/shared/ExperiencesCarousel';
 import {
@@ -440,18 +440,24 @@ export default function Home() {
         
         <section id="amenities-preview">
             <div className="container mx-auto px-4">
-                <h2 className="text-center font-headline text-3xl md:text-4xl font-bold mb-10">
-                    Signature Amenities
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                    <div className="max-w-2xl">
+                        <p className="text-primary font-bold mb-2 tracking-widest uppercase text-sm">Our Offerings</p>
+                        <h2 className="font-headline text-4xl md:text-5xl font-bold">
+                            Signature Amenities
+                        </h2>
+                    </div>
+                    <Button asChild variant="outline" className="group h-12 rounded-full px-8">
+                        <Link href="/amenities" className="flex items-center gap-2">
+                            Explore All Amenities
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
+                    </Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {amenities.slice(0, 3).map((amenity) => (
                         <AmenityCard key={amenity.title} amenity={amenity} />
                     ))}
-                </div>
-                <div className="text-center mt-12">
-                    <Button asChild size="lg">
-                        <Link href="/amenities">Explore All Amenities</Link>
-                    </Button>
                 </div>
             </div>
         </section>

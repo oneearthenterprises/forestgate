@@ -1,25 +1,3 @@
-import {
-  Mountain,
-  Waves,
-  HeartHandshake,
-  Bike,
-  Sun,
-  Camera,
-  BedDouble,
-  MapPin,
-  Sparkles,
-  Phone,
-} from 'lucide-react';
-import { MountainViewIcon } from '@/components/icons/MountainViewIcon';
-import { RiverViewIcon } from '@/components/icons/RiverViewIcon';
-import { AdventureIcon } from '@/components/icons/AdventureIcon';
-import { FamilyFriendlyIcon } from '@/components/icons/FamilyFriendlyIcon';
-import { PetFriendlyIcon } from '@/components/icons/PetFriendlyIcon';
-import { StargazingIcon } from '@/components/icons/StargazingIcon';
-import { BirdwatchingIcon } from '@/components/icons/BirdwatchingIcon';
-import { LawnsIcon } from '@/components/icons/LawnsIcon';
-
-
 export const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
@@ -32,10 +10,10 @@ export const navLinks = [
 ];
 
 export const highlights = [
-  { icon: MountainViewIcon, title: 'Mountain View' },
-  { icon: RiverViewIcon, title: 'River View' },
-  { icon: AdventureIcon, title: 'Adventure Activities' },
-  { icon: FamilyFriendlyIcon, title: 'Family & Pet Friendly' },
+  { iconName: 'mountain-view', title: 'Mountain View' },
+  { iconName: 'river-view', title: 'River View' },
+  { iconName: 'adventure', title: 'Adventure Activities' },
+  { iconName: 'family', title: 'Family & Pet Friendly' },
 ];
 
 export const rooms = [
@@ -202,49 +180,49 @@ export const detailedExperiences = [
         title: "Trekking & Nature Trails",
         description: "Embark on guided treks that wind through ancient forests and past cascading waterfalls. Our trails range from gentle walks suitable for all ages to challenging hikes for the seasoned adventurer. Discover the local flora and fauna and breathe in the crisp mountain air.",
         image: "exp-trekking",
-        icon: MountainViewIcon
+        iconName: "mountain-view"
     },
     {
         title: "River View Relaxation Spots",
         description: "Find your inner peace at our specially designated relaxation spots along the riverbank. These tranquil locations are perfect for yoga, meditation, reading a book, or simply listening to the soothing symphony of flowing water.",
         image: "exp-river-relax",
-        icon: RiverViewIcon
+        iconName: "river-view"
     },
     {
         title: "Sports & Adventure Activities",
         description: "For the thrill-seekers, we offer a range of adventure activities including rock climbing, rappelling, and ziplining, all under the supervision of certified instructors. Test your limits and create exhilarating memories.",
         image: "exp-sports",
-        icon: AdventureIcon
+        iconName: "adventure"
     },
     {
         title: "Outdoor Games & Events",
         description: "Our expansive green lawns are the perfect setting for a variety of outdoor games. From a friendly match of cricket or badminton to organized group activities, there's always something to keep you entertained.",
         image: "exp-outdoor-games",
-        icon: LawnsIcon
+        iconName: "lawns"
     },
     {
         title: "Kids Play Zone & Activities",
         description: "Our dedicated kids' zone is a haven of fun for our youngest guests. With safe and engaging play equipment and a host of planned activities, your children will be entertained for hours.",
         image: "exp-kids-zone",
-        icon: FamilyFriendlyIcon
+        iconName: "family"
     },
     {
         title: "Pet-Friendly Open Areas",
         description: "We believe that pets are family. Our resort features large, open, and safe areas where your four-legged companions can roam, play, and enjoy the holiday with you.",
         image: "exp-pet-friendly",
-        icon: PetFriendlyIcon
+        iconName: "pet"
     },
     {
         title: "Bird Watching Zones",
         description: "Himachal is a paradise for bird lovers. Our property includes several designated zones where you can spot a wide variety of native and migratory birds. Join our guides to learn more about these beautiful creatures.",
         image: "exp-bird-watching",
-        icon: BirdwatchingIcon
+        iconName: "birdwatching"
     },
     {
         title: "Open Sky Views & Stargazing",
         description: "Far from the pollution of the city, our skies are a canvas of cosmic wonders. On clear nights, join our stargazing sessions to marvel at constellations, planets, and the Milky Way through our powerful telescope.",
         image: "exp-stargazing",
-        icon: StargazingIcon
+        iconName: "stargazing"
     }
 ];
 
@@ -256,7 +234,7 @@ export const amenities = [
         description: "Take a dip in our temperature-controlled swimming pool while enjoying panoramic views of the majestic mountains.",
         longDescription: "Our stunning infinity pool is the centerpiece of relaxation at Himachal Haven. Heated to the perfect temperature year-round, it offers an unparalleled swimming experience with panoramic views of the snow-capped Himalayan peaks. Lounge on the comfortable sunbeds, sip a refreshing drink from the poolside bar, and let the majestic scenery wash over you. It's the perfect spot to unwind after a day of exploring.",
         image: "amenity-pool",
-        icon: Waves,
+        iconName: "waves",
     },
     {
         slug: "mini-cinema",
@@ -264,7 +242,7 @@ export const amenities = [
         description: "Enjoy a private movie screening with your loved ones in our cozy, state-of-the-art mini cinema.",
         longDescription: "Experience movie magic in our exclusive mini cinema. Featuring plush, reclining seats, a state-of-the-art surround sound system, and a large, high-definition screen, it's the perfect venue for a private movie night. Choose from our extensive library of films or connect your own device to enjoy your favorite content. Popcorn and snacks are, of course, part of the experience.",
         image: "amenity-cinema",
-        icon: Sparkles,
+        iconName: "sparkles",
     },
     {
         slug: "open-sky-dining",
@@ -272,7 +250,7 @@ export const amenities = [
         description: "Dine under the stars in our enchanting open-sky dining area, offering a unique culinary experience.",
         longDescription: "There's nothing quite like dining under a blanket of stars. Our open-sky dining area offers an unforgettable culinary journey amidst the beauty of nature. Whether it's a romantic dinner for two or a special celebration with family, our chefs will prepare a delectable meal using fresh, local ingredients, all while you enjoy the crisp mountain air and the celestial display above.",
         image: "amenity-dining",
-        icon: Sun,
+        iconName: "sun",
     },
     {
         slug: "indoor-outdoor-games",
@@ -280,7 +258,7 @@ export const amenities = [
         description: "From pool and table tennis indoors to cricket and badminton outdoors, we have activities for everyone.",
         longDescription: "Fun and recreation are always on the agenda at Himachal Haven. Our indoor game room is equipped with a pool table, table tennis, carrom, and various board games. Step outside onto our lush lawns for a friendly match of badminton or cricket. We provide all the necessary equipment, so all you need to bring is your competitive spirit.",
         image: "amenity-games",
-        icon: Bike,
+        iconName: "bike",
     },
     {
         slug: "event-party-spaces",
@@ -288,7 +266,7 @@ export const amenities = [
         description: "Host your special events, from weddings to corporate retreats, in our versatile and beautiful spaces.",
         longDescription: "With its stunning backdrop and versatile venues, Himachal Haven is the ideal location for your next event. We offer both indoor and outdoor spaces that can be customized for destination weddings, corporate retreats, or private parties. Our dedicated event planning team will work with you to ensure every detail is perfect, from decor and catering to entertainment and accommodations.",
         image: "amenity-events",
-        icon: HeartHandshake,
+        iconName: "heart-handshake",
     },
     {
         slug: "bonfire-nights",
@@ -296,7 +274,7 @@ export const amenities = [
         description: "Gather around a warm bonfire on chilly evenings for stories, music, and camaraderie.",
         longDescription: "As the sun sets and the mountain air turns crisp, gather around our roaring bonfire. It's a time-honored tradition at Himachal Haven, perfect for sharing stories, singing songs, or simply enjoying the warmth and a hot beverage. We often arrange live acoustic music and serve delicious snacks, creating a magical and memorable evening for all our guests.",
         image: "amenity-bonfire",
-        icon: Sparkles,
+        iconName: "sparkles",
     },
 ];
 

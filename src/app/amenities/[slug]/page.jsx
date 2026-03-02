@@ -6,7 +6,15 @@ import { PlaceHolderImages } from '../../../lib/placeholder-images';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Waves, Sparkles, Sun, Bike, HeartHandshake } from 'lucide-react';
 
+const icons = {
+    waves: Waves,
+    sparkles: Sparkles,
+    sun: Sun,
+    bike: Bike,
+    'heart-handshake': HeartHandshake,
+};
 
 export function generateStaticParams() {
   return amenities.map((amenity) => ({
@@ -23,6 +31,7 @@ export default function AmenityDetailPage({ params }) {
 
   const amenityImage = PlaceHolderImages.find((img) => img.id === amenity.image);
   const otherAmenities = amenities.filter(a => a.slug !== params.slug).slice(0, 3);
+  const Icon = icons[amenity.iconName] || Sparkles;
 
   return (
     <div>
@@ -58,7 +67,7 @@ export default function AmenityDetailPage({ params }) {
                 <Card>
                     <CardHeader>
                         <CardTitle className="font-headline text-3xl flex items-center gap-4">
-                            <amenity.icon className="w-8 h-8 text-primary shrink-0" />
+                            <Icon className="w-8 h-8 text-primary shrink-0" />
                             {amenity.title}
                         </CardTitle>
                     </CardHeader>
