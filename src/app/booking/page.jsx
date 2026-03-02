@@ -12,7 +12,6 @@ import Calendar from 'react-calendar';
 import Image from 'next/image';
 
 import { cn } from "@/lib/utils";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { PlaceHolderImages } from "../../lib/placeholder-images";
 import { rooms } from '../lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -152,19 +151,8 @@ function BookingPageContent() {
         }, 2000);
     }
 
-    const headerImage = PlaceHolderImages.find((img) => img.id === 'room-balcony-1');
-    
     return (
-        <div>
-            {headerImage && (
-                <PageHeader
-                title="Complete Your Booking"
-                subtitle="Just a few more details to secure your stay at The Forest Gate."
-                imageUrl={headerImage.imageUrl}
-                imageHint={headerImage.imageHint}
-                />
-            )}
-
+        <div className="pt-24">
             <section>
                 <div className="container mx-auto px-4">
                     <div className="grid lg:grid-cols-3 gap-12">
