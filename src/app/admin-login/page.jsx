@@ -48,18 +48,18 @@ export default function AdminLoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center p-4 sm:p-8">
-            <div className="w-full max-w-6xl bg-white rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row h-full lg:min-h-[700px]">
-                {/* Left Side: Login Form */}
-                <div className="w-full lg:w-1/2 p-8 sm:p-16 flex flex-col">
+        <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden">
+            {/* Left Side: Login Form (50%) */}
+            <div className="w-full lg:w-1/2 p-8 sm:p-16 flex flex-col justify-center min-h-screen">
+                <div className="max-w-md w-full mx-auto flex flex-col h-full py-12">
                     <div className="mb-12">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 border rounded-full text-sm font-bold text-muted-foreground bg-muted/50">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 border rounded-full text-sm font-bold text-muted-foreground bg-muted/30">
                             <Shield className="w-4 h-4" />
                             Admin Gateway
                         </div>
                     </div>
 
-                    <div className="flex-1 flex flex-col justify-center max-w-md w-full mx-auto">
+                    <div className="flex-1 flex flex-col justify-center">
                         <h1 className="text-4xl font-headline font-bold mb-2">Admin Login</h1>
                         <p className="text-muted-foreground mb-8">Access the management portal for The Forest Gate.</p>
 
@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
                                                     type="email" 
                                                     placeholder="admin@theforestgate.com" 
                                                     {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary"
+                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
                                                 />
                                             </FormControl> 
                                             <FormMessage /> 
@@ -94,7 +94,7 @@ export default function AdminLoginPage() {
                                                     type="password" 
                                                     placeholder="••••••••" 
                                                     {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary"
+                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
                                                 />
                                             </FormControl> 
                                             <FormMessage /> 
@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
                                 
                                 <Button 
                                     type="submit" 
-                                    className="w-full h-12 rounded-full bg-[#fcb101] hover:bg-[#e0a000] text-black font-bold text-base transition-all active:scale-[0.98]"
+                                    className="w-full h-12 rounded-full bg-[#fcb101] hover:bg-[#e0a000] text-black font-bold text-base transition-all active:scale-[0.98] shadow-none"
                                     disabled={form.formState.isSubmitting}
                                 >
                                     {form.formState.isSubmitting ? 'Verifying...' : 'Sign In'}
@@ -122,32 +122,32 @@ export default function AdminLoginPage() {
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Right Side: Image/Lifestyle */}
-                <div className="hidden lg:block lg:w-1/2 relative bg-primary">
-                    <div className="absolute inset-0 z-10 bg-gradient-to-br from-black/20 via-transparent to-black/60" />
-                    <Image 
-                        src={heroImage?.imageUrl || "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?auto=format&fit=crop&q=80&w=1200"}
-                        alt="Resort View"
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                    <div className="absolute inset-0 z-20 p-16 flex flex-col justify-end text-white">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
-                                <MountainSnow className="w-7 h-7 text-white" />
-                            </div>
-                            <span className="font-headline text-2xl font-bold tracking-wider">THE FOREST GATE</span>
+            {/* Right Side: Image/Lifestyle (50%) */}
+            <div className="hidden lg:block lg:w-1/2 relative bg-primary">
+                <div className="absolute inset-0 z-10 bg-gradient-to-br from-black/20 via-transparent to-black/60" />
+                <Image 
+                    src={heroImage?.imageUrl || "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?auto=format&fit=crop&q=80&w=1200"}
+                    alt="Resort View"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+                <div className="absolute inset-0 z-20 p-16 flex flex-col justify-end text-white">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                            <MountainSnow className="w-7 h-7 text-white" />
                         </div>
-                        <h2 className="text-5xl font-headline font-bold leading-tight mb-4">
-                            Excellence in <br/>
-                            <span className="text-[#fcb101]">Himalayan</span> Hospitality.
-                        </h2>
-                        <p className="text-white/80 text-lg font-light max-w-md">
-                            Manage your sanctuary with precision. Our admin portal provides all the tools needed to deliver unforgettable guest experiences.
-                        </p>
+                        <span className="font-headline text-2xl font-bold tracking-wider">THE FOREST GATE</span>
                     </div>
+                    <h2 className="text-5xl font-headline font-bold leading-tight mb-4">
+                        Excellence in <br/>
+                        <span className="text-[#fcb101]">Himalayan</span> Hospitality.
+                    </h2>
+                    <p className="text-white/80 text-lg font-light max-w-md">
+                        Manage your sanctuary with precision. Our admin portal provides all the tools needed to deliver unforgettable guest experiences.
+                    </p>
                 </div>
             </div>
         </div>
