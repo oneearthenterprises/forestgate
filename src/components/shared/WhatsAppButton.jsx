@@ -46,7 +46,7 @@ export function WhatsAppButton() {
         notificationDelay={30}
         notificationSound={true}
         darkMode={false}
-        allowClickAway={true}
+        allowClickAway={false}
         allowEsc={true}
         onSubmit={handleSubmit}
         buttonStyle={{ backgroundColor: '#22c55e' }}
