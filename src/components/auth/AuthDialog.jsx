@@ -4,15 +4,14 @@ import { useState } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { MountainSnow, X, ShieldCheck } from "lucide-react";
+import { MountainSnow } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -66,29 +65,57 @@ export function AuthDialog({ open, onOpenChange }) {
         setMode('login');
     }
 
+    const marqueeContent = (
+        <div className="flex items-center gap-8 pr-8">
+            <div className="flex flex-col gap-0.5">
+                <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest leading-none">System Status</span>
+                <div className="flex items-center gap-1.5 text-[#085d6b] text-xs font-bold">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#085d6b] animate-pulse" />
+                    SECURE CONNECTION
+                </div>
+            </div>
+            <div className="h-8 w-px bg-[#085d6b]/10" />
+            <div className="flex flex-col gap-0.5">
+                <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest leading-none">Gateway</span>
+                <p className="text-xs font-bold text-[#085d6b]">VERIFIED SSL</p>
+            </div>
+            <div className="h-8 w-px bg-[#085d6b]/10" />
+            <div className="flex flex-col gap-0.5">
+                <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest leading-none">Authentication</span>
+                <p className="text-xs font-bold text-[#085d6b]">MULTI-LAYERED</p>
+            </div>
+            <div className="h-8 w-px bg-[#085d6b]/10" />
+            <div className="flex flex-col gap-0.5">
+                <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest leading-none">Encryption</span>
+                <p className="text-xs font-bold text-[#085d6b]">AES-256 BIT</p>
+            </div>
+            <div className="h-8 w-px bg-[#085d6b]/10" />
+        </div>
+    );
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl bg-background">
                 {/* Scrollable Area with Fixed Height */}
-                <div className="h-[600px] overflow-y-auto px-8 pt-10 pb-10 space-y-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                    {/* Logo & Welcome Badge Container */}
-                    <div className="flex flex-col items-center gap-6 w-full">
-                        {/* Integrated Status Badge */}
-                        <div className="w-full bg-[#085d6b]/5 border border-[#085d6b]/10 rounded-2xl p-3 flex justify-between items-center hidden sm:flex">
-                            <div className="flex flex-col gap-0.5">
-                                <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest leading-none">System Status</span>
-                                <div className="flex items-center gap-1.5 text-[#085d6b] text-xs font-bold">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[#085d6b] animate-pulse" />
-                                    Secure Connection
-                                </div>
-                            </div>
-                            <div className="h-8 w-px bg-[#085d6b]/10 mx-2" />
-                            <div className="text-right">
-                                <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest leading-none block mb-0.5">Gateway</span>
-                                <p className="text-xs font-bold text-[#085d6b]">Verified</p>
+                <div className="h-[600px] overflow-y-auto px-8 pt-6 pb-10 space-y-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    {/* Integrated Marquee Status Badge */}
+                    <div className="w-full bg-[#085d6b]/5 border border-[#085d6b]/10 rounded-2xl p-3 overflow-hidden hidden sm:block">
+                        <div className="flex items-center w-full">
+                            <div className="relative flex overflow-x-hidden">
+                                <motion.div
+                                    animate={{ x: ["0%", "-50%"] }}
+                                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                                    className="flex whitespace-nowrap"
+                                >
+                                    {marqueeContent}
+                                    {marqueeContent}
+                                </motion.div>
                             </div>
                         </div>
+                    </div>
 
+                    {/* Logo */}
+                    <div className="flex flex-col items-center gap-2 w-full">
                         <div className="flex items-center gap-2 font-bold text-2xl font-headline text-primary">
                             <MountainSnow className="h-10 w-10 text-[#085d6b]" />
                             <span className="text-[#085d6b]">THE FOREST GATE</span>
