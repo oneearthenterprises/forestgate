@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -56,19 +55,15 @@ export function SidebarProvider({
 
 // --- Sidebar Root ---
 const sidebarVariants = cva(
-  'bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out',
+  'bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col h-full',
   {
     variants: {
       variant: {
         default: 'relative',
-        floating: 'relative m-4 rounded-xl border',
-      },
-      collapsible: {
-        true: '',
-        false: '',
+        floating: 'm-4 rounded-xl border shadow-sm',
       },
       collapsed: {
-        true: 'w-16',
+        true: 'w-[70px]',
         false: 'w-64',
       },
     },
@@ -85,8 +80,7 @@ const Sidebar = React.forwardRef(
       <aside
         ref={ref}
         className={cn(
-          sidebarVariants({ variant, collapsed: isCollapsed, collapsible: !!collapsible }),
-          'group flex flex-col',
+          sidebarVariants({ variant, collapsed: isCollapsed }),
           className
         )}
         data-state={isCollapsed ? 'collapsed' : 'open'}
@@ -135,7 +129,7 @@ export const SidebarTrigger = ({ className, ...props }) => {
 const SidebarHeader = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex h-16 shrink-0 items-center border-b border-sidebar-border px-4', className)}
+    className={cn('flex h-16 shrink-0 items-center border-b border-sidebar-border px-6', className)}
     {...props}
   />
 ));
@@ -144,7 +138,7 @@ SidebarHeader.displayName = 'SidebarHeader';
 const SidebarContent = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex-1 overflow-y-auto overflow-x-hidden', className)}
+    className={cn('flex-1 overflow-y-auto overflow-x-hidden p-3', className)}
     {...props}
   />
 ));
@@ -153,7 +147,7 @@ SidebarContent.displayName = 'SidebarContent';
 const SidebarFooter = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('mt-auto shrink-0 border-t border-sidebar-border p-2', className)}
+    className={cn('mt-auto shrink-0 border-t border-sidebar-border p-3', className)}
     {...props}
   />
 ));
@@ -170,7 +164,7 @@ const SidebarMenu = React.forwardRef(({ className, ...props }, ref) => (
 SidebarMenu.displayName = 'SidebarMenu';
 
 const SidebarMenuItem = React.forwardRef(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('', className)} {...props} />
+  <div ref={ref} className={className} {...props} />
 ));
 SidebarMenuItem.displayName = 'SidebarMenuItem';
 
@@ -181,8 +175,13 @@ const SidebarMenuButton = React.forwardRef(
     const buttonContent = (
       <Button
         ref={ref}
-        variant={isActive ? 'secondary' : 'ghost'}
-        className={cn('w-full gap-2', className)}
+        variant="ghost"
+        className={cn(
+          'w-full gap-3 justify-start px-3 py-2 h-10 transition-all font-medium',
+          isActive ? 'bg-primary/10 text-primary hover:bg-primary/15' : 'text-muted-foreground hover:text-foreground',
+          isCollapsed && 'justify-center px-0',
+          className
+        )}
         {...props}
       >
         {children}

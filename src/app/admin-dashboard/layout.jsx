@@ -45,7 +45,6 @@ export default function AdminDashboardLayout({
   const { toast } = useToast();
 
   const handleLogout = () => {
-    // In a real app, you'd clear the session/token here
     toast({
       title: 'Logged Out',
       description: 'You have been successfully logged out.',
@@ -53,29 +52,33 @@ export default function AdminDashboardLayout({
     router.push('/admin-login');
   };
 
+  const isLinkActive = (href) => {
+    if (href === '/admin-dashboard') return pathname === href;
+    return pathname.startsWith(href);
+  };
+
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen bg-background">
-        <Sidebar variant="floating" collapsible="icon">
+      <div className="flex h-screen overflow-hidden bg-muted/30">
+        <Sidebar variant="default" className="shrink-0">
           <SidebarHeader>
             <div className="flex items-center gap-2">
               <MountainSnow className="h-6 w-6 text-primary" />
-              <h2 className="text-lg font-semibold font-headline group-data-[state=collapsed]:hidden">
+              <h2 className="text-lg font-bold font-headline truncate group-data-[state=collapsed]:hidden">
                 Himachal Haven
               </h2>
             </div>
           </SidebarHeader>
-          <SidebarContent className="p-2">
+          <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === '/admin-dashboard'}
+                  isActive={isLinkActive('/admin-dashboard')}
                   tooltip="Dashboard"
-                  className="justify-start group-data-[state=collapsed]:justify-center"
                 >
                   <Link href="/admin-dashboard">
-                    <LayoutDashboard />
+                    <LayoutDashboard className="h-5 w-5" />
                     <span className='group-data-[state=collapsed]:hidden'>Dashboard</span>
                   </Link>
                 </SidebarMenuButton>
@@ -83,12 +86,11 @@ export default function AdminDashboardLayout({
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === '/admin-dashboard/rooms'}
+                  isActive={isLinkActive('/admin-dashboard/rooms')}
                   tooltip="Rooms"
-                   className="justify-start group-data-[state=collapsed]:justify-center"
                 >
                   <Link href="/admin-dashboard/rooms">
-                    <BedDouble />
+                    <BedDouble className="h-5 w-5" />
                      <span className='group-data-[state=collapsed]:hidden'>Rooms</span>
                   </Link>
                 </SidebarMenuButton>
@@ -96,12 +98,11 @@ export default function AdminDashboardLayout({
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === '/admin-dashboard/orders'}
+                  isActive={isLinkActive('/admin-dashboard/orders')}
                   tooltip="Orders"
-                  className="justify-start group-data-[state=collapsed]:justify-center"
                 >
                   <Link href="/admin-dashboard/orders">
-                    <ClipboardList />
+                    <ClipboardList className="h-5 w-5" />
                     <span className='group-data-[state=collapsed]:hidden'>Orders</span>
                   </Link>
                 </SidebarMenuButton>
@@ -109,12 +110,11 @@ export default function AdminDashboardLayout({
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === '/admin-dashboard/subscribers'}
+                  isActive={isLinkActive('/admin-dashboard/subscribers')}
                   tooltip="Subscribers"
-                  className="justify-start group-data-[state=collapsed]:justify-center"
                 >
                   <Link href="/admin-dashboard/subscribers">
-                    <Mail />
+                    <Mail className="h-5 w-5" />
                     <span className='group-data-[state=collapsed]:hidden'>Subscribers</span>
                   </Link>
                 </SidebarMenuButton>
@@ -122,12 +122,11 @@ export default function AdminDashboardLayout({
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === '/admin-dashboard/contacts'}
+                  isActive={isLinkActive('/admin-dashboard/contacts')}
                   tooltip="Contacts"
-                  className="justify-start group-data-[state=collapsed]:justify-center"
                 >
                   <Link href="/admin-dashboard/contacts">
-                    <Contact />
+                    <Contact className="h-5 w-5" />
                     <span className='group-data-[state=collapsed]:hidden'>Contacts</span>
                   </Link>
                 </SidebarMenuButton>
@@ -137,32 +136,33 @@ export default function AdminDashboardLayout({
           <SidebarFooter>
              <SidebarMenu>
                 <SidebarMenuItem>
-                    <SidebarMenuButton onClick={handleLogout} tooltip="Logout" className="justify-start group-data-[state=collapsed]:justify-center">
-                        <LogOut />
+                    <SidebarMenuButton onClick={handleLogout} tooltip="Logout">
+                        <LogOut className="h-5 w-5" />
                         <span className='group-data-[state=collapsed]:hidden'>Logout</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
              </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
-        <div className='flex flex-col flex-1'>
-          <header className="flex h-16 items-center justify-between border-b bg-card px-6">
+        
+        <div className='flex flex-col flex-1 min-w-0'>
+          <header className="flex h-16 shrink-0 items-center justify-between border-b bg-background px-6">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-               <div className="relative flex-1 max-w-md">
+               <div className="relative flex-1 max-w-md hidden sm:block">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search..." className="pl-9" />
+                  <Input placeholder="Search..." className="pl-9 h-9" />
               </div>
             </div>
             <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="h-9 w-9">
                     <Bell className="h-5 w-5" />
                     <span className="sr-only">Notifications</span>
                 </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                            <Avatar className="h-8 w-8">
+                        <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                            <Avatar className="h-9 w-9 border border-border">
                                 <AvatarImage src="https://i.pravatar.cc/150?u=admin" />
                                 <AvatarFallback>A</AvatarFallback>
                             </Avatar>
@@ -181,12 +181,14 @@ export default function AdminDashboardLayout({
                          <DropdownMenuItem>Profile</DropdownMenuItem>
                          <DropdownMenuItem>Settings</DropdownMenuItem>
                          <DropdownMenuSeparator />
-                         <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+                         <DropdownMenuItem onClick={handleLogout} className="text-destructive">Logout</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
           </header>
-          <main className="flex-1 p-6">{children}</main>
+          <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
+            {children}
+          </main>
         </div>
       </div>
     </SidebarProvider>
