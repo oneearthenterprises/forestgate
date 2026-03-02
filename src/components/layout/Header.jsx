@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -29,7 +30,7 @@ export function Header() {
 
   React.useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -40,23 +41,26 @@ export function Header() {
     return null;
   }
 
+  const isHome = pathname === '/';
   const headerNavLinks = navLinks.filter((link) => link.href !== '/events');
 
   const headerClasses = cn(
-    'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-card shadow-sm',
-    isScrolled ? 'h-16' : 'h-20'
+    'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out',
+    isScrolled || !isHome 
+      ? 'h-16 bg-card shadow-sm text-foreground' 
+      : 'h-20 bg-transparent text-white'
   );
   
   const linkClasses = (href) => cn(
-    'transition-colors font-medium text-foreground hover:text-primary',
-    pathname === href && 'text-primary'
+    'transition-colors font-medium hover:text-primary',
+    (isScrolled || !isHome) ? (pathname === href ? 'text-primary' : 'text-foreground') : 'text-white'
   );
 
   return (
     <header className={headerClasses}>
       <div className="container mx-auto flex h-full items-center px-4">
         <div className="flex-1 flex justify-start">
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl font-headline text-primary">
+            <Link href="/" className={cn("flex items-center gap-2 font-bold text-xl font-headline transition-colors", (isScrolled || !isHome) ? "text-primary" : "text-white")}>
               <MountainSnow className="h-6 w-6" />
               <span>Himachal Haven</span>
             </Link>
@@ -71,12 +75,12 @@ export function Header() {
         </nav>
 
         <div className="flex-1 hidden md:flex items-center justify-end gap-4">
-          <Button asChild>
+          <Button asChild className={cn(!isScrolled && isHome && "bg-white text-black hover:bg-white/90")}>
             <Link href="/booking">Book Now</Link>
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full text-foreground hover:bg-accent">
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent">
                 <CircleUser className="h-5 w-5" />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
@@ -101,7 +105,7 @@ export function Header() {
         <div className="md:hidden flex-1 flex justify-end">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-foreground">
+              <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
@@ -115,7 +119,7 @@ export function Header() {
                         </Link>
                     </SheetClose>
                 </div>
-                <nav className="flex flex-col gap-6 p-6 flex-1">
+                <nav className="flex flex-col gap-6 p-6 flex-1 text-foreground">
                   {headerNavLinks.map((link) => (
                     <SheetClose key={link.href} asChild>
                       <Link

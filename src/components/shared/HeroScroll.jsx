@@ -1,3 +1,4 @@
+
 'use client';
 
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -16,10 +17,10 @@ export function HeroScroll() {
     offset: ["start start", "end end"],
   });
 
-  // Parallax effects
+  // Parallax and fade effects
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const textScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const textY = useTransform(scrollYProgress, [0, 0.4], [0, -50]);
 
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
 
@@ -48,7 +49,7 @@ export function HeroScroll() {
 
       {/* Centered Content */}
       <motion.div 
-        style={{ opacity: textOpacity, scale: textScale }}
+        style={{ opacity: textOpacity, y: textY }}
         className="relative z-20 flex h-full w-full flex-col items-center justify-center px-4 text-center text-white"
       >
         <h1 className="font-headline text-5xl md:text-8xl font-bold uppercase tracking-[0.2em] mb-6">
