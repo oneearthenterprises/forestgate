@@ -3,7 +3,6 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { highlights } from "@/app/lib/data";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -60,8 +59,8 @@ export function HeroScroll() {
       });
 
       revealTL
-        .to(".split-image", {
-          scale: 1.3,
+        .to(".split-image-container", {
+          scale: 1.2,
           duration: 5,
           ease: "power2.inOut"
         })
@@ -96,12 +95,38 @@ export function HeroScroll() {
     return () => ctx.revert();
   }, []);
 
+  const SplitContent = ({ side }) => (
+    <div className={`absolute inset-0 flex flex-col items-center justify-center text-center pt-16`}>
+      <div className="split-inner-content w-full max-w-5xl px-4">
+        <h1 className="text-6xl md:text-[10rem] font-bold font-headline uppercase leading-none text-slate-900 mb-8">
+          WE CREATE
+        </h1>
+        <div className={`${side === 'top' ? 'text-container-top' : 'text-container-bottom'} relative h-20 md:h-32 w-full`}>
+          {highlights.map((h, i) => (
+            <p key={i} className="service-name absolute inset-0 opacity-0 text-3xl md:text-6xl font-black uppercase tracking-widest text-[#fcb101] flex items-center justify-center">
+              {h.title}
+            </p>
+          ))}
+        </div>
+        <div className="split-image-container relative w-[70vw] max-w-[980px] aspect-video mx-auto mt-12 rounded-3xl overflow-hidden shadow-2xl">
+          <Image 
+            src="https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?auto=format&fit=crop&q=80&w=1200"
+            alt="Sanctuary Landscape"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section ref={containerRef} className="relative bg-[#0b2c3d]">
-      {/* Intro Wrapper (Pinned Section) - Set to z-30 to stay below fixed header (z-50) */}
+      {/* Intro Wrapper (Pinned Section) */}
       <div ref={introWrapperRef} className="relative h-screen w-full overflow-hidden z-30">
         
-        {/* REVEAL UNDERLAY (The target hero content) */}
+        {/* REVEAL UNDERLAY (The target hero content revealed by split) */}
         <div className="absolute inset-0 z-0 flex flex-col items-center justify-center text-center px-4 pt-16">
           <div className="absolute inset-0">
             <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40">
@@ -128,62 +153,14 @@ export function HeroScroll() {
           </div>
         </div>
 
-        {/* Top Layer */}
-        <div className="split-layer-top absolute inset-0 z-20 bg-background overflow-hidden [clip-path:inset(0_0_50%_0)] pointer-events-none">
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-16">
-            <div className="split-inner-content w-full max-w-5xl px-4">
-              <h1 className="text-6xl md:text-[10rem] font-bold font-headline uppercase leading-none text-slate-900 mb-8">
-                WE CREATE
-              </h1>
-              <div className="text-container-top relative h-20 md:h-32 w-full">
-                {highlights.map((h, i) => (
-                  <p key={i} className="service-name absolute inset-0 opacity-0 text-3xl md:text-6xl font-black uppercase tracking-widest text-[#fcb101] flex items-center justify-center">
-                    {h.title}
-                  </p>
-                ))}
-              </div>
-              <div className="relative w-[70vw] max-w-[980px] aspect-video mx-auto mt-12 rounded-3xl overflow-hidden shadow-2xl">
-                <video 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  className="split-image absolute inset-0 w-full h-full object-cover"
-                >
-                  <source src="https://6000-firebase-studio-1770279522423.cluster-ejd22kqny5htuv5dfowoyipt52.cloudworkstations.dev/assets/videos/pecockwalking.mp4" type="video/mp4" />
-                </video>
-              </div>
-            </div>
-          </div>
+        {/* Top Split Layer */}
+        <div className="split-layer-top absolute inset-0 z-20 bg-[#fffef8] overflow-hidden [clip-path:inset(0_0_50%_0)] pointer-events-none">
+          <SplitContent side="top" />
         </div>
 
-        {/* Bottom Layer (Identical content, different clip) */}
-        <div className="split-layer-bottom absolute inset-0 z-10 bg-background overflow-hidden [clip-path:inset(50%_0_0_0)] pointer-events-none">
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-16">
-            <div className="split-inner-content w-full max-w-5xl px-4">
-              <h1 className="text-6xl md:text-[10rem] font-bold font-headline uppercase leading-none text-slate-900 mb-8">
-                WE CREATE
-              </h1>
-              <div className="text-container-bottom relative h-20 md:h-32 w-full">
-                {highlights.map((h, i) => (
-                  <p key={i} className="service-name absolute inset-0 opacity-0 text-3xl md:text-6xl font-black uppercase tracking-widest text-[#fcb101] flex items-center justify-center">
-                    {h.title}
-                  </p>
-                ))}
-              </div>
-              <div className="relative w-[70vw] max-w-[980px] aspect-video mx-auto mt-12 rounded-3xl overflow-hidden shadow-2xl">
-                <video 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  className="split-image absolute inset-0 w-full h-full object-cover"
-                >
-                  <source src="https://6000-firebase-studio-1770279522423.cluster-ejd22kqny5htuv5dfowoyipt52.cloudworkstations.dev/assets/videos/pecockwalking.mp4" type="video/mp4" />
-                </video>
-              </div>
-            </div>
-          </div>
+        {/* Bottom Split Layer */}
+        <div className="split-layer-bottom absolute inset-0 z-10 bg-[#fffef8] overflow-hidden [clip-path:inset(50%_0_0_0)] pointer-events-none">
+          <SplitContent side="bottom" />
         </div>
 
       </div>
