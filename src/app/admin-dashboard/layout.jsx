@@ -78,12 +78,12 @@ export default function AdminDashboardLayout({
       <div className="flex h-screen overflow-hidden bg-muted/30 w-full">
         {/* Fixed Sidebar */}
         <Sidebar variant="default" className="shrink-0 border-r bg-card h-full">
-          <SidebarHeader className="border-b px-6 py-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-primary/10 p-1.5 rounded-lg">
+          <SidebarHeader className="border-b px-6 py-4 group-data-[state=collapsed]:px-2">
+            <div className="flex items-center gap-3 group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:gap-0">
+              <div className="bg-primary/10 p-1.5 rounded-lg shrink-0">
                 <MountainSnow className="h-6 w-6 text-primary" />
               </div>
-              <h2 className="text-lg font-bold font-headline truncate group-data-[state=collapsed]:hidden">
+              <h2 className="text-lg font-bold font-headline truncate group-data-[state=collapsed]:hidden ml-3">
                 The Forest Gate
               </h2>
             </div>
@@ -97,7 +97,7 @@ export default function AdminDashboardLayout({
                   tooltip="Dashboard"
                 >
                   <Link href="/admin-dashboard">
-                    <LayoutDashboard className="h-5 w-5" />
+                    <LayoutDashboard className="h-5 w-5 shrink-0" />
                     <span className='group-data-[state=collapsed]:hidden font-medium'>Dashboard</span>
                   </Link>
                 </SidebarMenuButton>
@@ -109,7 +109,7 @@ export default function AdminDashboardLayout({
                   tooltip="Rooms"
                 >
                   <Link href="/admin-dashboard/rooms">
-                    <BedDouble className="h-5 w-5" />
+                    <BedDouble className="h-5 w-5 shrink-0" />
                      <span className='group-data-[state=collapsed]:hidden font-medium'>Rooms</span>
                   </Link>
                 </SidebarMenuButton>
@@ -121,7 +121,7 @@ export default function AdminDashboardLayout({
                   tooltip="Blog Posts"
                 >
                   <Link href="/admin-dashboard/blog">
-                    <Newspaper className="h-5 w-5" />
+                    <Newspaper className="h-5 w-5 shrink-0" />
                      <span className='group-data-[state=collapsed]:hidden font-medium'>Blog</span>
                   </Link>
                 </SidebarMenuButton>
@@ -133,7 +133,7 @@ export default function AdminDashboardLayout({
                   tooltip="Orders"
                 >
                   <Link href="/admin-dashboard/orders">
-                    <ClipboardList className="h-5 w-5" />
+                    <ClipboardList className="h-5 w-5 shrink-0" />
                     <span className='group-data-[state=collapsed]:hidden font-medium'>Orders</span>
                   </Link>
                 </SidebarMenuButton>
@@ -145,7 +145,7 @@ export default function AdminDashboardLayout({
                   tooltip="Subscribers"
                 >
                   <Link href="/admin-dashboard/subscribers">
-                    <Mail className="h-5 w-5" />
+                    <Mail className="h-5 w-5 shrink-0" />
                     <span className='group-data-[state=collapsed]:hidden font-medium'>Subscribers</span>
                   </Link>
                 </SidebarMenuButton>
@@ -157,14 +157,14 @@ export default function AdminDashboardLayout({
                   tooltip="Contacts"
                 >
                   <Link href="/admin-dashboard/contacts">
-                    <Contact className="h-5 w-5" />
+                    <Contact className="h-5 w-5 shrink-0" />
                     <span className='group-data-[state=collapsed]:hidden font-medium'>Contacts</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
-          <SidebarFooter className="border-t p-3">
+          <SidebarFooter className="border-t p-3 group-data-[state=collapsed]:p-2">
              <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton 
@@ -172,7 +172,7 @@ export default function AdminDashboardLayout({
                       tooltip="Logout"
                       className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     >
-                        <LogOut className="h-5 w-5" />
+                        <LogOut className="h-5 w-5 shrink-0" />
                         <span className='group-data-[state=collapsed]:hidden font-medium'>Logout</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

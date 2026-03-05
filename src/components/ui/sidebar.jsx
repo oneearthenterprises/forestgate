@@ -82,6 +82,7 @@ const Sidebar = React.forwardRef(
       <aside
         ref={ref}
         className={cn(
+          'group',
           sidebarVariants({ variant, collapsed: isCollapsed }),
           className
         )}
@@ -181,7 +182,7 @@ const SidebarMenuButton = React.forwardRef(
         className={cn(
           'w-full gap-3 justify-start px-3 py-2 h-10 transition-all font-medium rounded-lg',
           isActive ? 'bg-primary/10 text-primary hover:bg-primary/15' : 'text-muted-foreground hover:text-foreground',
-          isCollapsed && 'justify-center px-0',
+          isCollapsed && 'justify-center px-0 gap-0',
           className
         )}
         {...props}
