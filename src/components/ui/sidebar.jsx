@@ -42,14 +42,16 @@ export function SidebarProvider({
     setIsCollapsed((prev) => !prev);
   };
 
-  const value = {
+  const contextValue = React.useMemo(() => ({
     isCollapsed,
     toggleSidebar,
     isMobile,
-  };
+  }), [isCollapsed, isMobile]);
 
   return (
-    <SidebarContext.Provider value={contextValue}>{children}</SidebarContext.Provider>
+    <SidebarContext.Provider value={contextValue}>
+      {children}
+    </SidebarContext.Provider>
   );
 }
 
