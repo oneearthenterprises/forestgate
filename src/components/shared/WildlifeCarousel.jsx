@@ -27,7 +27,7 @@ export function WildlifeCarousel() {
 
   return (
     <section id="wildlife" className="bg-background">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl">
         <div className="max-w-3xl mb-16">
           <p className="mb-2" style={sectionLabelStyle}>Natural Sanctuary</p>
           <h2 className="text-3xl md:text-5xl mb-4 font-headline">
@@ -38,7 +38,7 @@ export function WildlifeCarousel() {
           </p>
         </div>
 
-        <div className="relative max-w-6xl mx-auto">
+        <div className="relative w-full mx-auto">
           <Carousel
             opts={{
               align: "start",
@@ -50,7 +50,7 @@ export function WildlifeCarousel() {
               {wildlifeViewpoints.map((point, index) => {
                 const imageData = PlaceHolderImages.find(img => img.id === point.image);
                 return (
-                  <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/3">
                     <div className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[500px] shadow-lg transition-all duration-500 hover:shadow-2xl border border-border/50">
                       {/* Background Image */}
                       {imageData && (
