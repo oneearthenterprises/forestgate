@@ -16,7 +16,6 @@ export function HeroScroll() {
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
   const containerRef = useRef(null);
   const introWrapperRef = useRef(null);
-  const splitImageRef = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current || !introWrapperRef.current) return;
@@ -106,7 +105,15 @@ export function HeroScroll() {
                 ))}
               </div>
               <div className="relative w-[70vw] max-w-[980px] aspect-video mx-auto mt-12 rounded-3xl overflow-hidden shadow-2xl">
-                <Image src={heroImage?.imageUrl} alt="Resort Intro" fill className="split-image object-cover" />
+                <video 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline 
+                  className="split-image absolute inset-0 w-full h-full object-cover"
+                >
+                  <source src="/assets/videos/pecockwalking.mp4" type="video/mp4" />
+                </video>
               </div>
             </div>
           </div>
@@ -127,7 +134,15 @@ export function HeroScroll() {
                 ))}
               </div>
               <div className="relative w-[70vw] max-w-[980px] aspect-video mx-auto mt-12 rounded-3xl overflow-hidden shadow-2xl">
-                <Image src={heroImage?.imageUrl} alt="Resort Intro" fill className="split-image object-cover" />
+                <video 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline 
+                  className="split-image absolute inset-0 w-full h-full object-cover"
+                >
+                  <source src="/assets/videos/pecockwalking.mp4" type="video/mp4" />
+                </video>
               </div>
             </div>
           </div>
