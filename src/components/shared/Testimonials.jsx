@@ -13,6 +13,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils";
+import Autoplay from 'embla-carousel-autoplay';
 
 export function Testimonials() {
     const sectionLabelStyle = {
@@ -24,6 +25,10 @@ export function Testimonials() {
         textAlign: 'left',
         lineHeight: 'normal',
     };
+
+    const autoplay = React.useRef(
+        Autoplay({ delay: 3000, stopOnInteraction: false })
+    );
 
     return (
         <section id="testimonials" className="bg-secondary/5">
@@ -41,6 +46,9 @@ export function Testimonials() {
                             align: "start",
                             loop: true,
                         }}
+                        plugins={[autoplay.current]}
+                        onMouseEnter={autoplay.current.stop}
+                        onMouseLeave={autoplay.current.play}
                         className="w-full"
                     >
                         <CarouselContent className="-ml-4">

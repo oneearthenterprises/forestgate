@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -13,6 +12,7 @@ import {
 import { influencers } from '@/app/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Instagram, Play } from 'lucide-react';
+import Autoplay from 'embla-carousel-autoplay';
 
 export function InfluencersCarousel() {
   const sectionLabelStyle = {
@@ -24,6 +24,10 @@ export function InfluencersCarousel() {
     textAlign: 'left',
     lineHeight: 'normal',
   };
+
+  const autoplay = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
 
   return (
     <section id="influencers" className="bg-muted/30">
@@ -44,6 +48,9 @@ export function InfluencersCarousel() {
               align: "start",
               loop: true,
             }}
+            plugins={[autoplay.current]}
+            onMouseEnter={autoplay.current.stop}
+            onMouseLeave={autoplay.current.play}
             className="w-full"
           >
             <CarouselContent className="-ml-4">

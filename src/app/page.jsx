@@ -1,4 +1,3 @@
-
 import {
   faqs,
   galleryImages,
@@ -33,6 +32,8 @@ import { InteractiveMapSection } from '@/components/shared/InteractiveMapSection
 import { ManagedBySection } from '@/components/shared/ManagedBySection';
 import { WildlifeCarousel } from '@/components/shared/WildlifeCarousel';
 import { InfluencersCarousel } from '@/components/shared/InfluencersCarousel';
+import { HighlightsCarouselWrapper } from '@/components/shared/HighlightsCarouselWrapper';
+import { MobileRoomsCarouselWrapper } from '@/components/shared/MobileRoomsCarouselWrapper';
 
 export default function Home() {
   const deluxeRoom = rooms.find((r) => r.id === 'deluxe-room');
@@ -90,36 +91,7 @@ export default function Home() {
           style={{ background: 'linear-gradient(to bottom, #70ac43, #ffffff)' }}
         >
           <div className="container mx-auto px-0">
-            <Carousel opts={{ align: "start", loop: true }} className="w-full">
-              <CarouselContent className="-ml-4">
-                {highlightsWithImages.map((highlight) => (
-                  <CarouselItem key={highlight.title} className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
-                    <div className="flex flex-col items-center gap-4 group py-12">
-                      <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-[150px] md:h-[150px] overflow-hidden rounded-full shadow-2xl transition-all duration-500 group-hover:scale-105 border-4 border-white/10">
-                        {highlight.image && (
-                          <Image
-                            src={highlight.image.imageUrl}
-                            alt={highlight.title}
-                            fill
-                            className="object-cover"
-                            data-ai-hint={highlight.image.imageHint}
-                            placeholder="blur"
-                            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                          />
-                        )}
-                      </div>
-                      <div className="text-center">
-                        <h3 className="text-base md:text-xl font-bold tracking-tight text-foreground transition-colors duration-300">
-                          {highlight.title}
-                        </h3>
-                      </div>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex -left-12 h-10 w-10 border-none bg-white/30 text-white hover:bg-white/50" />
-              <CarouselNext className="hidden md:flex -right-12 h-10 w-10 border-none bg-white/30 text-white hover:bg-white/50" />
-            </Carousel>
+            <HighlightsCarouselWrapper highlightsWithImages={highlightsWithImages} />
           </div>
         </section>
 
@@ -320,104 +292,7 @@ export default function Home() {
 
             {/* Mobile Carousel */}
             <div className="lg:hidden">
-              <Carousel opts={{ align: "start", loop: true }} className="w-full -ml-4">
-                <CarouselContent>
-                  {allRoomsForCarousel.map((room) => {
-                      const roomImage = PlaceHolderImages.find((img) => img.id === room.images[0]);
-                      return (
-                          <CarouselItem key={room.id} className="basis-full sm:basis-1/2 pl-4">
-                              <div className="p-1">
-                                  <Link
-                                      href={`/rooms#${room.id}`}
-                                      className="relative block group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full"
-                                  >
-                                      {roomImage && (
-                                          <Image
-                                              src={roomImage.imageUrl}
-                                              alt={room.name}
-                                              fill
-                                              className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                              data-ai-hint={roomImage.imageHint}
-                                              placeholder="blur"
-                                              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                                          />
-                                      )}
-                                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
-                                      {room.badge && (
-                                          <div
-                                              className={`absolute top-4 left-4 flex items-center gap-2 text-white px-3 py-1 rounded-full text-sm font-bold ${
-                                                  room.badge.variant === 'hot' ? 'bg-red-500/90' : 'bg-purple-500/90'
-                                              }`}
-                                          >
-                                              {room.badge.variant === 'liked' ? <Heart size={16} /> : <Flame size={16} />}
-                                              <span>{room.badge.label}</span>
-                                          </div>
-                                      )}
-                                      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                                          <h3 className="font-headline text-3xl font-bold">{room.name}</h3>
-                                          <p className="text-lg">₹{room.price.toLocaleString()} / per night</p>
-                                          {room.rating && (
-                                              <div className="flex items-center gap-2 mt-2">
-                                                  <div className="flex">
-                                                      {[...Array(5)].map((_, i) => (
-                                                          <Star
-                                                              key={i}
-                                                              size={16}
-                                                              className={
-                                                                  i < room.rating.stars
-                                                                      ? 'text-yellow-400 fill-yellow-400'
-                                                                      : 'text-gray-400'
-                                                              }
-                                                          />
-                                                      ))}
-                                                  </div>
-                                                  <span className="text-xs font-bold bg-green-600 px-2 py-0.5 rounded">
-                                                      {room.rating.label}
-                                                  </span>
-                                              </div>
-                                          )}
-                                      </div>
-                                  </Link>
-                              </div>
-                          </CarouselItem>
-                      );
-                  })}
-                  <CarouselItem className="basis-full sm:basis-1/2 pl-4">
-                      <div className="p-1 h-full">
-                          <Link
-                              href="/rooms"
-                              className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full block h-full"
-                          >
-                              <div className="grid grid-cols-2 grid-rows-2 h-full w-full">
-                                  {seeMoreImages.slice(0,4).map((image, index) => (
-                                      image && (
-                                          <div key={index} className="relative h-full w-full overflow-hidden">
-                                              <Image
-                                                  src={image.imageUrl}
-                                                  alt={image.description}
-                                                  fill
-                                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                                  data-ai-hint={image.imageHint}
-                                                  placeholder="blur"
-                                                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                                              />
-                                          </div>
-                                      )
-                                  ))}
-                              </div>
-                              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white">
-                                  <h4 className="font-headline text-2xl font-bold">See more</h4>
-                                  <p>+10 more</p>
-                              </div>
-                          </Link>
-                      </div>
-                  </CarouselItem>
-                </CarouselContent>
-                <div className="flex justify-center mt-4 gap-2">
-                    <CarouselPrevious className="static translate-y-0"/>
-                    <CarouselNext className="static translate-y-0" />
-                </div>
-              </Carousel>
+              <MobileRoomsCarouselWrapper allRoomsForCarousel={allRoomsForCarousel} seeMoreImages={seeMoreImages} />
             </div>
 
             <div className="text-center mt-12">

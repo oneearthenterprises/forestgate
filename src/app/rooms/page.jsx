@@ -16,6 +16,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { ManagedBySection } from '@/components/shared/ManagedBySection';
+import { RoomCarouselWrapper } from '@/components/shared/RoomCarouselWrapper';
 
 export default function RoomsPage() {
   const headerImage = PlaceHolderImages.find((img) => img.id === 'room-suite-1');
@@ -74,32 +75,7 @@ export default function RoomsPage() {
                   >
                     {/* Left: Image/Carousel */}
                     <div className="w-full md:w-[35%] shrink-0">
-                      <Carousel className="w-full">
-                        <CarouselContent>
-                          {room.images.map((imgId) => {
-                            const img = PlaceHolderImages.find(
-                              (p) => p.id === imgId
-                            );
-                            return (
-                              <CarouselItem key={imgId}>
-                                {img && (
-                                  <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-inner">
-                                    <Image
-                                      src={img.imageUrl}
-                                      alt={`${room.name}`}
-                                      fill
-                                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                      data-ai-hint={img.imageHint}
-                                    />
-                                  </div>
-                                )}
-                              </CarouselItem>
-                            );
-                          })}
-                        </CarouselContent>
-                        <CarouselPrevious className="left-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </Carousel>
+                      <RoomCarouselWrapper room={room} />
                     </div>
 
                     {/* Middle: Content */}

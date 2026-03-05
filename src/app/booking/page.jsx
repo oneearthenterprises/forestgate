@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Suspense, useState, useEffect, useRef } from 'react';
@@ -36,6 +35,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 
 const BookingFormSchema = z.object({
   fullName: z.string().min(2, "Full name is required."),
@@ -76,6 +76,10 @@ function BookingPageContent() {
     const [isCheckInOpen, setCheckInOpen] = useState(false);
     const [isCheckOutOpen, setCheckOutOpen] = useState(false);
     const formRef = useRef(null);
+
+    const autoplay = useRef(
+        Autoplay({ delay: 3000, stopOnInteraction: false })
+    );
 
     const roomId = searchParams.get('roomId');
     const roomToBook = rooms.find(r => r.id === roomId);
@@ -160,7 +164,13 @@ function BookingPageContent() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-16 h-auto lg:h-[600px]">
                         {/* Main Large Carousel (Left - 8 columns) */}
                         <div className="lg:col-span-8 relative h-[400px] lg:h-full group">
-                            <Carousel className="w-full h-full" opts={{ loop: true }}>
+                            <Carousel 
+                                className="w-full h-full" 
+                                opts={{ loop: true }}
+                                plugins={[autoplay.current]}
+                                onMouseEnter={autoplay.current.stop}
+                                onMouseLeave={autoplay.current.play}
+                            >
                                 <CarouselContent className="h-full ml-0">
                                     {itemToBook.images.map((imgId, idx) => {
                                         const img = PlaceHolderImages.find((p) => p.id === imgId);

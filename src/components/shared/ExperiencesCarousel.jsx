@@ -12,11 +12,16 @@ import {
 } from '@/components/ui/carousel';
 import { experiences } from '@/app/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Autoplay from 'embla-carousel-autoplay';
 
 export function ExperiencesCarousel() {
   const [api, setApi] = React.useState();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
+
+  const autoplay = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
 
   React.useEffect(() => {
     if (!api) {
@@ -32,7 +37,14 @@ export function ExperiencesCarousel() {
   }, [api]);
 
   return (
-    <Carousel setApi={setApi} opts={{ align: 'start', loop: true }} className="w-full relative">
+    <Carousel 
+      setApi={setApi} 
+      opts={{ align: 'start', loop: true }} 
+      plugins={[autoplay.current]}
+      onMouseEnter={autoplay.current.stop}
+      onMouseLeave={autoplay.current.play}
+      className="w-full relative"
+    >
       <CarouselContent className="-ml-4">
         {experiences.map((exp, index) => {
           const expImage = PlaceHolderImages.find((img) => img.id === exp.image);
