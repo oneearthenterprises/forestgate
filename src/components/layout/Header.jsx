@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Menu, MountainSnow, CircleUser, Shield, User, BarChart3, LifeBuoy, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { Menu, MountainSnow, User, BarChart3, LifeBuoy, Settings, LogOut } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
@@ -20,8 +20,7 @@ import {
     DropdownMenuContent, 
     DropdownMenuItem, 
     DropdownMenuTrigger,
-    DropdownMenuSeparator,
-    DropdownMenuLabel
+    DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -56,7 +55,7 @@ export function Header() {
   
   const linkClasses = (href) => cn(
     'transition-colors font-medium hover:text-primary',
-    pathname === href ? 'text-primary' : 'text-foreground'
+    pathname === href ? 'text-primary font-bold' : 'text-foreground'
   );
 
   return (
@@ -180,7 +179,7 @@ export function Header() {
                           href={link.href}
                           className={cn(
                             'text-lg font-medium transition-colors',
-                             pathname === link.href ? 'text-primary' : 'text-foreground hover:text-primary'
+                             pathname === link.href ? 'text-primary font-bold' : 'text-foreground hover:text-primary'
                           )}
                         >
                           {link.label}
