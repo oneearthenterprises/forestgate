@@ -12,13 +12,17 @@ import Link from "next/link";
  * @param {string} description - The subtitle text.
  * @param {string} buttonText - Text for the CTA button.
  * @param {string} buttonLink - Destination for the CTA button.
+ * @param {string} imageSrc - URL for the decorative side image.
+ * @param {string} imageAlt - Alt text for the decorative image.
  */
 export function ManagedBySection({ 
   label = "Managed By", 
   title = "The Himalayan Forest Development Authority", 
   description = "Authorized Eco-Tourism Partner",
   buttonText = "Contact Us",
-  buttonLink = "/contact"
+  buttonLink = "/contact",
+  imageSrc = "/assets/images/bannerpecock.png",
+  imageAlt = "Peacock"
 }) {
 
   const subTitleStyle = {
@@ -59,7 +63,7 @@ export function ManagedBySection({
       </div>
 
 
-      {/* Peacock Image */}
+      {/* Decorative Side Image */}
       <div className="
         pointer-events-none
         absolute
@@ -74,8 +78,8 @@ export function ManagedBySection({
       ">
 
         <Image
-          src="/assets/images/bannerpecock.png"
-          alt="Peacock"
+          src={imageSrc}
+          alt={imageAlt}
           fill
           priority
           className="object-contain object-bottom-right"

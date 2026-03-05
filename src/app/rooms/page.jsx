@@ -19,6 +19,7 @@ import { ManagedBySection } from '@/components/shared/ManagedBySection';
 
 export default function RoomsPage() {
   const headerImage = PlaceHolderImages.find((img) => img.id === 'room-suite-1');
+  const managedByImage = PlaceHolderImages.find((img) => img.id === 'palm-tree-banner');
 
   return (
     <div>
@@ -179,6 +180,8 @@ export default function RoomsPage() {
         description="Experience luxury curated by the guardians of the mountains."
         buttonText="Explore Sanctuary"
         buttonLink="/experiences"
+        imageSrc={managedByImage?.imageUrl}
+        imageAlt={managedByImage?.imageHint || "Nature Banner"}
       />
     </div>
   );
