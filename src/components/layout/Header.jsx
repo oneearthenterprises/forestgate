@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Menu, MountainSnow, User, BarChart3, LifeBuoy, Settings, LogOut, ArrowUpRight } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { Menu, MountainSnow, User, BarChart3, LifeBuoy, Settings, LogOut, Shield } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 import { navLinks } from '@/app/lib/data';
@@ -23,19 +23,12 @@ import {
     DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-
-const dummyUser = {
-  name: "Kasper Carlsen",
-  role: "Product Designer",
-  isPro: true,
-  email: "kasper@example.com",
-  avatar: "https://i.pravatar.cc/150?u=kasper",
-};
+import { useAuthContext } from '@/context/AuthContext';
 
 export function Header() {
+  const { user, logout, loading } = useAuthContext();
   const pathname = usePathname();
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true); // Dummy state for demonstration
+  const router = useRouter();
 
   // Hide header on admin pages, login, or register pages
   if (
@@ -58,6 +51,13 @@ export function Header() {
     pathname === href ? 'text-primary font-bold' : 'text-foreground'
   );
 
+  const handleLogout = async () => {
+    await logout();
+    if(!loading){
+      router.push("/login");
+    }
+  };
+
   return (
     <>
       <header className={headerClasses}>
@@ -69,7 +69,7 @@ export function Header() {
               </Link>
           </div>
 
-          {/* Desktop Nav: Shown only on large screens (1024px+) */}
+          {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-8">
             {headerNavLinks.map((link) => (
               <Link key={link.href} href={link.href} className={linkClasses(link.href)}>
@@ -83,28 +83,27 @@ export function Header() {
               <Link href="/booking">Book Now</Link>
             </Button>
             
-            {isLoggedIn ? (
+            {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="relative h-9 w-9 rounded-full overflow-hidden border-2 border-transparent hover:border-primary/20 transition-all outline-none">
                     <Avatar className="h-full w-full">
-                      <AvatarImage src={dummyUser.avatar} />
-                      <AvatarFallback>KC</AvatarFallback>
+                      <AvatarImage src={`https://i.pravatar.cc/150?u=${user.email}`} />
+                      <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 p-2 rounded-[1.5rem] border-slate-100 shadow-2xl">
                   <div className="flex items-center gap-3 p-3">
                     <Avatar className="h-10 w-10 border">
-                      <AvatarImage src={dummyUser.avatar} />
-                      <AvatarFallback>KC</AvatarFallback>
+                      <AvatarImage src={`https://i.pravatar.cc/150?u=${user.email}`} />
+                      <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold truncate leading-none">{dummyUser.name}</span>
-                        <Badge className="h-4 px-1.5 text-[8px] font-black bg-slate-900 text-white rounded-md uppercase tracking-widest border-none">PRO</Badge>
+                        <span className="text-sm font-bold truncate leading-none">{user.name}</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground mt-1 truncate">{dummyUser.role}</span>
+                      <span className="text-[10px] text-muted-foreground mt-1 truncate">{user.email}</span>
                     </div>
                   </div>
                   <DropdownMenuSeparator className="mx-2" />
@@ -116,9 +115,9 @@ export function Header() {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
-                      <Link href="/ai-guide" className="flex items-center w-full">
+                      <Link href="/my-bookings" className="flex items-center w-full">
                         <BarChart3 className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
-                        <span className="text-sm font-medium">Analytics & Data</span>
+                        <span className="text-sm font-medium">My Bookings</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
@@ -127,15 +126,16 @@ export function Header() {
                         <span className="text-sm font-medium">Help Center</span>
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator className="mx-2" />
                     <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
-                      <Link href="/profile" className="flex items-center w-full">
-                        <Settings className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
-                        <span className="text-sm font-medium">Account Settings</span>
+                      <Link href="/admin-dashboard" className="flex items-center w-full">
+                        <Shield className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
+                        <span className="text-sm font-medium">Admin Panel</span>
                       </Link>
                     </DropdownMenuItem>
                   </div>
                   <DropdownMenuSeparator className="mx-2" />
-                  <DropdownMenuItem onClick={() => setIsLoggedIn(false)} className="rounded-xl h-10 px-3 cursor-pointer group text-destructive focus:text-destructive">
+                  <DropdownMenuItem onClick={handleLogout} className="rounded-xl h-10 px-3 cursor-pointer group text-destructive focus:text-destructive">
                     <LogOut className="mr-3 h-4 w-4" />
                     <span className="text-sm font-bold">Sign Out</span>
                   </DropdownMenuItem>
@@ -148,14 +148,8 @@ export function Header() {
             )}
           </div>
 
-          {/* Tablet/Mobile Menu Trigger: Shown below 1024px */}
+          {/* Tablet/Mobile Menu Trigger */}
           <div className="lg:hidden flex-1 flex justify-end gap-2">
-            {isLoggedIn && (
-               <Avatar className="h-8 w-8 border">
-                <AvatarImage src={dummyUser.avatar} />
-                <AvatarFallback>KC</AvatarFallback>
-              </Avatar>
-            )}
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -188,16 +182,16 @@ export function Header() {
                     ))}
                   </nav>
                   <div className="p-6 mt-auto border-t">
-                      {isLoggedIn ? (
+                      {user ? (
                         <div className="space-y-4">
                           <div className="flex items-center gap-3 mb-4">
                             <Avatar className="h-10 w-10 border">
-                              <AvatarImage src={dummyUser.avatar} />
-                              <AvatarFallback>KC</AvatarFallback>
+                              <AvatarImage src={`https://i.pravatar.cc/150?u=${user.email}`} />
+                              <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="text-sm font-bold">{dummyUser.name}</p>
-                              <p className="text-xs text-muted-foreground">{dummyUser.email}</p>
+                              <p className="text-sm font-bold">{user.name}</p>
+                              <p className="text-xs text-muted-foreground">{user.email}</p>
                             </div>
                           </div>
                           <SheetClose asChild>
@@ -205,7 +199,7 @@ export function Header() {
                               <Link href="/profile"><User className="mr-2 h-4 w-4" /> Profile</Link>
                             </Button>
                           </SheetClose>
-                          <Button variant="destructive" className="w-full mt-4" onClick={() => setIsLoggedIn(false)}>
+                          <Button variant="destructive" className="w-full mt-4" onClick={handleLogout}>
                             Sign Out
                           </Button>
                         </div>

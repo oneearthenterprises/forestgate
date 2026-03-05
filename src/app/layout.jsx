@@ -4,7 +4,7 @@ import { Footer } from '@/components/layout/Footer';
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
 import './globals.css';
 import './react-calendar.css';
-
+import { AuthContextProvider } from '@/context/AuthContext';
 export const metadata = {
   title: 'The Forest Gate - Luxury Meets Nature in the Heart of Himachal',
   description:
@@ -47,11 +47,13 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
+          <AuthContextProvider>
           <Header />
           <main>{children}</main>
           <Footer />
           <WhatsAppButton />
           <Toaster />
+          </AuthContextProvider>
       </body>
     </html>
   );

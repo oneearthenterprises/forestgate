@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { MountainSnow, ArrowRight, UserCircle } from "lucide-react";
+import { MountainSnow, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useAuthContext } from "@/context/AuthContext";
 
 const LoginFormSchema = z.object({
     email: z.string().email({
@@ -31,6 +32,7 @@ const LoginFormSchema = z.object({
 });
 
 export default function LoginPage() {
+    const { login } = useAuthContext();
     const { toast } = useToast();
     const router = useRouter();
     const heroImage = PlaceHolderImages.find(img => img.id === 'gallery-nature-1');
@@ -40,10 +42,24 @@ export default function LoginPage() {
         defaultValues: { email: "", password: "" },
     });
 
-    async function onLoginSubmit(data) {
-        toast({ title: "Login Successful!", description: "Welcome back to The Forest Gate." });
-        router.push('/my-bookings');
-    }
+    const onLoginSubmit = async (values) => {
+        try {
+            await login(values); 
+
+            toast({
+                title: "Login Successful",
+                description: "Welcome back to The Forest Gate.",
+            });
+
+            router.push("/my-bookings");
+        } catch (err) {
+            toast({
+                variant: "destructive",
+                title: "Login failed",
+                description: err.message,
+            });
+        }
+    };
 
     return (
         <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">

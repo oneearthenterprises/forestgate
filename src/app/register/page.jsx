@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,185 +20,206 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useAuthContext } from "@/context/AuthContext";
 
 const RegisterFormSchema = z.object({
-    name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-    email: z.string().email({ message: "Please enter a valid email address." }),
-    phone: z.string().min(10, { message: "Please enter a valid 10-digit phone number." }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters." })
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  phone: z.string().min(10, { message: "Please enter a valid 10-digit phone number." }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 });
 
 export default function RegisterPage() {
-    const { toast } = useToast();
-    const router = useRouter();
-    const heroImage = PlaceHolderImages.find(img => img.id === 'gallery-pool-1');
+  const { toast } = useToast();
+  const router = useRouter();
+  const { register, loading } = useAuthContext();
+  const heroImage = PlaceHolderImages.find(img => img.id === 'gallery-pool-1');
 
-    const form = useForm({
-        resolver: zodResolver(RegisterFormSchema),
-        defaultValues: { name: "", email: "", phone: "", password: "" },
-    });
+  const form = useForm({
+    resolver: zodResolver(RegisterFormSchema),
+    defaultValues: { name: "", email: "", phone: "", password: "" },
+  });
 
-    async function onRegisterSubmit(data) {
-        toast({ title: "Registration Successful!", description: "Welcome to The Forest Gate. Please sign in." });
-        router.push('/login');
+  const onRegisterSubmit = async (values) => {
+    try {
+      await register(values);
+
+      toast({
+        title: "Registration successful",
+        description: "Welcome to The Forest Gate. Please login to continue.",
+      });
+
+      router.push("/login");
+    } catch (err) {
+      toast({
+        title: "Registration failed",
+        description: err.message,
+        variant: "destructive",
+      });
+      if (err.message === "User already exists") {
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      }
     }
+  };
 
-    return (
-        <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">
-            {/* Subtle Textured Background */}
-            <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
-                <Image 
-                    src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=1200"
-                    alt="texture"
-                    fill
-                    className="object-cover"
-                />
-            </div>
+  return (
+    <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">
+        {/* Subtle Textured Background */}
+        <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
+            <Image 
+                src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=1200"
+                alt="texture"
+                fill
+                className="object-cover"
+            />
+        </div>
 
-            {/* Left Side: Register Form */}
-            <div className="w-full lg:w-1/2 p-8 sm:p-16 flex flex-col justify-center min-h-screen relative z-10">
-                <div className="max-w-md w-full mx-auto flex flex-col h-full py-12">
-                    <div className="mb-12">
-                        <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 border rounded-full text-sm font-bold text-muted-foreground bg-muted/30 hover:bg-muted/50 transition-colors">
-                            <MountainSnow className="w-4 h-4 text-primary" />
-                            Return Home
-                        </Link>
-                    </div>
+        {/* Left Side: Register Form */}
+        <div className="w-full lg:w-1/2 p-8 sm:p-16 flex flex-col justify-center min-h-screen relative z-10">
+            <div className="max-w-md w-full mx-auto flex flex-col h-full py-12">
+                <div className="mb-12">
+                    <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 border rounded-full text-sm font-bold text-muted-foreground bg-muted/30 hover:bg-muted/50 transition-colors">
+                        <MountainSnow className="w-4 h-4 text-primary" />
+                        Return Home
+                    </Link>
+                </div>
 
-                    <div className="flex-1 flex flex-col justify-center">
-                        <h1 className="text-4xl font-headline font-bold mb-2">Join the Sanctuary</h1>
-                        <p className="text-muted-foreground mb-8">Create an account to begin your journey with us.</p>
+                <div className="flex-1 flex flex-col justify-center">
+                    <h1 className="text-4xl font-headline font-bold mb-2">Join the Sanctuary</h1>
+                    <p className="text-muted-foreground mb-8">Create an account to begin your journey with us.</p>
 
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onRegisterSubmit)} className="space-y-5">
-                                <FormField 
-                                    control={form.control} 
-                                    name="name" 
-                                    render={({ field }) => ( 
-                                        <FormItem> 
-                                            <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-4">Full Name</FormLabel> 
-                                            <FormControl>
-                                                <Input 
-                                                    placeholder="John Doe" 
-                                                    {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
-                                                />
-                                            </FormControl> 
-                                            <FormMessage /> 
-                                        </FormItem> 
-                                    )} 
-                                />
-                                <FormField 
-                                    control={form.control} 
-                                    name="email" 
-                                    render={({ field }) => ( 
-                                        <FormItem> 
-                                            <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-4">Email address</FormLabel> 
-                                            <FormControl>
-                                                <Input 
-                                                    type="email" 
-                                                    placeholder="you@example.com" 
-                                                    {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
-                                                />
-                                            </FormControl> 
-                                            <FormMessage /> 
-                                        </FormItem> 
-                                    )} 
-                                />
-                                <FormField 
-                                    control={form.control} 
-                                    name="phone" 
-                                    render={({ field }) => ( 
-                                        <FormItem> 
-                                            <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-4">Phone Number</FormLabel> 
-                                            <FormControl>
-                                                <Input 
-                                                    placeholder="+91 98765 43210" 
-                                                    {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
-                                                />
-                                            </FormControl> 
-                                            <FormMessage /> 
-                                        </FormItem> 
-                                    )} 
-                                />
-                                <FormField 
-                                    control={form.control} 
-                                    name="password" 
-                                    render={({ field }) => ( 
-                                        <FormItem> 
-                                            <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-4">Password</FormLabel> 
-                                            <FormControl>
-                                                <Input 
-                                                    type="password" 
-                                                    placeholder="••••••••" 
-                                                    {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
-                                                />
-                                            </FormControl> 
-                                            <FormMessage /> 
-                                        </FormItem> 
-                                    )} 
-                                />
-                                
-                                <Button 
-                                    type="submit" 
-                                    className="w-full h-12 rounded-full bg-[#fcb101] hover:bg-[#e0a000] text-black font-bold text-base transition-all active:scale-[0.98] shadow-none mt-2"
-                                    disabled={form.formState.isSubmitting}
-                                >
-                                    {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
-                                    {!form.formState.isSubmitting && <ArrowRight className="ml-2 w-5 h-5" />}
-                                </Button>
-                            </form>
-                        </Form>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onRegisterSubmit)} className="space-y-5">
+                            <FormField 
+                                control={form.control} 
+                                name="name" 
+                                render={({ field }) => ( 
+                                    <FormItem> 
+                                        <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-4">Full Name</FormLabel> 
+                                        <FormControl>
+                                            <Input 
+                                                placeholder="John Doe" 
+                                                {...field} 
+                                                className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
+                                            />
+                                        </FormControl> 
+                                        <FormMessage /> 
+                                    </FormItem> 
+                                )} 
+                            />
+                            <FormField 
+                                control={form.control} 
+                                name="email" 
+                                render={({ field }) => ( 
+                                    <FormItem> 
+                                        <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-4">Email address</FormLabel> 
+                                        <FormControl>
+                                            <Input 
+                                                type="email" 
+                                                placeholder="you@example.com" 
+                                                {...field} 
+                                                className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
+                                            />
+                                        </FormControl> 
+                                        <FormMessage /> 
+                                    </FormItem> 
+                                )} 
+                            />
+                            <FormField 
+                                control={form.control} 
+                                name="phone" 
+                                render={({ field }) => ( 
+                                    <FormItem> 
+                                        <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-4">Phone Number</FormLabel> 
+                                        <FormControl>
+                                            <Input 
+                                                placeholder="+91 98765 43210" 
+                                                {...field} 
+                                                className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
+                                            />
+                                        </FormControl> 
+                                        <FormMessage /> 
+                                    </FormItem> 
+                                )} 
+                            />
+                            <FormField 
+                                control={form.control} 
+                                name="password" 
+                                render={({ field }) => ( 
+                                    <FormItem> 
+                                        <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-4">Password</FormLabel> 
+                                        <FormControl>
+                                            <Input 
+                                                type="password" 
+                                                placeholder="••••••••" 
+                                                {...field} 
+                                                className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
+                                            />
+                                        </FormControl> 
+                                        <FormMessage /> 
+                                    </FormItem> 
+                                )} 
+                            />
+                            
+                            <Button 
+                                type="submit" 
+                                className="w-full h-12 rounded-full bg-[#fcb101] hover:bg-[#e0a000] text-black font-bold text-base transition-all active:scale-[0.98] shadow-none mt-2"
+                                disabled={loading}
+                            >
+                                {loading ? 'Creating Account...' : 'Create Account'}
+                                {!loading && <ArrowRight className="ml-2 w-5 h-5" />}
+                            </Button>
+                        </form>
+                    </Form>
 
-                        <div className="mt-8 text-center">
-                            <p className="text-sm text-muted-foreground">
-                                Already have an account?{" "}
-                                <Link href="/login" className="text-primary font-bold hover:underline">
-                                    Log In
-                                </Link>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="mt-12 flex justify-between text-[11px] text-muted-foreground uppercase font-bold tracking-widest">
-                        <Link href="/rooms" className="hover:text-primary transition-colors">Our Suites</Link>
-                        <div className="flex gap-4">
-                            <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
-                            <Link href="/contact" className="hover:text-primary transition-colors">Support</Link>
-                        </div>
+                    <div className="mt-8 text-center">
+                        <p className="text-sm text-muted-foreground">
+                            Already have an account?{" "}
+                            <Link href="/login" className="text-primary font-bold hover:underline">
+                                Log In
+                            </Link>
+                        </p>
                     </div>
                 </div>
-            </div>
 
-            {/* Right Side: Image/Lifestyle */}
-            <div className="hidden lg:block lg:w-1/2 relative bg-primary">
-                <div className="absolute inset-0 z-10 bg-gradient-to-br from-black/40 via-transparent to-black/60" />
-                <Image 
-                    src={heroImage?.imageUrl || "https://images.unsplash.com/photo-1500815845799-7748ca339f27?auto=format&fit=crop&q=80&w=1200"}
-                    alt="Poolside View"
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                <div className="absolute inset-0 z-20 p-16 flex flex-col justify-end text-white">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
-                            <Sparkles className="w-7 h-7 text-[#fcb101]" />
-                        </div>
-                        <span className="font-headline text-2xl font-bold tracking-wider">THE FOREST GATE</span>
+                <div className="mt-12 flex justify-between text-[11px] text-muted-foreground uppercase font-bold tracking-widest">
+                    <Link href="/rooms" className="hover:text-primary transition-colors">Our Suites</Link>
+                    <div className="flex gap-4">
+                        <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
+                        <Link href="/contact" className="hover:text-primary transition-colors">Support</Link>
                     </div>
-                    <h2 className="text-5xl font-headline text-white font-bold leading-tight mb-4">
-                        Begin Your <br/>
-                        <span className="text-[#fcb101]">Bespoke</span> Adventure.
-                    </h2>
-                    <p className="text-white/80 text-lg font-light max-w-md">
-                        Experience the heights of hospitality. Create your account today to unlock exclusive rates and tailored Himalayan itineraries.
-                    </p>
                 </div>
             </div>
         </div>
-    );
+
+        {/* Right Side: Image/Lifestyle */}
+        <div className="hidden lg:block lg:w-1/2 relative bg-primary">
+            <div className="absolute inset-0 z-10 bg-gradient-to-br from-black/40 via-transparent to-black/60" />
+            <Image 
+                src={heroImage?.imageUrl || "https://images.unsplash.com/photo-1500815845799-7748ca339f27?auto=format&fit=crop&q=80&w=1200"}
+                alt="Poolside View"
+                fill
+                className="object-cover"
+                priority
+            />
+            <div className="absolute inset-0 z-20 p-16 flex flex-col justify-end text-white">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                        <Sparkles className="w-7 h-7 text-[#fcb101]" />
+                    </div>
+                    <span className="font-headline text-2xl font-bold tracking-wider">THE FOREST GATE</span>
+                </div>
+                <h2 className="text-5xl font-headline text-white font-bold leading-tight mb-4">
+                    Begin Your <br/>
+                    <span className="text-[#fcb101]">Bespoke</span> Adventure.
+                </h2>
+                <p className="text-white/80 text-lg font-light max-w-md">
+                    Experience the heights of hospitality. Create your account today to unlock exclusive rates and tailored Himalayan itineraries.
+                </p>
+            </div>
+        </div>
+    </div>
+  );
 }
