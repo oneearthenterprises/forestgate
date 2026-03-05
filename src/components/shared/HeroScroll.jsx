@@ -6,7 +6,7 @@ import { useRef } from "react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ArrowUpRight } from "lucide-react";
 
 export function HeroScroll() {
   const containerRef = useRef(null);
@@ -70,11 +70,16 @@ export function HeroScroll() {
           <p className="max-w-2xl text-lg md:text-xl font-light tracking-wide mb-10 opacity-90">
             Luxury meets nature in the heart of Himachal. Experience tranquility like never before.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild size="lg" className="bg-white text-black hover:bg-white/90">
-              <Link href="/booking">Book Your Stay</Link>
+          <div className="flex flex-col sm:flex-row gap-6">
+            <Button asChild className="h-14 px-0 bg-white hover:bg-slate-50 text-slate-900 rounded-full overflow-hidden flex group border-none shadow-2xl transition-all p-1">
+              <Link href="/booking" className="flex items-center h-full">
+                <span className="px-8 flex items-center justify-center h-full uppercase tracking-[0.2em] font-black text-xs">Book Your Stay</span>
+                <div className="h-full aspect-square bg-primary flex items-center justify-center rounded-full transition-all group-hover:scale-105">
+                  <ArrowUpRight className="w-5 h-5 text-white" />
+                </div>
+              </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white/10">
+            <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white/10 rounded-full px-10">
               <Link href="/rooms">Explore Rooms</Link>
             </Button>
           </div>

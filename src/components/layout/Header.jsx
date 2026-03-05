@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Menu, MountainSnow, User, BarChart3, LifeBuoy, Settings, LogOut } from 'lucide-react';
+import { Menu, MountainSnow, User, BarChart3, LifeBuoy, Settings, LogOut, ArrowUpRight } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
@@ -79,8 +79,13 @@ export function Header() {
           </nav>
 
           <div className="flex-1 hidden lg:flex items-center justify-end gap-4">
-            <Button asChild className="h-10 px-6">
-              <Link href="/booking">Book Now</Link>
+            <Button asChild className="h-11 px-0 bg-white hover:bg-slate-50 text-slate-900 rounded-full overflow-hidden flex group border border-slate-100 shadow-sm transition-all ring-offset-background p-1">
+              <Link href="/booking" className="flex items-center h-full">
+                <span className="px-5 flex items-center justify-center h-full uppercase tracking-[0.2em] font-black text-[10px]">Book Now</span>
+                <div className="h-full aspect-square bg-primary flex items-center justify-center rounded-full transition-all group-hover:scale-105">
+                  <ArrowUpRight className="w-4 h-4 text-white" />
+                </div>
+              </Link>
             </Button>
             
             {isLoggedIn ? (

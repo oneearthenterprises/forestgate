@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -98,16 +97,16 @@ export function WelcomePopup() {
 
                 {/* Buttons */}
                 <div className="flex flex-wrap items-center gap-4 pt-4">
-                  <Button asChild className="h-14 px-0 bg-slate-900 hover:bg-slate-800 rounded-none overflow-hidden flex group border-none shadow-none ring-offset-background transition-all">
+                  <Button asChild className="h-14 px-0 bg-slate-900 hover:bg-slate-800 rounded-full overflow-hidden flex group border-none shadow-xl transition-all p-1">
                     <Link href="/booking" className="flex items-center h-full">
                       <span className="px-8 flex items-center justify-center h-full uppercase tracking-[0.2em] font-black text-[10px] text-white">Book Dates</span>
-                      <div className="h-full w-14 bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors border-l border-white/10">
-                        <ArrowUpRight className="w-5 h-5 text-white transform group-hover:scale-110 transition-transform" />
+                      <div className="h-full aspect-square bg-primary flex items-center justify-center rounded-full transition-all group-hover:scale-105">
+                        <ArrowUpRight className="w-5 h-5 text-white" />
                       </div>
                     </Link>
                   </Button>
 
-                  <Button variant="outline" asChild className="h-14 rounded-none border-slate-200 hover:bg-slate-50 hover:text-slate-900 uppercase tracking-[0.2em] font-black text-[10px] px-8 flex gap-2 border-2 shadow-none ring-offset-background transition-all">
+                  <Button variant="outline" asChild className="h-14 rounded-full border-slate-200 hover:bg-slate-50 hover:text-slate-900 uppercase tracking-[0.2em] font-black text-[10px] px-8 flex gap-2 border-2 shadow-none ring-offset-background transition-all">
                     <Link href="/rooms" className="flex items-center gap-3 h-full">
                       <span>Scroll to explore</span>
                       <div className="flex flex-col -space-y-1">

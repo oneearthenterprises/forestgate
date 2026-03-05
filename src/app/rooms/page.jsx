@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Check, ChevronRight } from 'lucide-react';
+import { Check, ChevronRight, ArrowUpRight } from 'lucide-react';
 
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -52,7 +52,7 @@ export default function RoomsPage() {
             </TabsList>
             
             <TabsContent value="accommodations" className="mt-0">
-              <div className="text-center mb-16 max-w-3xl mx-auto">
+              <div className="text-center mb-16 max-w-3xl mx-auto flex flex-col items-center">
                 <h2 className="font-headline text-3xl md:text-5xl font-bold mb-6">
                   Experience Private Luxury
                 </h2>
@@ -61,8 +61,13 @@ export default function RoomsPage() {
                   the entire The Forest Gate. You'll get exclusive access to
                   all our accommodations and world-class amenities.
                 </p>
-                <Button asChild size="lg" variant="secondary" className="px-10 h-14 text-lg font-bold">
-                  <Link href="/booking">Book Entire Resort</Link>
+                <Button asChild className="h-14 px-0 bg-slate-900 hover:bg-slate-800 text-white rounded-full overflow-hidden flex group border-none shadow-xl transition-all p-1">
+                  <Link href="/booking" className="flex items-center h-full">
+                    <span className="px-8 flex items-center justify-center h-full uppercase tracking-[0.2em] font-black text-[10px]">Book Entire Resort</span>
+                    <div className="h-full aspect-square bg-primary flex items-center justify-center rounded-full transition-all group-hover:scale-105">
+                      <ArrowUpRight className="w-5 h-5 text-white" />
+                    </div>
+                  </Link>
                 </Button>
               </div>
 
@@ -106,11 +111,16 @@ export default function RoomsPage() {
                     </div>
 
                     {/* Right: Actions */}
-                    <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed">
-                      <Button asChild variant="secondary" className="h-14 px-8 font-bold text-base shadow-none">
-                        <Link href={`/booking?roomId=${room.id}`}>Book Now</Link>
+                    <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed items-center md:items-start">
+                      <Button asChild className="h-12 px-0 bg-white hover:bg-slate-50 text-slate-900 rounded-full overflow-hidden flex group border border-slate-100 shadow-sm transition-all p-1 w-full max-w-[160px]">
+                        <Link href={`/booking?roomId=${room.id}`} className="flex items-center h-full w-full">
+                          <span className="flex-1 flex items-center justify-center h-full uppercase tracking-[0.2em] font-black text-[9px]">Book Now</span>
+                          <div className="h-full aspect-square bg-primary flex items-center justify-center rounded-full transition-all group-hover:scale-105">
+                            <ArrowUpRight className="w-4 h-4 text-white" />
+                          </div>
+                        </Link>
                       </Button>
-                      <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn">
+                      <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn w-full">
                         <Link href={`/rooms#${room.id}`} className="flex items-center justify-center gap-2">
                           See Details
                           <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
