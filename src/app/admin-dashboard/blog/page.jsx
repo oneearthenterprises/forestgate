@@ -30,13 +30,14 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { format } from 'date-fns';
 
+// Updated schema to allow base64 strings or URLs
 const BlogFormSchema = z.object({
   title: z.string().min(5, 'Title is required.'),
   excerpt: z.string().min(10, 'Excerpt is required.'),
   content: z.string().min(20, 'Content is required.'),
   author: z.string().min(2, 'Author name is required.'),
   category: z.string().min(2, 'Category is required.'),
-  imageUrl: z.string().url('Please enter a valid image URL.').or(z.string().startsWith('data:image')),
+  imageUrl: z.string().min(1, 'Featured image is required.'),
 });
 
 const defaultFormValues = {
@@ -51,7 +52,7 @@ const defaultFormValues = {
 export default function AdminBlogPage() {
   const { toast } = useToast();
   const [posts, setPosts] = useState(blogPosts);
-  const [editingPost, setEditingRoom] = useState(null);
+  const [editingPost, setEditingPost] = useState(null);
   const fileInputRef = useRef(null);
   const formRef = useRef(null);
 
@@ -101,7 +102,7 @@ export default function AdminBlogPage() {
         title: 'Post Updated',
         description: `"${data.title}" has been successfully updated.`,
       });
-      setEditingRoom(null);
+      setEditingPost(null);
     } else {
       const newPost = {
           id: 'blog-' + Math.random().toString(36).substring(2, 7),
@@ -137,12 +138,16 @@ export default function AdminBlogPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
-          form.setValue('imageUrl', reader.result);
+          form.setValue('imageUrl', reader.result, { shouldValidate: true });
         }
       };
       reader.readAsDataURL(file);
       event.target.value = '';
     }
+  };
+
+  const handleRemoveImage = () => {
+    form.setValue('imageUrl', '', { shouldValidate: true });
   };
 
   return (
@@ -153,7 +158,7 @@ export default function AdminBlogPage() {
             <Card>
                 <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    {editingPost ? <Edit /> : <PlusCircle />}
+                    {editingPost ? <Edit className="w-5 h-5 text-primary" /> : <PlusCircle className="w-5 h-5 text-primary" />}
                     {editingPost ? 'Edit Post' : 'New Post'}
                 </CardTitle>
                 </CardHeader>
@@ -233,32 +238,55 @@ export default function AdminBlogPage() {
                         name="imageUrl"
                         render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Featured Image</FormLabel>
+                            <FormLabel className="flex justify-between items-center">
+                                Featured Image
+                                {field.value && (
+                                    <button 
+                                        type="button" 
+                                        onClick={handleRemoveImage}
+                                        className="text-xs text-destructive hover:underline"
+                                    >
+                                        Remove Image
+                                    </button>
+                                )}
+                            </FormLabel>
                             <div className="space-y-4">
                                 {field.value ? (
-                                    <div className="relative aspect-video rounded-lg overflow-hidden border">
+                                    <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-muted group">
                                         <Image src={field.value} alt="Preview" fill className="object-cover" />
-                                        <Button 
-                                            type="button" 
-                                            variant="destructive" 
-                                            size="icon" 
-                                            className="absolute top-2 right-2"
-                                            onClick={() => field.onChange('')}
-                                        >
-                                            <X className="h-4 w-4" />
-                                        </Button>
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <Button 
+                                                type="button" 
+                                                variant="destructive" 
+                                                size="sm" 
+                                                className="rounded-full"
+                                                onClick={handleRemoveImage}
+                                            >
+                                                <X className="w-4 h-4 mr-2" />
+                                                Remove
+                                            </Button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="w-full aspect-video rounded-lg border-2 border-dashed flex flex-col items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors"
+                                        className="w-full aspect-video rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/30 flex flex-col items-center justify-center text-muted-foreground hover:text-primary hover:border-primary hover:bg-primary/5 transition-all"
                                     >
-                                        <Plus className="h-8 w-8 mb-2" />
-                                        <span>Upload Image</span>
+                                        <div className="bg-background p-3 rounded-full shadow-sm mb-2">
+                                            <Plus className="h-6 w-6" />
+                                        </div>
+                                        <span className="text-sm font-bold">Upload Featured Image</span>
+                                        <span className="text-[10px] uppercase tracking-widest mt-1 opacity-60">PNG, JPG or WebP</span>
                                     </button>
                                 )}
-                                <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
+                                <input 
+                                    type="file" 
+                                    ref={fileInputRef} 
+                                    onChange={handleImageUpload} 
+                                    className="hidden" 
+                                    accept="image/*" 
+                                />
                             </div>
                             <FormMessage />
                         </FormItem>
@@ -266,11 +294,11 @@ export default function AdminBlogPage() {
                     />
 
                     <div className="flex items-center gap-2 pt-4">
-                         <Button type="submit" className="flex-1">
+                         <Button type="submit" className="flex-1 font-bold">
                             {editingPost ? 'Save Changes' : 'Publish Post'}
                         </Button>
                         {editingPost && (
-                            <Button type="button" variant="outline" onClick={() => setEditingRoom(null)}>
+                            <Button type="button" variant="outline" onClick={() => setEditingPost(null)}>
                                 Cancel
                             </Button>
                         )}
@@ -282,45 +310,58 @@ export default function AdminBlogPage() {
         </div>
         <div className="lg:col-span-2 space-y-6">
             <h2 className="text-2xl font-bold font-headline">Published Posts</h2>
-             {posts.map((post) => {
-                const postImg = (() => {
-                    if (!post.image) return null;
-                    if (post.image.startsWith('http') || post.image.startsWith('data:image')) return post.image;
-                    const placeholder = PlaceHolderImages.find(img => img.id === post.image);
-                    return placeholder ? placeholder.imageUrl : null;
-                })();
+             {posts.length === 0 ? (
+                 <div className="p-12 text-center border-2 border-dashed rounded-3xl bg-muted/20">
+                     <ImageIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
+                     <p className="text-muted-foreground">No blog posts found. Create your first one!</p>
+                 </div>
+             ) : (
+                posts.map((post) => {
+                    const postImg = (() => {
+                        if (!post.image) return null;
+                        if (post.image.startsWith('http') || post.image.startsWith('data:image')) return post.image;
+                        const placeholder = PlaceHolderImages.find(img => img.id === post.image);
+                        return placeholder ? placeholder.imageUrl : null;
+                    })();
 
-                return (
-                    <Card key={post.id} className="flex flex-col md:flex-row overflow-hidden">
-                        <div className="relative md:w-1/3 aspect-video md:aspect-auto">
-                            {postImg ? (
-                                <Image src={postImg} alt={post.title} fill className="object-cover" />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-muted">
-                                    <ImageIcon className="w-12 h-12 text-muted-foreground" />
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex-1 p-6">
-                             <div className="flex justify-between items-start mb-2">
-                                <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">{post.category}</p>
-                                    <h3 className="font-bold text-xl leading-tight">{post.title}</h3>
-                                </div>
-                                <div className="text-right text-xs text-muted-foreground">
-                                    <p>{post.date}</p>
-                                    <p>By {post.author}</p>
-                                </div>
-                             </div>
-                            <p className="text-sm text-muted-foreground line-clamp-2 mb-6">{post.excerpt}</p>
-                            <div className="flex gap-2">
-                                <Button variant="outline" size="sm" onClick={() => setEditingRoom(post)}><Edit className="mr-2 h-4 w-4" /> Edit</Button>
-                                <Button variant="destructive" size="sm" onClick={() => handleDelete(post.id)}><Trash2 className="mr-2 h-4 w-4" /> Delete</Button>
+                    return (
+                        <Card key={post.id} className="flex flex-col md:flex-row overflow-hidden rounded-3xl border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <div className="relative md:w-1/3 aspect-video md:aspect-auto min-h-[200px]">
+                                {postImg ? (
+                                    <Image src={postImg} alt={post.title} fill className="object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-muted">
+                                        <ImageIcon className="w-12 h-12 text-muted-foreground" />
+                                    </div>
+                                )}
                             </div>
-                        </div>
-                    </Card>
-                 )
-             })}
+                            <div className="flex-1 p-6">
+                                <div className="flex justify-between items-start mb-2">
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">{post.category}</p>
+                                        <h3 className="font-bold text-xl leading-tight hover:text-primary transition-colors cursor-default">{post.title}</h3>
+                                    </div>
+                                    <div className="text-right text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">
+                                        <p>{post.date}</p>
+                                        <p className="text-foreground">By {post.author}</p>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-muted-foreground line-clamp-2 mb-6 font-light">{post.excerpt}</p>
+                                <div className="flex gap-2">
+                                    <Button variant="outline" size="sm" className="rounded-full px-4 h-9" onClick={() => setEditingPost(post)}>
+                                        <Edit className="mr-2 h-3.5 w-3.5" /> 
+                                        Edit
+                                    </Button>
+                                    <Button variant="destructive" size="sm" className="rounded-full px-4 h-9" onClick={() => handleDelete(post.id)}>
+                                        <Trash2 className="mr-2 h-3.5 w-3.5" /> 
+                                        Delete
+                                    </Button>
+                                </div>
+                            </div>
+                        </Card>
+                    )
+                })
+             )}
         </div>
       </div>
     </div>
