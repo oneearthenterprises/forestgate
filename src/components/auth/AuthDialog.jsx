@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -90,12 +89,8 @@ export function AuthDialog({ open, onOpenChange }) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl bg-white">
-                <div className="max-h-[90vh] overflow-y-auto px-8 pt-6 pb-10 space-y-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] relative">
+                <div className="max-h-[90vh] overflow-y-auto px-8 pt-12 pb-10 space-y-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] relative">
                     
-                    <DialogClose className="absolute right-6 top-6 rounded-full p-2 bg-slate-100 hover:bg-slate-200 transition-colors z-50">
-                        <X className="h-4 w-4 text-slate-500" />
-                    </DialogClose>
-
                     {/* Light Green Marquee Status */}
                     <div className="w-full bg-[#effaf3] border border-green-100 rounded-2xl p-3 overflow-hidden">
                         <div className="flex items-center w-full">
