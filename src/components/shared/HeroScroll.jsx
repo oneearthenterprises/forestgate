@@ -7,13 +7,13 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { highlights } from "@/app/lib/data";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Link from 'next/link';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
 export function HeroScroll() {
-  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
   const containerRef = useRef(null);
   const introWrapperRef = useRef(null);
 
@@ -52,7 +52,7 @@ export function HeroScroll() {
         scrollTrigger: {
           trigger: introWrapperRef.current,
           start: "top top",
-          end: "+=150%",
+          end: "+=100%",
           scrub: 1,
           pin: true,
           anticipatePin: 1,
@@ -61,7 +61,7 @@ export function HeroScroll() {
 
       revealTL
         .to(".split-image", {
-          scale: 1.5,
+          scale: 1.3,
           duration: 5,
           ease: "power2.inOut"
         })
@@ -77,8 +77,19 @@ export function HeroScroll() {
         }, 0)
         .to(".split-inner-content", {
           opacity: 0,
-          duration: 2
-        }, 0);
+          scale: 0.9,
+          duration: 3,
+          ease: "power2.in"
+        }, 0)
+        .fromTo(".hero-reveal-content", {
+          scale: 1.1,
+          opacity: 0
+        }, {
+          scale: 1,
+          opacity: 1,
+          duration: 3,
+          ease: "power2.out"
+        }, 2);
 
     }, containerRef);
 
@@ -90,8 +101,35 @@ export function HeroScroll() {
       {/* Intro Wrapper (Pinned Section) */}
       <div ref={introWrapperRef} className="relative h-screen w-full overflow-hidden z-50">
         
+        {/* REVEAL UNDERLAY (The target hero content) */}
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center text-center px-4">
+          <div className="absolute inset-0">
+            <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40">
+              <source src="https://assets.mixkit.co/videos/preview/kit-drone-view-of-a-dense-forest-in-the-mountains-34531-large.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0b2c3d] via-transparent to-[#0b2c3d]" />
+          </div>
+          
+          <div className="hero-reveal-content relative z-10 max-w-4xl text-white opacity-0">
+            <h2 className="text-5xl md:text-8xl font-bold uppercase tracking-[0.2em] mb-6 font-headline">
+              THE FOREST GATE
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg md:text-xl font-light tracking-wide mb-10 opacity-90 drop-shadow-md">
+              Luxury meets nature in the heart of Himachal. Experience tranquility like never before in our sustainable Himalayan sanctuary.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <Link href="/booking" className="inline-flex items-center justify-center h-16 px-12 rounded-full bg-secondary text-black font-bold text-lg hover:scale-105 transition-transform active:scale-95 shadow-2xl">
+                Book Your Stay
+              </Link>
+              <Link href="/rooms" className="inline-flex items-center justify-center h-16 px-12 rounded-full border-2 border-white text-white font-bold text-lg hover:bg-white/10 backdrop-blur-sm transition-all active:scale-95">
+                Explore Rooms
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Top Layer */}
-        <div className="split-layer-top absolute inset-0 z-20 bg-background overflow-hidden [clip-path:inset(0_0_50%_0)]">
+        <div className="split-layer-top absolute inset-0 z-20 bg-background overflow-hidden [clip-path:inset(0_0_50%_0)] pointer-events-none">
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
             <div className="split-inner-content w-full max-w-5xl px-4">
               <h1 className="text-6xl md:text-[10rem] font-bold font-headline uppercase leading-none text-slate-900 mb-8">
@@ -112,7 +150,7 @@ export function HeroScroll() {
                   playsInline 
                   className="split-image absolute inset-0 w-full h-full object-cover"
                 >
-                  <source src="/assets/videos/pecockwalking.mp4" type="video/mp4" />
+                  <source src="https://6000-firebase-studio-1770279522423.cluster-ejd22kqny5htuv5dfowoyipt52.cloudworkstations.dev/assets/videos/pecockwalking.mp4" type="video/mp4" />
                 </video>
               </div>
             </div>
@@ -120,7 +158,7 @@ export function HeroScroll() {
         </div>
 
         {/* Bottom Layer (Identical content, different clip) */}
-        <div className="split-layer-bottom absolute inset-0 z-10 bg-background overflow-hidden [clip-path:inset(50%_0_0_0)]">
+        <div className="split-layer-bottom absolute inset-0 z-10 bg-background overflow-hidden [clip-path:inset(50%_0_0_0)] pointer-events-none">
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
             <div className="split-inner-content w-full max-w-5xl px-4">
               <h1 className="text-6xl md:text-[10rem] font-bold font-headline uppercase leading-none text-slate-900 mb-8">
@@ -141,40 +179,13 @@ export function HeroScroll() {
                   playsInline 
                   className="split-image absolute inset-0 w-full h-full object-cover"
                 >
-                  <source src="/assets/videos/pecockwalking.mp4" type="video/mp4" />
+                  <source src="https://6000-firebase-studio-1770279522423.cluster-ejd22kqny5htuv5dfowoyipt52.cloudworkstations.dev/assets/videos/pecockwalking.mp4" type="video/mp4" />
                 </video>
               </div>
             </div>
           </div>
         </div>
 
-      </div>
-
-      {/* Reveal Underlay (This is where the actual Hero Content lives) */}
-      <div className="relative h-screen flex flex-col items-center justify-center text-center px-4">
-        <div className="absolute inset-0 z-0">
-          <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40">
-            <source src="https://assets.mixkit.co/videos/preview/kit-drone-view-of-a-dense-forest-in-the-mountains-34531-large.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0b2c3d] via-transparent to-[#0b2c3d]" />
-        </div>
-        
-        <div className="relative z-10 max-w-4xl text-white">
-          <h2 className="text-5xl md:text-8xl font-bold uppercase tracking-[0.2em] mb-6 font-headline">
-            THE FOREST GATE
-          </h2>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl font-light tracking-wide mb-10 opacity-90 drop-shadow-md">
-            Luxury meets nature in the heart of Himachal. Experience tranquility like never before in our sustainable Himalayan sanctuary.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <button className="h-16 px-12 rounded-full bg-secondary text-black font-bold text-lg hover:scale-105 transition-transform active:scale-95 shadow-2xl">
-              Book Your Stay
-            </button>
-            <button className="h-16 px-12 rounded-full border-2 border-white text-white font-bold text-lg hover:bg-white/10 backdrop-blur-sm transition-all active:scale-95">
-              Explore Rooms
-            </button>
-          </div>
-        </div>
       </div>
     </section>
   );
