@@ -67,7 +67,7 @@ export default function Home() {
 
   const sectionLabelStyle = {
     color: '#ffae3e',
-    fontFamily: 'Laguna-Smile',
+    fontFamily: '"Kaushan Script", cursive',
     fontSize: '32px',
     fontStyle: 'normal',
     fontWeight: '400',

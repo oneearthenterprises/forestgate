@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 export function Testimonials() {
     const sectionLabelStyle = {
         color: '#ffae3e',
-        fontFamily: 'Laguna-Smile',
+        fontFamily: '"Kaushan Script", cursive',
         fontSize: '32px',
         fontStyle: 'normal',
         fontWeight: '400',
