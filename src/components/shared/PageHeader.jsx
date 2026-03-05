@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from "next/image";
@@ -29,7 +28,7 @@ export function PageHeader({ title, subtitle, imageUrl, breadcrumbLabel }) {
 
       {/* Main Content Area */}
       <div className="relative z-20 px-4 max-w-5xl mx-auto">
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold tracking-tight uppercase leading-tight mb-6 drop-shadow-lg">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight uppercase leading-tight mb-6 drop-shadow-lg font-headline">
           {title}
         </h1>
 
@@ -45,7 +44,8 @@ export function PageHeader({ title, subtitle, imageUrl, breadcrumbLabel }) {
         </div>
         
         {subtitle && (
-            <p className="max-w-2xl mx-auto text-lg md:text-xl mt-10 opacity-80 font-light leading-relaxed italic font-headline">
+            <p className="max-w-2xl mx-auto text-lg md:text-xl mt-10 opacity-80 font-light leading-relaxed"
+               style={{ color: '#ffae3e', fontFamily: '"Kaushan Script", cursive', fontSize: '32px', fontStyle: 'normal', fontWeight: 400 }}>
                 {subtitle}
             </p>
         )}

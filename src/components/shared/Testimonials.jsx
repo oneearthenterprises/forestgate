@@ -30,7 +30,7 @@ export function Testimonials() {
             <div className="container mx-auto px-4">
                 <div className="max-w-3xl mb-16">
                     <p className="mb-2" style={sectionLabelStyle}>Guest Reviews</p>
-                    <h2 className="text-3xl md:text-5xl mb-4" style={{ fontFamily: "'Sour Gummy', system-ui" }}>
+                    <h2 className="text-3xl md:text-5xl mb-4 font-headline">
                         What Our Guests Say
                     </h2>
                 </div>

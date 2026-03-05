@@ -16,7 +16,8 @@ module.exports = {
     extend: {
       fontFamily: {
         body: ['Lato', 'sans-serif'],
-        headline: ['Playfair Display', 'serif'],
+        headline: ['Sour Gummy', 'system-ui'],
+        kaushan: ['Kaushan Script', 'cursive'],
         code: ['monospace'],
       },
       colors: {
