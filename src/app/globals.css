@@ -68,12 +68,23 @@
 }
 
 @layer base {
+  html {
+    @apply scroll-smooth;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+
   section {
     @apply py-16 md:py-24;
   }

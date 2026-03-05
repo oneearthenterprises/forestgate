@@ -1,20 +1,71 @@
 'use client';
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ChevronDown, ArrowUpRight } from "lucide-react";
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export function HeroScroll() {
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
+  const containerRef = useRef(null);
+  const contentRef = useRef(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !contentRef.current || !videoRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // 1. Entrance Animation
+      const tl = gsap.timeline();
+      
+      tl.fromTo(contentRef.current, 
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2, ease: "power4.out", delay: 0.3 }
+      );
+
+      // 2. Scroll-Linked Parallax Effect (The Scrub)
+      gsap.to(videoRef.current, {
+        y: "20%", // Subtle video parallax
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        }
+      });
+
+      gsap.to(contentRef.current, {
+        y: -100,
+        opacity: 0,
+        scale: 0.95,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "80% top",
+          scrub: true,
+        }
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-black">
+    <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-black">
       {/* Background Media */}
-      <div className="absolute inset-0 z-0 h-full w-full">
+      <div className="absolute inset-0 z-0 h-[120%] w-full">
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
@@ -42,10 +93,8 @@ export function HeroScroll() {
 
       {/* Centered Content */}
       <div className="relative z-20 container mx-auto h-full flex flex-col items-center justify-center px-4 text-center text-white">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
+        <div
+          ref={contentRef}
           className="max-w-4xl"
         >
           <h1 className="text-5xl md:text-8xl font-bold uppercase tracking-[0.2em] mb-6 drop-shadow-2xl" style={{ fontFamily: "'Sour Gummy', system-ui" }}>
@@ -64,23 +113,17 @@ export function HeroScroll() {
               <Link href="/rooms">Explore Rooms</Link>
             </Button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Scroll Indicator */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
+        <div 
           className="absolute bottom-10 flex flex-col items-center gap-2 opacity-70"
         >
           <span className="text-[10px] uppercase tracking-[0.3em] font-black text-white/80">Scroll to explore</span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
+          <div className="animate-bounce">
             <ChevronDown className="h-6 w-6 text-secondary" />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
