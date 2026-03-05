@@ -40,7 +40,7 @@ export function InteractiveMapSection() {
       <div className="container relative z-10 mx-auto max-w-7xl h-full flex flex-col items-center">
         {/* Centered Creative Header */}
         <div className="text-center mb-24 max-w-4xl mx-auto">
-            <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight" style={{ fontFamily: "'Agbalumo', system-ui" }}>
+            <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight" style={{ fontFamily: "'Sour Gummy', system-ui" }}>
                 Explore Himalayan Destinations
             </h2>
         </div>

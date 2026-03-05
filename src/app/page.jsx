@@ -76,7 +76,7 @@ export default function Home() {
   };
 
   const titleStyle = {
-    fontFamily: "'Agbalumo', system-ui",
+    fontFamily: "'Sour Gummy', system-ui",
   };
 
 
