@@ -141,7 +141,7 @@ export default function AboutPage() {
                             className="bg-background p-10 rounded-[2.5rem] shadow-xl shadow-black/5 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group flex flex-col items-start text-left h-full border border-border/50"
                         >
                             <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#fcb101] group-hover:shadow-lg group-hover:shadow-[#fcb101]/20 transition-all duration-500">
-                                <feature.icon className="w-8 h-8 text-primary group-hover:text-black transition-colors duration-500" />
+                                <feature.icon className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-500" />
                             </div>
                             <h3 className="font-headline text-2xl font-bold mb-4 group-hover:text-primary transition-colors duration-300">
                                 {feature.title}

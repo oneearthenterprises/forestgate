@@ -41,8 +41,8 @@ export function AmenityCard({ amenity }) {
                     style={{ background: 'linear-gradient(to top, #70ac43 0%, rgba(112, 172, 67, 0.6) 40%, transparent 100%)' }}
                 ></div>
                 
-                {/* Icon Badge - Top Right - Turns Secondary on Hover */}
-                <div className="absolute top-6 right-6 w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30 transition-all duration-500 group-hover:scale-110 group-hover:bg-secondary group-hover:border-secondary group-hover:text-black shadow-lg">
+                {/* Icon Badge - Top Right - Turns Secondary on Hover with White Icon */}
+                <div className="absolute top-6 right-6 w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30 transition-all duration-500 group-hover:scale-110 group-hover:bg-secondary group-hover:border-secondary group-hover:text-white shadow-lg">
                     <Icon className="w-7 h-7" />
                 </div>
 
