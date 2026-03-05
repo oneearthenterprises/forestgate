@@ -23,22 +23,23 @@ const destinations = [
 
 export function InteractiveMapSection() {
   return (
-    <section className="relative min-h-[800px] overflow-hidden flex flex-col items-center justify-center bg-[#0b2c3d] py-32 px-4">
+    <section className="relative  overflow-hidden flex flex-col items-center justify-center bg-[#0b2c3d] py-10 px-4">
       {/* Cinematic Blurred Background */}
       <div className="absolute inset-0 z-0">
-        <Image
-          src="https://images.unsplash.com/photo-1591384387119-c7420bf514d8?auto=format&fit=crop&q=80&w=1920"
-          alt="Himachal Background"
-          fill
-          className="object-cover opacity-40 blur-[8px] scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60" />
-      </div>
+  <video
+    src="/assets/videos/pecockwalking.mp4"
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="w-full h-full object-cover"
+  />
+</div>
 
       <div className="container relative z-10 mx-auto max-w-7xl h-full flex flex-col items-center">
         {/* Centered Creative Header */}
         <div className="text-center mb-24 max-w-4xl mx-auto">
-            <h2 className="font-headline text-5xl md:text-7xl font-bold text-[#fcb101] tracking-tight leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+            <h2 className="font-headline text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight ">
                 Explore Himalayan Destinations
             </h2>
         </div>
@@ -79,27 +80,20 @@ export function InteractiveMapSection() {
               whileInView={{ scale: 1, opacity: 1 }}
               transition={{ duration: 1.5, ease: "easeOut" }}
               viewport={{ once: true }}
-              className="relative w-full max-w-[550px] aspect-square flex items-center justify-center p-12 bg-white/5 backdrop-blur-2xl rounded-[4rem] border border-white/10 shadow-2xl overflow-hidden"
+              className="relative w-full max-w-[550px] aspect-square flex items-center justify-center  overflow-hidden"
             >
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-[500px] ">
                  <Image 
                     src="/assets/images/harnayaimage.png" 
                     alt="Himachal Map Outline" 
                     fill 
-                    className="object-contain filter invert brightness-200 opacity-60 drop-shadow-[0_0_40px_rgba(255,255,255,0.3)]"
-                    data-ai-hint="map outline"
-                    onError={(e) => {
-                        e.currentTarget.src = "https://placehold.co/600x600/000000/FFFFFF/png?text=Map+Location";
-                    }}
+                    className="object-contain h-[550px] "
+                 
                  />
-                 {/* Visual markers/glow on the map area */}
-                 <div className="absolute top-[40%] left-[50%] w-6 h-6 bg-[#fcb101] rounded-full animate-pulse shadow-[0_0_30px_#fcb101] z-20" />
-                 <div className="absolute top-[35%] left-[45%] w-3 h-3 bg-white rounded-full opacity-40 z-20" />
-                 <div className="absolute top-[50%] left-[55%] w-2 h-2 bg-white rounded-full opacity-40 z-20" />
+              
               </div>
               
-              {/* Subtle Scanline Overlay for map feel */}
-              <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_2px,3px_100%]" />
+            
             </motion.div>
           </div>
         </div>

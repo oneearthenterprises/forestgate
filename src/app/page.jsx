@@ -68,45 +68,34 @@ export default function Home() {
       <main className="flex-1">
         <HeroScroll />
 
-        <section id="highlights" className="bg-card">
+        <section id="highlights" className="bg-card py-20">
           <div className="container mx-auto px-4">
-            <Carousel
-              opts={{
-                align: 'start',
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-4">
-                {highlightsWithImages.map((highlight) => (
-                  <CarouselItem key={highlight.title} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                    <div className="p-1">
-                      <div className="relative group overflow-hidden rounded-3xl shadow-lg aspect-[4/5]">
-                        {highlight.image && (
-                          <Image
-                            src={highlight.image.imageUrl}
-                            alt={highlight.title}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            data-ai-hint={highlight.image.imageHint}
-                            placeholder="blur"
-                            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                          />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                          <h3 className="font-headline text-3xl font-bold">
-                            {highlight.title}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="left-4" />
-              <CarouselNext className="right-4" />
-            </Carousel>
+            <div className="flex flex-wrap justify-center gap-8 md:gap-16">
+              {highlightsWithImages.map((highlight) => (
+                <div key={highlight.title} className="flex flex-col items-center gap-6 group">
+                  <div className="relative w-[200px] h-[200px] overflow-hidden rounded-full shadow-2xl border-4 border-background transition-all duration-500 group-hover:scale-105 group-hover:border-primary/20">
+                    {highlight.image && (
+                      <Image
+                        src={highlight.image.imageUrl}
+                        alt={highlight.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        data-ai-hint={highlight.image.imageHint}
+                        placeholder="blur"
+                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                  </div>
+                  <div className="text-center">
+                    <h3 className="font-headline text-2xl font-bold tracking-tight text-foreground/90 group-hover:text-primary transition-colors duration-300">
+                      {highlight.title}
+                    </h3>
+                    <div className="w-8 h-0.5 bg-secondary mx-auto mt-2 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
