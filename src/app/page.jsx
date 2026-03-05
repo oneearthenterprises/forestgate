@@ -1,3 +1,4 @@
+
 import {
   faqs,
   galleryImages,
@@ -29,6 +30,7 @@ import {
 } from '@/components/ui/carousel';
 import { HeroScroll } from '@/components/shared/HeroScroll';
 import { InteractiveMapSection } from '@/components/shared/InteractiveMapSection';
+import { ManagedBySection } from '@/components/shared/ManagedBySection';
 
 export default function Home() {
   const deluxeRoom = rooms.find((r) => r.id === 'deluxe-room');
@@ -156,8 +158,8 @@ export default function Home() {
 
         <section id="rooms" className="bg-card">
           <div className="container mx-auto px-4">
-            <p className="mb-2 text-center" style={{ ...sectionLabelStyle, textAlign: 'center' }}>Accommodations</p>
-            <h2 className="text-center text-3xl md:text-4xl font-bold mb-10 font-headline">
+            <p className="mb-2 text-left" style={sectionLabelStyle}>Accommodations</p>
+            <h2 className="text-left text-3xl md:text-4xl font-bold mb-10 font-headline">
               Our Rooms
             </h2>
              {/* Desktop Grid */}
@@ -476,12 +478,13 @@ export default function Home() {
             </div>
         </section>
 
+        <ManagedBySection />
         <Testimonials />
 
         <section id="faq" className="bg-card">
           <div className="container mx-auto px-4 max-w-3xl">
-            <p className="mb-2 text-center" style={{ ...sectionLabelStyle, textAlign: 'center' }}>Support</p>
-            <h2 className="text-center text-3xl md:text-4xl font-bold mb-10 font-headline">
+            <p className="mb-2 text-left" style={sectionLabelStyle}>Support</p>
+            <h2 className="text-left text-3xl md:text-4xl font-bold mb-10 font-headline">
               Frequently Asked Questions
             </h2>
             <Accordion type="single" collapsible className="w-full">

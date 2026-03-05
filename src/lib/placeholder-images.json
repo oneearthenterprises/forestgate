@@ -63,13 +63,13 @@
     {
       "id": "exp-trekking",
       "description": "A group of people trekking on a mountain trail.",
-      "imageUrl": "https://images.unsplash.com/photo-1660231226843-a24144d4a933?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtb3VudGFpbiUyMHRyZWtraW5nfGVufDB8fHx8MTc3MDIxNjM3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1660231226843-a24144d4a933?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMHRyZWtraW5nfGVufDB8fHx8MTc3MDIxNjM3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "mountain trekking"
     },
     {
       "id": "exp-river-relax",
       "description": "A person meditating by the river.",
-      "imageUrl": "https://images.unsplash.com/photo-1755173095906-22500ce60b5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxyaXZlciUyMG1lZGl0YXRpb258ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1755173095906-22500ce60b5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaXZlciUyMG1lZGl0YXRpb258ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "river meditation"
     },
     {
@@ -189,13 +189,13 @@
     {
       "id": "about-resort",
       "description": "A beautiful view of the resort nestled in the mountains",
-      "imageUrl": "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtb3VudGFpbiUyMHJlc29ydHxlbnwwfHx8fDE3NzAxOTY2NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMHJlc29ydHxlbnwwfHx8fDE3NzAxOTY2NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "mountain resort"
     },
     {
       "id": "map-placeholder",
       "description": "A stylized map showing the location of The Forest Gate.",
-      "imageUrl": "https://images.unsplash.com/photo-1687552627668-6b9fa2edb60e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtYXAlMjBsb2NhdGlvbnxlbnwwfHx8fDE3NzAxOTM1MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1687552627668-6b9fa2edb60e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxtYXAlMjBsb2NhdGlvbnxlbnwwfHx8fDE3NzAxOTM1MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "map location"
     },
     {
@@ -209,6 +209,12 @@
       "description": "A white torn paper edge effect.",
       "imageUrl": "/assets/images/shape8.png",
       "imageHint": "paper texture"
+    },
+    {
+      "id": "palm-tree-banner",
+      "description": "A single palm tree against a solid green background.",
+      "imageUrl": "https://images.unsplash.com/photo-1505506434515-59df1ee5f82a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYWxtJTIwdHJlZXxlbnwwfHx8fDE3NzA0MzM0MDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "palm tree"
     }
   ]
 }
