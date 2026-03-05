@@ -25,9 +25,12 @@ export function InfluencersCarousel() {
     lineHeight: 'normal',
   };
 
-  const autoplay = React.useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false })
+  const autoplay = React.useMemo(
+    () => (typeof Autoplay === 'function' ? Autoplay({ delay: 3000, stopOnInteraction: false }) : null),
+    []
   );
+
+  const plugins = React.useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
 
   return (
     <section id="influencers" className="bg-muted/30">
@@ -48,9 +51,9 @@ export function InfluencersCarousel() {
               align: "start",
               loop: true,
             }}
-            plugins={[autoplay.current]}
-            onMouseEnter={autoplay.current.stop}
-            onMouseLeave={autoplay.current.play}
+            plugins={plugins}
+            onMouseEnter={() => autoplay?.stop?.()}
+            onMouseLeave={() => autoplay?.play?.()}
             className="w-full"
           >
             <CarouselContent className="-ml-4">

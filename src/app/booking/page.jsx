@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -77,9 +77,12 @@ function BookingPageContent() {
     const [isCheckOutOpen, setCheckOutOpen] = useState(false);
     const formRef = useRef(null);
 
-    const autoplay = useRef(
-        Autoplay({ delay: 3000, stopOnInteraction: false })
+    const autoplay = useMemo(
+        () => (typeof Autoplay === 'function' ? Autoplay({ delay: 3000, stopOnInteraction: false }) : null),
+        []
     );
+
+    const plugins = useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
 
     const roomId = searchParams.get('roomId');
     const roomToBook = rooms.find(r => r.id === roomId);
@@ -167,9 +170,9 @@ function BookingPageContent() {
                             <Carousel 
                                 className="w-full h-full" 
                                 opts={{ loop: true }}
-                                plugins={[autoplay.current]}
-                                onMouseEnter={autoplay.current.stop}
-                                onMouseLeave={autoplay.current.play}
+                                plugins={plugins}
+                                onMouseEnter={() => autoplay?.stop?.()}
+                                onMouseLeave={() => autoplay?.play?.()}
                             >
                                 <CarouselContent className="h-full ml-0">
                                     {itemToBook.images.map((imgId, idx) => {

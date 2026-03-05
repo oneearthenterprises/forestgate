@@ -32,12 +32,17 @@ const Carousel = React.forwardRef(
     },
     ref
   ) => {
+    // Filter out any undefined plugins to prevent Embla from crashing
+    const stablePlugins = React.useMemo(() => 
+      Array.isArray(plugins) ? plugins.filter(Boolean) : []
+    , [plugins]);
+
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
         axis: orientation === 'horizontal' ? 'x' : 'y',
       },
-      plugins
+      stablePlugins
     );
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);

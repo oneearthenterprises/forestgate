@@ -15,16 +15,19 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Autoplay from 'embla-carousel-autoplay';
 
 export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages }) {
-  const autoplay = React.useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false })
+  const autoplay = React.useMemo(
+    () => (typeof Autoplay === 'function' ? Autoplay({ delay: 3000, stopOnInteraction: false }) : null),
+    []
   );
+
+  const plugins = React.useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
 
   return (
     <Carousel 
       opts={{ align: "start", loop: true }} 
-      plugins={[autoplay.current]}
-      onMouseEnter={autoplay.current.stop}
-      onMouseLeave={autoplay.current.play}
+      plugins={plugins}
+      onMouseEnter={() => autoplay?.stop?.()}
+      onMouseLeave={() => autoplay?.play?.()}
       className="w-full -ml-4"
     >
       <CarouselContent>
