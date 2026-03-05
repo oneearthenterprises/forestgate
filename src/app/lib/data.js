@@ -134,6 +134,33 @@ export const testimonials = [
     },
 ];
 
+export const influencers = [
+  {
+    name: "Aarav Sharma",
+    handle: "@aarav_explores",
+    quote: "The tranquility here is unmatched. A true Himalayan sanctuary.",
+    image: "influencer-1"
+  },
+  {
+    name: "Isha Kapoor",
+    handle: "@ishatravels",
+    quote: "Waking up to the river view was the highlight of my trip!",
+    image: "influencer-2"
+  },
+  {
+    name: "Rohan Varma",
+    handle: "@rohan_vlogs",
+    quote: "Perfect blend of luxury and adventure. Highly recommended.",
+    image: "influencer-3"
+  },
+  {
+    name: "Sanya Malhotra",
+    handle: "@sanya_peaks",
+    quote: "The most pet-friendly resort I've ever visited. My dog loved it!",
+    image: "influencer-4"
+  }
+];
+
 export const experiences = [
     {
         title: "Trekking & Nature Trails",
@@ -298,7 +325,7 @@ export const galleryImages = [
 export const faqs = [
   {
     question: "What are the check-in and check-out times?",
-    answer: "Our standard check-in time is 2:00 PM and check-out is at 11:00 AM. Early check-in or late check-out is subject to availability and may incur additional charges."
+    answer: "Our standard check-in time is 2:00 PM and check-out is at 11:00 AM. Early check-in or <a href=\"/policy\">late check-out</a> is subject to availability and may incur additional charges."
   },
   {
     question: "Is the resort pet-friendly?",
