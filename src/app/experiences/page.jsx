@@ -62,7 +62,7 @@ export default function ExperiencesPage() {
                                     )}
 
                                     {/* Premium Gradient Overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b2c3d] via-[#0b2c3d]/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b2c3d] via-[#0b2c3d]/40 to-transparent opacity-90 transition-opacity duration-500" />
                                     
                                     {/* Decorative Icon Badge */}
                                     <div className="absolute top-8 left-8">
@@ -72,19 +72,19 @@ export default function ExperiencesPage() {
                                     </div>
 
                                     {/* Content Overlay */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-10 transform translate-y-10 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                                    <div className="absolute bottom-0 left-0 right-0 p-10">
                                         <h3 className="font-headline text-4xl font-bold text-white mb-4 leading-tight tracking-tight drop-shadow-md">
                                             {exp.title}
                                         </h3>
                                         
                                         <div className="overflow-hidden">
-                                            <p className="text-white/80 text-base leading-relaxed opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 line-clamp-6 font-light">
+                                            <p className="text-white/90 text-base leading-relaxed line-clamp-6 font-light">
                                                 {exp.description}
                                             </p>
                                         </div>
 
                                         {/* Stylized Accent Bar */}
-                                        <div className="w-16 h-1 bg-[#fcb101] mt-8 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-full" />
+                                        <div className="w-16 h-1 bg-[#fcb101] mt-8 rounded-full shadow-sm" />
                                     </div>
                                 </div>
                             )
