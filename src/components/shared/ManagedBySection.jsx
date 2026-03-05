@@ -18,7 +18,7 @@ import Link from "next/link";
 export function ManagedBySection({ 
   label = "Managed By", 
   title = "The Himalayan Forest Development Authority", 
-  description = "Authorized Eco-Tourism Partner",
+  description = "Authorized Eco-Tourism Partner dedicated to sustainable luxury and nature preservation in the heart of Himachal Pradesh. Our mission is to protect the pristine beauty of the Himalayas while offering world-class hospitality to every guest. Join us in our journey to create a harmonious balance between comfort and conservation.",
   buttonText = "Contact Us",
   buttonLink = "/contact",
   imageSrc = "/assets/images/bannerpecock.png",
@@ -47,7 +47,7 @@ export function ManagedBySection({
           </div>
 
           <div className="space-y-6 pt-4">
-            <p className="text-[#1a1a1a] text-base md:text-lg font-medium opacity-80 font-body">
+            <p className="text-white text-base md:text-lg font-light opacity-90 font-body leading-relaxed max-w-2xl">
               {description}
             </p>
 
