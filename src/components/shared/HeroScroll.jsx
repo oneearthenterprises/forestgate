@@ -41,7 +41,7 @@ export function HeroScroll() {
               className="absolute inset-0 w-full h-full object-cover"
             >
               {/* Forest Drone View Video Source */}
-              <source src="https://assets.mixkit.co/videos/preview/mixkit-drone-view-of-a-dense-forest-in-the-mountains-34531-large.mp4" type="video/mp4" />
+              <source src="https://assets.mixkit.co/videos/preview/kit-drone-view-of-a-dense-forest-in-the-mountains-34531-large.mp4" type="video/mp4" />
               {/* Fallback to Image if video fails */}
               {heroImage && (
                 <Image
@@ -71,15 +71,12 @@ export function HeroScroll() {
             Luxury meets nature in the heart of Himachal. Experience tranquility like never before.
           </p>
           <div className="flex flex-col sm:flex-row gap-6">
-            <Button asChild className="h-14 px-0 bg-white hover:bg-slate-50 text-slate-900 rounded-full overflow-hidden flex group border-none shadow-2xl transition-all p-1">
-              <Link href="/booking" className="flex items-center h-full">
-                <span className="px-8 flex items-center justify-center h-full uppercase tracking-[0.2em] font-black text-xs">Book Your Stay</span>
-                <div className="h-full aspect-square bg-primary flex items-center justify-center rounded-full transition-all group-hover:scale-105">
-                  <ArrowUpRight className="w-5 h-5 text-white" />
-                </div>
+            <Button asChild size="lg" className="rounded-full px-12">
+              <Link href="/booking" className="flex items-center gap-2">
+                Book Your Stay <ArrowUpRight className="w-5 h-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white/10 rounded-full px-10">
+            <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white/10 rounded-full px-12">
               <Link href="/rooms">Explore Rooms</Link>
             </Button>
           </div>

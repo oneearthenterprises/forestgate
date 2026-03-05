@@ -61,12 +61,9 @@ export default function RoomsPage() {
                   the entire The Forest Gate. You'll get exclusive access to
                   all our accommodations and world-class amenities.
                 </p>
-                <Button asChild className="h-14 px-0 bg-slate-900 hover:bg-slate-800 text-white rounded-full overflow-hidden flex group border-none shadow-xl transition-all p-1">
-                  <Link href="/booking" className="flex items-center h-full">
-                    <span className="px-8 flex items-center justify-center h-full uppercase tracking-[0.2em] font-black text-[10px]">Book Entire Resort</span>
-                    <div className="h-full aspect-square bg-primary flex items-center justify-center rounded-full transition-all group-hover:scale-105">
-                      <ArrowUpRight className="w-5 h-5 text-white" />
-                    </div>
+                <Button asChild size="lg" className="rounded-full px-12 shadow-xl">
+                  <Link href="/booking" className="flex items-center gap-2">
+                    Book Entire Resort <ArrowUpRight className="w-5 h-5" />
                   </Link>
                 </Button>
               </div>
@@ -112,13 +109,8 @@ export default function RoomsPage() {
 
                     {/* Right: Actions */}
                     <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed items-center md:items-start">
-                      <Button asChild className="h-12 px-0 bg-white hover:bg-slate-50 text-slate-900 rounded-full overflow-hidden flex group border border-slate-100 shadow-sm transition-all p-1 w-full max-w-[160px]">
-                        <Link href={`/booking?roomId=${room.id}`} className="flex items-center h-full w-full">
-                          <span className="flex-1 flex items-center justify-center h-full uppercase tracking-[0.2em] font-black text-[9px]">Book Now</span>
-                          <div className="h-full aspect-square bg-primary flex items-center justify-center rounded-full transition-all group-hover:scale-105">
-                            <ArrowUpRight className="w-4 h-4 text-white" />
-                          </div>
-                        </Link>
+                      <Button asChild className="rounded-full font-bold w-full max-w-[160px]">
+                        <Link href={`/booking?roomId=${room.id}`}>Book Now</Link>
                       </Button>
                       <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn w-full">
                         <Link href={`/rooms#${room.id}`} className="flex items-center justify-center gap-2">
