@@ -1,29 +1,70 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Check, ChevronRight, ArrowUpRight } from 'lucide-react';
+import { ChevronRight, ArrowUpRight } from 'lucide-react';
 
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { rooms, galleryImages } from '../lib/data';
 import { PlaceHolderImages } from '../../lib/placeholder-images';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { ManagedBySection } from '@/components/shared/ManagedBySection';
 import { RoomCarouselWrapper } from '@/components/shared/RoomCarouselWrapper';
 
 export default function RoomsPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const headerImage = PlaceHolderImages.find((img) => img.id === 'room-suite-1');
-  const managedByImage = PlaceHolderImages.find((img) => img.id === 'palm-tree-banner');
+
+  useEffect(() => {
+    // Simulate loading for premium feel
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const RoomSkeleton = () => (
+    <div className="bg-card border border-border/50 rounded-[2.5rem] p-4 md:p-6 flex flex-col md:flex-row items-center gap-8 animate-pulse">
+      {/* Left: Image Skeleton */}
+      <div className="w-full md:w-[35%] aspect-[4/3] bg-slate-100 rounded-[2rem] shrink-0" />
+
+      {/* Middle: Content Skeleton */}
+      <div className="flex-1 space-y-4 py-2 w-full">
+        <div className="space-y-2">
+          <div className="h-5 w-24 bg-slate-100 rounded-full" />
+          <div className="h-10 w-2/3 bg-slate-100 rounded-xl" />
+        </div>
+        
+        <div className="space-y-2">
+          <div className="h-4 w-full bg-slate-100 rounded-md" />
+          <div className="h-4 w-5/6 bg-slate-100 rounded-md" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4 pt-6 border-t border-dashed border-slate-100">
+          <div className="space-y-2">
+            <div className="h-2 w-16 bg-slate-100 rounded" />
+            <div className="h-6 w-24 bg-slate-100 rounded-lg" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-2 w-16 bg-slate-100 rounded" />
+            <div className="h-6 w-24 bg-slate-100 rounded-lg" />
+          </div>
+        </div>
+      </div>
+
+      {/* Right: Actions Skeleton */}
+      <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed md:border-slate-100 items-center md:items-start">
+        <div className="h-12 w-full max-w-[160px] bg-slate-100 rounded-full" />
+        <div className="h-10 w-24 bg-slate-100 rounded-full" />
+      </div>
+    </div>
+  );
 
   return (
-    <div>
+    <div className="bg-[#fcfcfc]">
       {headerImage && (
         <PageHeader
           title="Our Accommodations"
@@ -69,58 +110,67 @@ export default function RoomsPage() {
               </div>
 
               <div className="flex flex-col gap-8 max-w-6xl mx-auto">
-                {rooms.map((room) => (
-                  <div
-                    key={room.id}
-                    id={room.id}
-                    className="group bg-card border border-border/50 rounded-[2.5rem] overflow-hidden p-4 md:p-6 flex flex-col md:flex-row items-center gap-8 transition-all duration-500 hover:shadow-2xl hover:border-primary/20"
-                  >
-                    {/* Left: Image/Carousel */}
-                    <div className="w-full md:w-[35%] shrink-0">
-                      <RoomCarouselWrapper room={room} />
-                    </div>
-
-                    {/* Middle: Content */}
-                    <div className="flex-1 space-y-4 py-2">
-                      <div className="space-y-1">
-                        <Badge variant="outline" className="rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest bg-muted/30">
-                          {room.badge?.label || 'Premium Stay'}
-                        </Badge>
-                        <h3 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">
-                          {room.name}
-                        </h3>
+                {isLoading ? (
+                  <>
+                    <RoomSkeleton />
+                    <RoomSkeleton />
+                    <RoomSkeleton />
+                    <RoomSkeleton />
+                  </>
+                ) : (
+                  rooms.map((room) => (
+                    <div
+                      key={room.id}
+                      id={room.id}
+                      className="group bg-card border border-border/50 rounded-[2.5rem] overflow-hidden p-4 md:p-6 flex flex-col md:flex-row items-center gap-8 transition-all duration-500 hover:shadow-2xl hover:border-primary/20"
+                    >
+                      {/* Left: Image/Carousel */}
+                      <div className="w-full md:w-[35%] shrink-0">
+                        <RoomCarouselWrapper room={room} />
                       </div>
-                      
-                      <p className="text-foreground/60 text-sm md:text-base leading-relaxed line-clamp-3 md:line-clamp-2">
-                        {room.longDescription}
-                      </p>
 
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-4 pt-6 border-t border-dashed">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Price per night</p>
-                          <p className="font-headline text-xl font-bold text-primary">₹{room.price.toLocaleString()}</p>
+                      {/* Middle: Content */}
+                      <div className="flex-1 space-y-4 py-2">
+                        <div className="space-y-1">
+                          <Badge variant="outline" className="rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest bg-muted/30">
+                            {room.badge?.label || 'Premium Stay'}
+                          </Badge>
+                          <h3 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">
+                            {room.name}
+                          </h3>
                         </div>
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Key Amenity</p>
-                          <p className="text-sm font-bold truncate">{room.amenities[0]?.name || 'Mountain View'}</p>
+                        
+                        <p className="text-foreground/60 text-sm md:text-base leading-relaxed line-clamp-3 md:line-clamp-2">
+                          {room.longDescription}
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-4 pt-6 border-t border-dashed">
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Price per night</p>
+                            <p className="font-headline text-xl font-bold text-primary">₹{room.price.toLocaleString()}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Key Amenity</p>
+                            <p className="text-sm font-bold truncate">{room.amenities[0]?.name || 'Mountain View'}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Right: Actions */}
-                    <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed items-center md:items-start">
-                      <Button asChild className="rounded-full font-bold w-full max-w-[160px]">
-                        <Link href={`/booking?roomId=${room.id}`}>Book Now</Link>
-                      </Button>
-                      <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn w-full">
-                        <Link href={`/rooms#${room.id}`} className="flex items-center justify-center gap-2">
-                          See Details
-                          <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                        </Link>
-                      </Button>
+                      {/* Right: Actions */}
+                      <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed items-center md:items-start">
+                        <Button asChild className="rounded-full font-bold w-full max-w-[160px]">
+                          <Link href={`/booking?roomId=${room.id}`}>Book Now</Link>
+                        </Button>
+                        <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn w-full">
+                          <Link href={`/rooms#${room.id}`} className="flex items-center justify-center gap-2">
+                            See Details
+                            <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </TabsContent>
 
