@@ -34,6 +34,7 @@ import { WildlifeCarousel } from '@/components/shared/WildlifeCarousel';
 import { InfluencersCarousel } from '@/components/shared/InfluencersCarousel';
 import { HighlightsCarouselWrapper } from '@/components/shared/HighlightsCarouselWrapper';
 import { MobileRoomsCarouselWrapper } from '@/components/shared/MobileRoomsCarouselWrapper';
+import { WelcomePopup } from '@/components/shared/WelcomePopup';
 
 export default function Home() {
   const deluxeRoom = rooms.find((r) => r.id === 'deluxe-room');
@@ -82,6 +83,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-dvh">
+      <WelcomePopup />
       <main className="flex-1">
         <HeroScroll />
 
