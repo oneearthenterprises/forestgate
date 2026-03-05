@@ -69,15 +69,15 @@
 
 @layer base {
   html {
-    @apply scroll-smooth;
-    overflow-y: scroll;
     overflow-x: hidden;
+    height: 100%;
   }
   
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
     width: 100%;
+    min-height: 100%;
     position: relative;
   }
 
