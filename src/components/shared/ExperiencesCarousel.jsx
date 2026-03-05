@@ -20,11 +20,20 @@ export function ExperiencesCarousel() {
   const [count, setCount] = React.useState(0);
 
   const autoplay = React.useMemo(
-    () => (typeof Autoplay === 'function' ? Autoplay({ delay: 3000, stopOnInteraction: false }) : null),
+    () => (typeof Autoplay === 'function' ? Autoplay({ 
+      delay: 3000, 
+      stopOnInteraction: false,
+      stopOnMouseEnter: true
+    }) : null),
     []
   );
 
   const plugins = React.useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
+  
+  const carouselOpts = React.useMemo(() => ({
+    align: 'start',
+    loop: true
+  }), []);
 
   React.useEffect(() => {
     if (!api) {
@@ -42,10 +51,8 @@ export function ExperiencesCarousel() {
   return (
     <Carousel 
       setApi={setApi} 
-      opts={{ align: 'start', loop: true }} 
+      opts={carouselOpts} 
       plugins={plugins}
-      onMouseEnter={() => autoplay?.stop?.()}
-      onMouseLeave={() => autoplay?.play?.()}
       className="w-full relative"
     >
       <CarouselContent className="-ml-4">

@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -17,18 +16,25 @@ import Autoplay from 'embla-carousel-autoplay';
 
 export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages }) {
   const autoplay = React.useMemo(
-    () => (typeof Autoplay === 'function' ? Autoplay({ delay: 3000, stopOnInteraction: false }) : null),
+    () => (typeof Autoplay === 'function' ? Autoplay({ 
+      delay: 3000, 
+      stopOnInteraction: false,
+      stopOnMouseEnter: true
+    }) : null),
     []
   );
 
   const plugins = React.useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
+  
+  const carouselOpts = React.useMemo(() => ({
+    align: "start",
+    loop: true
+  }), []);
 
   return (
     <Carousel 
-      opts={{ align: "start", loop: true }} 
+      opts={carouselOpts} 
       plugins={plugins}
-      onMouseEnter={() => autoplay?.stop?.()}
-      onMouseLeave={() => autoplay?.play?.()}
       className="w-full -ml-4"
     >
       <CarouselContent>

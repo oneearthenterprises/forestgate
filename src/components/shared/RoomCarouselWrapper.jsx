@@ -14,18 +14,25 @@ import Autoplay from 'embla-carousel-autoplay';
 
 export function RoomCarouselWrapper({ room }) {
   const autoplay = React.useMemo(
-    () => (typeof Autoplay === 'function' ? Autoplay({ delay: 3000, stopOnInteraction: false }) : null),
+    () => (typeof Autoplay === 'function' ? Autoplay({ 
+      delay: 3000, 
+      stopOnInteraction: false,
+      stopOnMouseEnter: true
+    }) : null),
     []
   );
 
   const plugins = React.useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
+  
+  const carouselOpts = React.useMemo(() => ({
+    loop: true
+  }), []);
 
   return (
     <Carousel 
-      className="w-full" 
+      className="w-full group" 
       plugins={plugins}
-      onMouseEnter={() => autoplay?.stop?.()}
-      onMouseLeave={() => autoplay?.play?.()}
+      opts={carouselOpts}
     >
       <CarouselContent>
         {room.images.map((imgId) => {

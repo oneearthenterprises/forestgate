@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Suspense, useState, useEffect, useRef, useMemo } from 'react';
@@ -79,11 +78,16 @@ function BookingPageContent() {
     const formRef = useRef(null);
 
     const autoplay = useMemo(
-        () => (typeof Autoplay === 'function' ? Autoplay({ delay: 3000, stopOnInteraction: false }) : null),
+        () => (typeof Autoplay === 'function' ? Autoplay({ 
+          delay: 3000, 
+          stopOnInteraction: false,
+          stopOnMouseEnter: true
+        }) : null),
         []
     );
 
     const plugins = useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
+    const carouselOpts = useMemo(() => ({ loop: true }), []);
 
     const roomId = searchParams.get('roomId');
     const roomToBook = rooms.find(r => r.id === roomId);
@@ -170,10 +174,8 @@ function BookingPageContent() {
                         <div className="lg:col-span-8 relative h-[400px] lg:h-full group">
                             <Carousel 
                                 className="w-full h-full" 
-                                opts={{ loop: true }}
+                                opts={carouselOpts}
                                 plugins={plugins}
-                                onMouseEnter={() => autoplay?.stop?.()}
-                                onMouseLeave={() => autoplay?.play?.()}
                             >
                                 <CarouselContent className="h-full ml-0">
                                     {itemToBook.images.map((imgId, idx) => {

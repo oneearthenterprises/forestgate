@@ -12,14 +12,21 @@ import {
 import Autoplay from 'embla-carousel-autoplay';
 
 export function HighlightsCarouselWrapper({ highlightsWithImages }) {
-  // Use useMemo for stable plugin initialization
   const autoplay = React.useMemo(
-    () => (typeof Autoplay === 'function' ? Autoplay({ delay: 3000, stopOnInteraction: false }) : null),
+    () => (typeof Autoplay === 'function' ? Autoplay({ 
+      delay: 3000, 
+      stopOnInteraction: false,
+      stopOnMouseEnter: true
+    }) : null),
     []
   );
 
-  // Stable plugins array for Embla
   const plugins = React.useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
+  
+  const carouselOpts = React.useMemo(() => ({
+    align: "start",
+    loop: true,
+  }), []);
 
   if (!highlightsWithImages || highlightsWithImages.length === 0) {
     return null;
@@ -27,10 +34,8 @@ export function HighlightsCarouselWrapper({ highlightsWithImages }) {
 
   return (
     <Carousel 
-      opts={{ align: "start", loop: true }} 
+      opts={carouselOpts} 
       plugins={plugins}
-      onMouseEnter={() => autoplay?.stop?.()}
-      onMouseLeave={() => autoplay?.play?.()}
       className="w-full"
     >
       <CarouselContent className="-ml-4">
