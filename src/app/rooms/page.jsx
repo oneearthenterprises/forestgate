@@ -180,8 +180,8 @@ export default function RoomsPage() {
         description="Experience luxury curated by the guardians of the mountains."
         buttonText="Explore Sanctuary"
         buttonLink="/experiences"
-        imageSrc={managedByImage?.imageUrl}
-        imageAlt={managedByImage?.imageHint || "Nature Banner"}
+        imageSrc="/assets/images/dearimage.png"
+        imageAlt="Delicate Forest"
       />
     </div>
   );
