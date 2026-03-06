@@ -180,13 +180,13 @@ export function Header() {
                           </Link>
                       </SheetClose>
                   </div>
-                  <nav className="flex flex-col gap-6 p-10 flex-1 text-foreground overflow-y-auto items-center justify-center text-center [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]">
+                  <nav className="flex flex-col gap-6 p-10 flex-1 text-foreground overflow-y-auto items-start justify-start text-left [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]">
                     {headerNavLinks.map((link) => (
                       <SheetClose key={link.href} asChild>
                         <Link
                           href={link.href}
                           className={cn(
-                            'text-3xl font-headline font-bold transition-all hover:scale-110',
+                            'text-3xl font-headline font-bold transition-all hover:translate-x-2',
                              pathname === link.href ? 'text-primary' : 'text-foreground hover:text-primary'
                           )}
                         >
