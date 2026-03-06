@@ -170,7 +170,7 @@ export function Header() {
                   </div>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="top" className="w-full h-screen bg-card p-0 flex flex-col border-none">
+              <SheetContent side="top" className="w-full h-screen bg-card p-0 flex flex-col border-none [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]">
                   <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                   <div className="p-6 border-b flex items-center h-16">
                      <SheetClose asChild>
@@ -180,7 +180,7 @@ export function Header() {
                           </Link>
                       </SheetClose>
                   </div>
-                  <nav className="flex flex-col gap-6 p-10 flex-1 text-foreground overflow-y-auto items-center justify-center text-center">
+                  <nav className="flex flex-col gap-6 p-10 flex-1 text-foreground overflow-y-auto items-center justify-center text-center [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]">
                     {headerNavLinks.map((link) => (
                       <SheetClose key={link.href} asChild>
                         <Link
