@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import Image from "next/image";
-import Link from 'next/link';
+import Link from 'link';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, SendHorizontal } from "lucide-react";
@@ -71,7 +71,7 @@ export default function EventsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        <h1 className="text-6xl md:text-[10rem] font-black text-white leading-none tracking-tighter uppercase drop-shadow-2xl font-playfair">
+                        <h1 className="text-6xl md:text-[10rem] font-bold text-white leading-none tracking-tighter uppercase drop-shadow-2xl font-playfair">
                             Celebrations
                         </h1>
                         
@@ -209,7 +209,7 @@ export default function EventsPage() {
                                 10% OFF CONGRATS PROMO <br className="md:hidden" /> CODES FOR NOVEMBER 2025
                             </p>
                             <h2 className="text-3xl md:text-5xl lg:text-6xl font-playfair font-bold text-white leading-tight tracking-tight">
-                                15% Off Your Next <br className="hidden md:block" /> Purchase By Subscribing
+                                15% Off Your Next <br className="hidden md:block" /> Visit By Subscribing
                             </h2>
                         </div>
 
