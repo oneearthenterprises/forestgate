@@ -59,11 +59,6 @@ export function HeroScroll() {
       });
 
       revealTL
-        .to(".split-image-container", {
-          scale: 1.2,
-          duration: 5,
-          ease: "power2.inOut"
-        })
         .to(".split-layer-top", {
           yPercent: -100,
           duration: 5,
@@ -96,19 +91,19 @@ export function HeroScroll() {
   }, []);
 
   const SplitContent = ({ side }) => (
-    <div className={`absolute inset-0 flex flex-col items-center justify-center text-center pt-16`}>
+    <div className={`absolute inset-0 flex flex-col items-center justify-center text-center pb-32 md:pb-48`}>
       <div className="split-inner-content w-full max-w-5xl px-4">
-        <h1 className="text-6xl md:text-[10rem] font-bold font-headline uppercase leading-none text-slate-900 mb-8 drop-shadow-sm">
+        <h1 className="text-5xl md:text-[9rem] font-bold font-headline uppercase leading-none text-slate-900 mb-6 drop-shadow-sm">
           WE CREATE
         </h1>
-        <div className={`${side === 'top' ? 'text-container-top' : 'text-container-bottom'} relative h-20 md:h-32 w-full`}>
+        <div className={`${side === 'top' ? 'text-container-top' : 'text-container-bottom'} relative h-16 md:h-24 w-full`}>
           {highlights.map((h, i) => (
-            <p key={i} className="service-name absolute inset-0 opacity-0 text-3xl md:text-6xl font-black uppercase tracking-widest text-[#fcb101] flex items-center justify-center drop-shadow-md">
+            <p key={i} className="service-name absolute inset-0 opacity-0 text-2xl md:text-5xl font-black uppercase tracking-widest text-[#0b2c3d] flex items-center justify-center drop-shadow-sm">
               {h.title}
             </p>
           ))}
         </div>
-        <div className="split-image-container relative w-[70vw] max-w-[980px] aspect-video mx-auto mt-12 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="relative w-[60vw] max-w-[800px] aspect-video mx-auto mt-16 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
           <Image 
             src="https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?auto=format&fit=crop&q=80&w=1200"
             alt="Sanctuary Landscape"
@@ -122,7 +117,7 @@ export function HeroScroll() {
   );
 
   return (
-    <section ref={containerRef} className="relative bg-[#0b2c3d] py-10">
+    <section ref={containerRef} className="relative bg-[#0b2c3d]">
       {/* Intro Wrapper (Pinned Section) */}
       <div ref={introWrapperRef} className="relative h-screen w-full overflow-hidden z-30">
         
