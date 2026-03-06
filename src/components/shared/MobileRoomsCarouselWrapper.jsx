@@ -35,9 +35,9 @@ export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages 
     <Carousel 
       opts={carouselOpts} 
       plugins={plugins}
-      className="w-full -ml-4"
+      className="w-full"
     >
-      <CarouselContent>
+      <CarouselContent className="-ml-4">
         {allRoomsForCarousel.map((room) => {
             const roomImage = PlaceHolderImages.find((img) => img.id === room.images[0]);
             return (
@@ -129,7 +129,7 @@ export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages 
             </div>
         </CarouselItem>
       </CarouselContent>
-      <div className="flex justify-center mt-4 gap-2">
+      <div className="flex justify-center mt-8 gap-2">
           <CarouselPrevious className="static translate-y-0"/>
           <CarouselNext className="static translate-y-0" />
       </div>
