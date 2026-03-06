@@ -4,8 +4,7 @@ import Image from "next/image";
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Heart, Briefcase, PartyPopper, ArrowRight, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export default function EventsPage() {
     const bannerImage = "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&q=80&w=2000";
@@ -16,6 +15,14 @@ export default function EventsPage() {
         viewport: { once: true, margin: "-100px" },
         transition: { duration: 0.8, ease: "easeOut" }
     };
+
+    const highlights = [
+        { name: "Balloons", img: "balloons", hint: "party balloons" },
+        { name: "Dessert Table", img: "dessert", hint: "dessert table" },
+        { name: "Confetti", img: "confetti", hint: "heart confetti" },
+        { name: "Table Setting", img: "table", hint: "wedding table" },
+        { name: "Neon Signs", img: "neon", hint: "neon sign" }
+    ];
 
     return (
         <div className="bg-[#fcfcfc] overflow-x-hidden">
@@ -60,7 +67,7 @@ export default function EventsPage() {
                 </div>
             </section>
 
-            {/* NEW BOUTIQUE TYPOGRAPHY SECTION */}
+            {/* BOUTIQUE TYPOGRAPHY SECTION */}
             <section className="bg-white py-24 md:py-40 overflow-hidden border-y border-slate-100">
                 <div className="container mx-auto px-4 flex flex-col items-center text-[#eb5e28]">
                     {/* Line 1 */}
@@ -111,7 +118,33 @@ export default function EventsPage() {
                 </div>
             </section>
 
-            {/* VENUES GRID */}
+            {/* SEAMLESS ATMOSPHERE GRID (Matching Reference Image) */}
+            <section className="bg-[#0b2c3d] py-0 overflow-hidden">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-0 w-full">
+                    {highlights.map((item, idx) => (
+                        <div key={idx} className="group relative h-[600px] overflow-hidden">
+                            <Image 
+                                src={`https://picsum.photos/seed/${item.img}/600/1000`} 
+                                alt={item.name} 
+                                fill 
+                                className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+                                data-ai-hint={item.hint}
+                            />
+                            {/* Gradient Overlay for Text */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+                            
+                            {/* Text at Bottom */}
+                            <div className="absolute bottom-10 left-0 right-0 text-center px-4">
+                                <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight drop-shadow-md">
+                                    {item.name}
+                                </h3>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* VENUES CTA SECTION */}
             <section className="bg-primary py-24 md:py-32 text-white">
                 <div className="container mx-auto px-4">
                     <div className="text-center max-w-3xl mx-auto mb-20">
@@ -121,45 +154,11 @@ export default function EventsPage() {
                         </div>
                         <h2 className="font-headline text-4xl md:text-6xl font-bold mb-6">Our Iconic Venues</h2>
                         <p className="text-white/60 text-lg font-light leading-relaxed">
-                            Meticulously designed environments that serve as the perfect canvas for your most important moments.
+                            Meticulously designed environments that serve as the perfect canvas for your most important moments. From mountain lawns to starlight terraces.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            { name: "The Mountain Lawn", img: "venue1", hint: "outdoor venue", capacity: "200 Guests" },
-                            { name: "The Riverside Hall", img: "venue2", hint: "banquet hall", capacity: "120 Guests" },
-                            { name: "The Starlight Terrace", img: "venue3", hint: "terrace party", capacity: "80 Guests" }
-                        ].map((venue, idx) => (
-                            <div key={idx} className="group relative h-[550px] rounded-[3rem] overflow-hidden shadow-2xl">
-                                <Image 
-                                    src={`https://picsum.photos/seed/${venue.img}/600/800`} 
-                                    alt={venue.name} 
-                                    fill 
-                                    className="object-cover transition-transform duration-1000 group-hover:scale-110" 
-                                    data-ai-hint={venue.hint}
-                                />
-                                {/* Signature Secondary Color Overlay with Opacity */}
-                                <div className="absolute inset-0 bg-secondary/20 group-hover:bg-secondary/40 transition-colors duration-500" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 opacity-90 group-hover:opacity-70" />
-                                
-                                <div className="absolute inset-0 p-12 flex flex-col justify-end">
-                                    <div className="flex items-center gap-2 mb-4 text-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform translate-y-4 group-hover:translate-y-0">
-                                        <Star className="w-4 h-4 fill-current" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">{venue.capacity}</span>
-                                    </div>
-                                    <h3 className="font-headline text-3xl font-bold mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                        {venue.name}
-                                    </h3>
-                                    <p className="text-white/70 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 line-clamp-2">
-                                        Bespoke arrangements with high-end catering and integrated AV support.
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-20 text-center">
+                    <div className="mt-12 text-center">
                         <Button asChild size="lg" className="h-16 px-12 rounded-full text-lg font-bold bg-secondary text-black hover:bg-[#e0a000] border-none shadow-none">
                             <Link href="/contact">Plan Your Event With Us</Link>
                         </Button>
