@@ -16,7 +16,7 @@ module.exports = {
     extend: {
       fontFamily: {
         body: ['Poppins', 'sans-serif'],
-        headline: ['Sour Gummy', 'system-ui'],
+        headline: ['Playfair Display', 'serif'],
         kaushan: ['Kaushan Script', 'cursive'],
         playfair: ['Playfair Display', 'serif'],
         code: ['monospace'],
