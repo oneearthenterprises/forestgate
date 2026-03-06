@@ -100,7 +100,7 @@ export default function LoginPage() {
                                                     type="email" 
                                                     placeholder="you@example.com" 
                                                     {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
+                                                    className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 focus-visible:ring-primary shadow-sm"
                                                 />
                                             </FormControl> 
                                             <FormMessage /> 
@@ -118,7 +118,7 @@ export default function LoginPage() {
                                                     type="password" 
                                                     placeholder="••••••••" 
                                                     {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
+                                                    className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 focus-visible:ring-primary shadow-sm"
                                                 />
                                             </FormControl> 
                                             <FormMessage /> 

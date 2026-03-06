@@ -151,7 +151,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                                 <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4 mb-3">Email Address</FormLabel>
                                                 <FormControl>
                                                     <div className="relative">
-                                                        <Input placeholder="admin@theforestgate.com" {...field} className="h-14 rounded-2xl border-none bg-slate-50/50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300" />
+                                                        <Input placeholder="admin@theforestgate.com" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
                                                         <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#085d6b]/20">
                                                             <Mail className="w-5 h-5" />
                                                         </div>
@@ -168,7 +168,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                             <FormItem>
                                                 <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4 mb-3">Password</FormLabel>
                                                 <FormControl>
-                                                    <Input type="password" placeholder="••••••••" {...field} className="h-14 rounded-2xl border-none bg-slate-50/50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300" />
+                                                    <Input type="password" placeholder="••••••••" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
                                                 </FormControl>
                                                 <FormMessage className="ml-4" />
                                             </FormItem>
@@ -189,7 +189,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                             <FormItem>
                                                 <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4 mb-3">Full Name</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="John Doe" {...field} className="h-14 rounded-2xl border-none bg-slate-50/50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300" />
+                                                    <Input placeholder="John Doe" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
                                                 </FormControl>
                                                 <FormMessage className="ml-4" />
                                             </FormItem>
@@ -203,7 +203,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                                 <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4 mb-3">Email Address</FormLabel>
                                                 <FormControl>
                                                     <div className="relative">
-                                                        <Input placeholder="admin@theforestgate.com" {...field} className="h-14 rounded-2xl border-none bg-slate-50/50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300" />
+                                                        <Input placeholder="admin@theforestgate.com" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
                                                         <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#085d6b]/20">
                                                             <Mail className="w-5 h-5" />
                                                         </div>
@@ -220,7 +220,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                             <FormItem>
                                                 <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4 mb-3">Phone Number</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="+91 987 654 3210" {...field} className="h-14 rounded-2xl border-none bg-slate-50/50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300" />
+                                                    <Input placeholder="+91 987 654 3210" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
                                                 </FormControl>
                                                 <FormMessage className="ml-4" />
                                             </FormItem>
@@ -233,7 +233,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                             <FormItem>
                                                 <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4 mb-3">Create Password</FormLabel>
                                                 <FormControl>
-                                                    <Input type="password" placeholder="••••••••" {...field} className="h-14 rounded-2xl border-none bg-slate-50/50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300" />
+                                                    <Input type="password" placeholder="••••••••" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
                                                 </FormControl>
                                                 <FormMessage className="ml-4" />
                                             </FormItem>

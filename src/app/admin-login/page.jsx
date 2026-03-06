@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -87,7 +86,7 @@ export default function AdminLoginPage() {
                                                     type="email" 
                                                     placeholder="admin@theforestgate.com" 
                                                     {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
+                                                    className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 focus-visible:ring-primary shadow-sm"
                                                 />
                                             </FormControl> 
                                             <FormMessage /> 
@@ -105,7 +104,7 @@ export default function AdminLoginPage() {
                                                     type="password" 
                                                     placeholder="••••••••" 
                                                     {...field} 
-                                                    className="h-12 rounded-full bg-muted/30 border-none px-6 focus-visible:ring-primary shadow-none"
+                                                    className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 focus-visible:ring-primary shadow-sm"
                                                 />
                                             </FormControl> 
                                             <FormMessage /> 
