@@ -23,7 +23,7 @@ export default function NotFound() {
         <div className="flex justify-center">
             <div className="relative w-64 h-64 md:w-80 md:h-80">
                 <DotLottieReact
-                    src="/404.lottie"
+                    src="/assets/lootiefiles/Error 404.lottie"
                     loop
                     autoplay
                 />
