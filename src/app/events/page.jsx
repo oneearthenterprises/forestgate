@@ -208,7 +208,7 @@ export default function EventsPage() {
                             <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white/80">
                                 10% OFF CONGRATS PROMO <br className="md:hidden" /> CODES FOR NOVEMBER 2025
                             </p>
-                            <h2 className="text-4xl md:text-7xl lg:text-8xl font-playfair font-bold text-white leading-tight tracking-tight">
+                            <h2 className="text-3xl md:text-5xl lg:text-6xl font-playfair font-bold text-white leading-tight tracking-tight">
                                 15% Off Your Next <br className="hidden md:block" /> Purchase By Subscribing
                             </h2>
                         </div>
