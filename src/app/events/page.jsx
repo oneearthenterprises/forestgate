@@ -48,7 +48,7 @@ export default function EventsPage() {
                 />
                 <div className="absolute inset-0 bg-black/30" />
 
-                {/* Floating Decorative Dots (Inspired by Reference) */}
+                {/* Floating Decorative Dots */}
                 <div className="absolute top-[20%] left-[15%] w-4 h-4 bg-[#ff5722] rounded-full blur-[1px] animate-pulse" />
                 <div className="absolute top-[22%] left-[15%] w-4 h-4 bg-white rounded-full blur-[1px]" />
                 <div className="absolute top-[15%] right-[20%] w-5 h-5 bg-[#ffeb3b] rounded-full blur-[1px]" />
@@ -75,64 +75,6 @@ export default function EventsPage() {
                             </svg>
                         </div>
                     </motion.div>
-                </div>
-            </section>
-
-            {/* SERVICES SECTION - Overlapping Editorial Layout */}
-            <section className="py-24 md:py-32 relative">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-col gap-32">
-                        {events.map((event, index) => (
-                            <motion.div 
-                                key={event.title}
-                                initial={{ opacity: 0, y: 60 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-100px" }}
-                                transition={{ duration: 0.8 }}
-                                className="relative grid grid-cols-1 lg:grid-cols-12 gap-0 items-center group"
-                            >
-                                {/* Background Decorative Number */}
-                                <div className={`absolute -top-20 hidden lg:block opacity-[0.04] select-none pointer-events-none transition-transform duration-1000 group-hover:scale-110 ${index % 2 === 0 ? '-left-10' : '-right-10 text-right'}`}>
-                                    <span className="text-[25rem] font-black leading-none">
-                                        0{index + 1}
-                                    </span>
-                                </div>
-
-                                {/* Image Container with "Cut" style */}
-                                <div className={`lg:col-span-7 relative z-0 overflow-hidden rounded-[3rem] shadow-2xl aspect-[16/10] ${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2 lg:col-start-6'}`}>
-                                    <Image
-                                        src={event.image}
-                                        alt={event.title}
-                                        fill
-                                        className="object-cover transition-transform duration-[2000ms] group-hover:scale-110"
-                                        data-ai-hint={event.imageHint}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-60" />
-                                </div>
-
-                                {/* Floating Content Box */}
-                                <div className={`relative z-10 mt-[-60px] lg:mt-0 lg:col-span-6 ${index % 2 === 0 ? 'lg:order-2 lg:ml-[-8%]' : 'lg:order-1 lg:mr-[-8%] lg:col-start-1'}`}>
-                                    <div className="bg-white/95 backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] shadow-2xl border border-slate-100 flex flex-col items-start">
-                                        <div className="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center mb-8">
-                                            <event.icon className="w-7 h-7 text-secondary" />
-                                        </div>
-                                        <h3 className="font-headline text-4xl md:text-5xl font-bold mb-6 text-slate-900 leading-[1.1]">
-                                            {event.title}
-                                        </h3>
-                                        <p className="text-slate-500 mb-10 text-lg leading-relaxed font-light">
-                                            {event.description}
-                                        </p>
-                                        <Button asChild variant="secondary" className="h-14 px-10 text-base font-bold group shadow-none rounded-2xl">
-                                            <Link href="/contact" className="flex items-center gap-2">
-                                                Enquire Now
-                                                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                                            </Link>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
                 </div>
             </section>
 
