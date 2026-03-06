@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "@/components/ui/button";
@@ -75,14 +74,12 @@ const initialBookings = [
 
 export default function BookingHistoryPage() {
     const headerImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
-    const router = useRouter();
     const { toast } = useToast();
     const [bookings, setBookings] = useState(initialBookings);
     const [cancelReason, setCancelReason] = useState('');
     const isLoading = false;
 
     const handleCancelBooking = (bookingId) => {
-        console.log(`Cancelling booking ${bookingId} for reason: ${cancelReason}`);
         setBookings(currentBookings =>
             currentBookings.map(booking =>
                 booking.id === bookingId ? { ...booking, status: 'Cancelled' } : booking

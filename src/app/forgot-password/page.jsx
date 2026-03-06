@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { MountainSnow, ArrowRight, ShieldCheck, Mail, Lock, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ShieldCheck, Mail, Lock, CheckCircle2, MountainSnow } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,7 +21,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { useAuthContext } from "@/context/AuthContext";
 import {
   InputOTP,
   InputOTPGroup,
@@ -49,7 +48,7 @@ export default function ForgotPasswordPage() {
   const router = useRouter();
   const heroImage = PlaceHolderImages.find(img => img.id === 'exp-stargazing');
 
-  const [step, setStep] = useState("REQUEST_OTP"); // REQUEST_OTP, VERIFY_OTP, RESET_PASSWORD
+  const [step, setStep] = useState("REQUEST_OTP");
   const [userEmail, setUserEmail] = useState("");
 
   const emailForm = useForm({
@@ -68,7 +67,6 @@ export default function ForgotPasswordPage() {
   });
 
   const onRequestOtp = async (values) => {
-    // Dummy flow: Bypass API and show OTP step
     setUserEmail(values.email);
     setStep("VERIFY_OTP");
     toast({
@@ -77,8 +75,7 @@ export default function ForgotPasswordPage() {
     });
   };
 
-  const onVerifyOtp = async (values) => {
-    // Dummy flow: Bypass API and show Reset Password step
+  const onVerifyOtp = async () => {
     setStep("RESET_PASSWORD");
     toast({
       title: "Identity Verified",
@@ -86,8 +83,7 @@ export default function ForgotPasswordPage() {
     });
   };
 
-  const onResetPassword = async (values) => {
-    // Dummy flow: Bypass API and redirect to login
+  const onResetPassword = async () => {
     toast({
       title: "Password Updated",
       description: "Your password has been 'reset' successfully. Please login.",

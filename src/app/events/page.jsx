@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, SendHorizontal } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -15,15 +15,25 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from 'embla-carousel-autoplay';
 
+const highlights = [
+    { name: "Balloons", img: "balloons", hint: "party balloons" },
+    { name: "Dessert Table", img: "dessert", hint: "dessert table" },
+    { name: "Confetti", img: "confetti", hint: "heart confetti" },
+    { name: "Table Setting", img: "table", hint: "wedding table" },
+    { name: "Neon Signs", img: "neon", hint: "neon sign" },
+    { name: "Floral Decor", img: "flowers", hint: "event flowers" },
+    { name: "Gourmet Catering", img: "catering", hint: "gourmet food" }
+];
+
+const fadeInUp = {
+    initial: { opacity: 0, y: 40 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-100px" },
+    transition: { duration: 0.8, ease: "easeOut" }
+};
+
 export default function EventsPage() {
     const bannerImage = "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&q=80&w=2000";
-
-    const fadeInUp = {
-        initial: { opacity: 0, y: 40 },
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: "-100px" },
-        transition: { duration: 0.8, ease: "easeOut" }
-    };
 
     const autoplay = React.useMemo(
         () => (typeof Autoplay === 'function' ? Autoplay({ 
@@ -33,16 +43,6 @@ export default function EventsPage() {
         }) : null),
         []
     );
-
-    const highlights = [
-        { name: "Balloons", img: "balloons", hint: "party balloons" },
-        { name: "Dessert Table", img: "dessert", hint: "dessert table" },
-        { name: "Confetti", img: "confetti", hint: "heart confetti" },
-        { name: "Table Setting", img: "table", hint: "wedding table" },
-        { name: "Neon Signs", img: "neon", hint: "neon sign" },
-        { name: "Floral Decor", img: "flowers", hint: "event flowers" },
-        { name: "Gourmet Catering", img: "catering", hint: "gourmet food" }
-    ];
 
     return (
         <div className="bg-[#fcfcfc] overflow-x-hidden">
@@ -78,7 +78,6 @@ export default function EventsPage() {
                             <p className="font-kaushan text-3xl md:text-5xl text-white drop-shadow-lg">
                                 & bespoke curation
                             </p>
-                            {/* Wavy Line SVG */}
                             <svg className="w-48 md:w-72 h-4 text-white mt-2" viewBox="0 0 300 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M0 10C25 10 25 2 50 2C75 2 75 18 100 18C125 18 125 2 150 2C175 2 175 18 200 18C225 18 225 2 250 2C275 2 275 10 300 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                             </svg>
@@ -90,7 +89,6 @@ export default function EventsPage() {
             {/* BOUTIQUE TYPOGRAPHY SECTION */}
             <section className="bg-white py-24 md:py-40 overflow-hidden border-y border-slate-100">
                 <div className="container mx-auto px-4 flex flex-col items-center text-[#eb5e28]">
-                    {/* Line 1 */}
                     <motion.div 
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -103,7 +101,6 @@ export default function EventsPage() {
                         </h2>
                     </motion.div>
 
-                    {/* Line 2 */}
                     <motion.div 
                         initial={{ opacity: 0, x: 50 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -119,7 +116,6 @@ export default function EventsPage() {
                         </h2>
                     </motion.div>
 
-                    {/* Line 3 */}
                     <motion.div 
                         initial={{ opacity: 0, y: 50 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -166,7 +162,6 @@ export default function EventsPage() {
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    {/* Navigation Buttons - Visible on hover */}
                     <div className="absolute top-1/2 left-6 z-20 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500">
                         <CarouselPrevious className="static translate-y-0 h-14 w-14 rounded-full bg-white/10 backdrop-blur-xl border-none text-white hover:bg-secondary hover:text-black shadow-2xl transition-all" />
                     </div>
@@ -178,7 +173,6 @@ export default function EventsPage() {
 
             {/* CUSTOM PROMO SUBSCRIPTION SECTION */}
             <section className="relative bg-[#003d82] py-24 md:py-40 overflow-hidden">
-                {/* Decorative Elements */}
                 <motion.div 
                     animate={{ y: [0, -20, 0] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
