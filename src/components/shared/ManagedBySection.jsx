@@ -19,10 +19,10 @@ import Link from "next/link";
 export function ManagedBySection({ 
   label = "Managed By", 
   title = "The Himalayan Forest Development Authority", 
-  description = "Authorized Eco-Tourism Partner dedicated to sustainable luxury and nature preservation in the heart of Himachal Pradesh. Our mission is to protect the pristine beauty of the Himalayas while offering world-class hospitality to every guest. Join us in our journey to create a harmonious balance between comfort and conservation.",
+  description = "Authorized Eco-Tourism Partner dedicated to sustainable luxury and nature preservation in the heart of Himachal Pradesh.",
   buttonText = "Contact Us",
   buttonLink = "/contact",
-  imageSrc = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800",
+  imageSrc = "/assets/images/bannerpecock.png",
   imageAlt = "Lush Forest"
 }) {
 
@@ -34,61 +34,62 @@ export function ManagedBySection({
   };
 
   return (
-    <section className="relative bg-[#70ac43] py-16 md:py-24 overflow-x-hidden">
+    <section className="relative bg-[#70ac43] py-20 md:py-24  overflow-hidden">
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-3xl space-y-6">
-
-          <div className="space-y-2">
-            <p style={subTitleStyle}>{label}</p>
-
-            <h2 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-headline">
-              {title}
-            </h2>
-          </div>
-
-          <div className="space-y-6 pt-4">
-            <p className="text-white text-base md:text-lg font-light opacity-90 font-body leading-relaxed max-w-2xl">
-              {description}
-            </p>
-
-            <Button
-              asChild
-              className="bg-white text-black hover:bg-white/90 rounded-2xl px-10 h-14 shadow-none font-bold text-base"
-            >
-              <Link href={buttonLink}>{buttonText}</Link>
-            </Button>
-          </div>
-
+    <div className="container mx-auto px-4 relative z-10 h-full flex items-center">
+      <div className="max-w-3xl space-y-6">
+  
+        <div className="space-y-2">
+          <p style={subTitleStyle}>{label}</p>
+  
+          <h2 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-headline">
+            {title}
+          </h2>
         </div>
+  
+        <div className="space-y-6 pt-4">
+          <p className="text-white text-base md:text-lg font-light opacity-90 font-body leading-relaxed max-w-2xl">
+            {description}
+          </p>
+  
+          <Button
+            asChild
+            className="bg-white text-black hover:bg-white/90 rounded-2xl px-10 h-14 shadow-none font-bold text-base"
+          >
+            <Link href={buttonLink}>{buttonText}</Link>
+          </Button>
+        </div>
+  
       </div>
-
-
-      {/* Decorative Side Image */}
-      <div className="
-        pointer-events-none
+    </div>
+  
+    {/* Peacock */}
+    <div
+      className="
         absolute
+        right-0
         bottom-0
-        right-[-40px]
+        top-0
+        z-20
+        pointer-events-none
+        flex items-center
         w-[220px]
-        h-[320px]
-        sm:w-[260px] sm:h-[360px]
-        md:w-[320px] md:h-[400px]
-        lg:w-[420px] lg:h-[500px]
-        xl:w-[480px] xl:h-[500px]
-        opacity-40
-      ">
-
-        <Image
-          src={imageSrc}
-          alt={imageAlt}
-          fill
-          priority
-          className="object-cover rounded-l-[4rem]"
-        />
-
-      </div>
-
-    </section>
+        sm:w-[280px]
+        md:w-[340px]
+        lg:w-[365px]
+        xl:w-[365px]
+      "
+    >
+      <Image
+        src={imageSrc}
+        alt={imageAlt}
+        width={500}
+        height={900}
+        priority
+        className="w-full h-auto object-contain"
+      />
+    </div>
+  
+  </section>
   );
 }

@@ -218,7 +218,7 @@ export default function RoomsPage() {
         description="Experience luxury curated by the guardians of the mountains. Our partnerships ensure every stay contributes to the preservation of Himachal's ancient forest trails and biodiversity."
         buttonText="Explore Sanctuary"
         buttonLink="/experiences"
-        imageSrc="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800"
+        imageSrc="/assets/images/dearimage.png"
         imageAlt="Forest Sanctuary"
       />
     </div>
