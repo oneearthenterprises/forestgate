@@ -79,7 +79,7 @@ export default function EventsPage() {
             </section>
 
             {/* VENUES GRID */}
-            <section className="bg-slate-900 py-24 md:py-32 text-white">
+            <section className="bg-primary py-24 md:py-32 text-white">
                 <div className="container mx-auto px-4">
                     <div className="text-center max-w-3xl mx-auto mb-20">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-widest mb-6">
@@ -106,7 +106,7 @@ export default function EventsPage() {
                                     className="object-cover transition-transform duration-1000 group-hover:scale-110" 
                                     data-ai-hint={venue.hint}
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent transition-opacity duration-500 opacity-80" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent transition-opacity duration-500 opacity-80" />
                                 <div className="absolute inset-0 p-12 flex flex-col justify-end">
                                     <div className="flex items-center gap-2 mb-4 text-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform translate-y-4 group-hover:translate-y-0">
                                         <Star className="w-4 h-4 fill-current" />
