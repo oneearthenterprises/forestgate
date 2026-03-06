@@ -68,7 +68,8 @@ export function WelcomePopup() {
             </div>
 
             {/* Right Column: Details & Actions */}
-            <div className="w-full md:w-3/5 p-6 md:p-16 flex flex-col justify-center bg-white relative text-slate-900 overflow-y-auto">
+            {/* Added scrollbar hiding classes here */}
+            <div className="w-full md:w-3/5 p-6 md:p-16 flex flex-col justify-center bg-white relative text-slate-900 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <div className="space-y-6 md:space-y-8">
                 {/* Location */}
                 <div className="flex items-start gap-3 md:gap-4">
