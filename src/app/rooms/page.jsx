@@ -111,7 +111,7 @@ export default function RoomsPage() {
                   the entire The Forest Gate. You'll get exclusive access to
                   all our accommodations and world-class amenities.
                 </p>
-                <Button asChild size="lg" className="rounded-full px-12 shadow-xl">
+                <Button asChild size="lg" className="rounded-full px-12 shadow-none">
                   <Link href="/booking" className="flex items-center gap-2">
                     Book Entire Resort <ArrowUpRight className="w-5 h-5" />
                   </Link>
@@ -132,7 +132,7 @@ export default function RoomsPage() {
                       key={room.id}
                       {...fadeInUp}
                       transition={{ delay: index * 0.1 }}
-                      className="group bg-card border border-border/50 rounded-[2.5rem] overflow-hidden p-4 md:p-6 flex flex-col md:flex-row items-center gap-8 transition-all duration-500 hover:shadow-2xl hover:border-primary/20"
+                      className="group bg-card border border-border/50 rounded-[2.5rem] overflow-hidden p-4 md:p-6 flex flex-col md:flex-row items-center gap-8 transition-all duration-500 hover:border-primary/20"
                     >
                       {/* Left: Image/Carousel */}
                       <div className="w-full md:w-[35%] shrink-0">
@@ -168,7 +168,7 @@ export default function RoomsPage() {
 
                       {/* Right: Actions */}
                       <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed items-center md:items-start">
-                        <Button asChild className="rounded-full font-bold w-full max-w-[160px]">
+                        <Button asChild className="rounded-full font-bold w-full max-w-[160px] shadow-none">
                           <Link href={`/booking?roomId=${room.id}`}>Book Now</Link>
                         </Button>
                         <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn w-full">
@@ -198,7 +198,7 @@ export default function RoomsPage() {
                         alt={imageData.description}
                         width={500}
                         height={500}
-                        className="w-full h-auto rounded-[2rem] shadow-md transition-transform duration-500 hover:scale-[1.02]"
+                        className="w-full h-auto rounded-[2rem] shadow-none transition-transform duration-500 hover:scale-[1.02]"
                         data-ai-hint={imageData.imageHint}
                         placeholder="blur"
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
