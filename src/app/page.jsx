@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   faqs,
@@ -33,6 +34,7 @@ import { MobileRoomsCarouselWrapper } from '@/components/shared/MobileRoomsCarou
 import { WelcomePopup } from '@/components/shared/WelcomePopup';
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
   const deluxeRoom = rooms.find((r) => r.id === 'deluxe-room');
   const singleRoom = rooms.find((r) => r.id === 'single-room');
   const doubleRoom = rooms.find((r) => r.id === 'double-room');
@@ -83,6 +85,35 @@ export default function Home() {
     viewport: { once: true, margin: "-100px" },
     transition: { duration: 0.8, ease: "easeOut" }
   };
+
+  useEffect(() => {
+    // Simulate loading for premium feel
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const RoomsSkeleton = () => (
+    <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4 animate-pulse">
+      {/* Large Card Skeleton */}
+      <div className="bg-slate-100 rounded-2xl aspect-[4/5] w-full" />
+      
+      {/* 2x2 Grid Skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-slate-100 rounded-2xl aspect-square w-full" />
+        <div className="bg-slate-100 rounded-2xl aspect-square w-full" />
+        <div className="bg-slate-100 rounded-2xl aspect-square w-full" />
+        <div className="bg-slate-100 rounded-2xl aspect-square w-full" />
+      </div>
+    </div>
+  );
+
+  const MobileRoomsSkeleton = () => (
+    <div className="lg:hidden animate-pulse">
+        <div className="bg-slate-100 rounded-2xl aspect-[4/5] w-full" />
+    </div>
+  );
 
   return (
     <div className="relative">
@@ -141,69 +172,30 @@ export default function Home() {
           <h2 className="text-left text-3xl md:text-4xl font-bold mb-10 font-headline">
             Our Rooms
           </h2>
-            {/* Desktop Grid */}
-          <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {deluxeRoom &&
-              (() => {
-                const roomImage = PlaceHolderImages.find(
-                  (img) => img.id === deluxeRoom.images[0]
-                );
-                return (
-                  <Link
-                    href={`/rooms/${deluxeRoom.id}`}
-                    className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full"
-                  >
-                    {roomImage && (
-                      <Image
-                        src={roomImage.imageUrl}
-                        alt={deluxeRoom.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={roomImage.imageHint}
-                        placeholder="blur"
-                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
-                    {deluxeRoom.badge && (
-                      <div
-                        className={
-                          'absolute top-4 left-4 flex items-center gap-2 text-white px-3 py-1 rounded-full text-sm font-bold bg-red-500/90'
-                        }
-                      >
-                        <Flame size={16} />
-                        <span>{deluxeRoom.badge.label}</span>
-                      </div>
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h3 className="font-headline text-3xl font-bold">
-                        {deluxeRoom.name}
-                      </h3>
-                      <p className="text-lg">
-                        ₹{deluxeRoom.price.toLocaleString()} / per night
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })()}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[singleRoom, doubleRoom, familyRoom].map(
-                (room) =>
-                  room &&
+          
+          {isLoading ? (
+            <>
+              <RoomsSkeleton />
+              <MobileRoomsSkeleton />
+            </>
+          ) : (
+            <>
+              {/* Desktop Grid */}
+              <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {deluxeRoom &&
                   (() => {
                     const roomImage = PlaceHolderImages.find(
-                      (img) => img.id === room.images[0]
+                      (img) => img.id === deluxeRoom.images[0]
                     );
                     return (
                       <Link
-                        key={room.id}
-                        href={`/rooms/${room.id}`}
-                        className="relative group overflow-hidden rounded-2xl shadow-lg aspect-square w-full"
+                        href={`/rooms/${deluxeRoom.id}`}
+                        className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full"
                       >
                         {roomImage && (
                           <Image
                             src={roomImage.imageUrl}
-                            alt={room.name}
+                            alt={deluxeRoom.name}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                             data-ai-hint={roomImage.imageHint}
@@ -212,93 +204,142 @@ export default function Home() {
                           />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
-                        {room.badge && (
+                        {deluxeRoom.badge && (
                           <div
-                            className={`absolute top-4 left-4 flex items-center gap-2 text-white px-3 py-1 rounded-full text-xs font-bold ${
-                              room.badge.variant === 'liked'
-                                ? 'bg-purple-500/90'
-                                : 'bg-red-500/90'
-                            }`}
+                            className={
+                              'absolute top-4 left-4 flex items-center gap-2 text-white px-3 py-1 rounded-full text-sm font-bold bg-red-500/90'
+                            }
                           >
-                            {room.badge.variant === 'liked' ? (
-                              <Heart size={14} />
-                            ) : (
-                              <Flame size={14} />
-                            )}
-                            <span>{room.badge.label}</span>
+                            <Flame size={16} />
+                            <span>{deluxeRoom.badge.label}</span>
                           </div>
                         )}
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                          <h4 className="font-headline text-xl font-bold">
-                            {room.name}
-                          </h4>
-                          <p className="text-sm">
-                            ₹{room.price.toLocaleString()} / per night
+                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                          <h3 className="font-headline text-3xl font-bold">
+                            {deluxeRoom.name}
+                          </h3>
+                          <p className="text-lg">
+                            ₹{deluxeRoom.price.toLocaleString()} / per night
                           </p>
-                          {room.rating && (
-                            <div className="flex items-center gap-2 mt-1">
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    size={14}
-                                    className={
-                                      i < room.rating.stars
-                                        ? 'text-yellow-400 fill-yellow-400'
-                                        : 'text-gray-400'
-                                    }
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-xs font-bold bg-green-600 px-2 py-0.5 rounded">
-                                {room.rating.label}
-                              </span>
-                            </div>
-                          )}
                         </div>
                       </Link>
                     );
-                  })()
-              )}
-              <Link
-                href="/rooms"
-                className="relative group overflow-hidden rounded-2xl shadow-lg aspect-square w-full"
-              >
-                <div className="grid grid-cols-2 grid-rows-2 h-full w-full">
-                  {seeMoreImages.map(
-                    (image, index) =>
-                      image && (
-                        <div
-                          key={index}
-                          className="relative h-full w-full overflow-hidden"
-                        >
-                          <Image
-                            src={image.imageUrl}
-                            alt={image.description}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            data-ai-hint={image.imageHint}
-                            placeholder="blur"
-                            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                          />
-                        </div>
-                      )
+                  })()}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[singleRoom, doubleRoom, familyRoom].map(
+                    (room) =>
+                      room &&
+                      (() => {
+                        const roomImage = PlaceHolderImages.find(
+                          (img) => img.id === room.images[0]
+                        );
+                        return (
+                          <Link
+                            key={room.id}
+                            href={`/rooms/${room.id}`}
+                            className="relative group overflow-hidden rounded-2xl shadow-lg aspect-square w-full"
+                          >
+                            {roomImage && (
+                              <Image
+                                src={roomImage.imageUrl}
+                                alt={room.name}
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                data-ai-hint={roomImage.imageHint}
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+                              />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+                            {room.badge && (
+                              <div
+                                className={`absolute top-4 left-4 flex items-center gap-2 text-white px-3 py-1 rounded-full text-xs font-bold ${
+                                  room.badge.variant === 'liked'
+                                    ? 'bg-purple-500/90'
+                                    : 'bg-red-500/90'
+                                }`}
+                              >
+                                {room.badge.variant === 'liked' ? (
+                                  <Heart size={14} />
+                                ) : (
+                                  <Flame size={14} />
+                                )}
+                                <span>{room.badge.label}</span>
+                              </div>
+                            )}
+                            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                              <h4 className="font-headline text-xl font-bold">
+                                {room.name}
+                              </h4>
+                              <p className="text-sm">
+                                ₹{room.price.toLocaleString()} / per night
+                              </p>
+                              {room.rating && (
+                                <div className="flex items-center gap-2 mt-1">
+                                  <div className="flex">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star
+                                        key={i}
+                                        size={14}
+                                        className={
+                                          i < room.rating.stars
+                                            ? 'text-yellow-400 fill-yellow-400'
+                                            : 'text-gray-400'
+                                        }
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="text-xs font-bold bg-green-600 px-2 py-0.5 rounded">
+                                    {room.rating.label}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                        );
+                      })()
                   )}
+                  <Link
+                    href="/rooms"
+                    className="relative group overflow-hidden rounded-2xl shadow-lg aspect-square w-full"
+                  >
+                    <div className="grid grid-cols-2 grid-rows-2 h-full w-full">
+                      {seeMoreImages.map(
+                        (image, index) =>
+                          image && (
+                            <div
+                              key={index}
+                              className="relative h-full w-full overflow-hidden"
+                            >
+                              <Image
+                                src={image.imageUrl}
+                                alt={image.description}
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                data-ai-hint={image.imageHint}
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+                              />
+                            </div>
+                          )
+                      )}
+                    </div>
+                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white">
+                      <h4 className="font-headline text-2xl font-bold">
+                        See more
+                      </h4>
+                      <p>+10 more</p>
+                    </div>
+                  </Link>
                 </div>
-                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white">
-                  <h4 className="font-headline text-2xl font-bold">
-                    See more
-                  </h4>
-                  <p>+10 more</p>
-                </div>
-              </Link>
-            </div>
-          </div>
+              </div>
 
-          {/* Mobile Carousel */}
-          <div className="lg:hidden">
-            <MobileRoomsCarouselWrapper allRoomsForCarousel={allRoomsForCarousel} seeMoreImages={seeMoreImages} />
-          </div>
+              {/* Mobile Carousel */}
+              <div className="lg:hidden">
+                <MobileRoomsCarouselWrapper allRoomsForCarousel={allRoomsForCarousel} seeMoreImages={seeMoreImages} />
+              </div>
+            </>
+          )}
 
           <div className="text-center mt-12">
             <Button asChild size="lg">
