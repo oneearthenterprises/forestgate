@@ -91,27 +91,20 @@ export function HeroScroll() {
   }, []);
 
   const SplitContent = ({ side }) => (
-    <div className={`absolute inset-0 flex flex-col items-center justify-center text-center pb-32 md:pb-48`}>
-      <div className="split-inner-content w-full max-w-5xl px-4">
-        <h1 className="text-5xl md:text-[9rem] font-bold font-headline uppercase leading-none text-slate-900 mb-6 drop-shadow-sm">
+    <div className={`absolute inset-0 flex flex-col items-center justify-center text-center`}>
+      <div className="split-inner-content w-full max-w-5xl px-4 flex flex-col items-center">
+        <h1 className="text-6xl md:text-[11rem] font-bold font-headline uppercase leading-none text-[#0b2c3d] tracking-tight">
           WE CREATE
         </h1>
-        <div className={`${side === 'top' ? 'text-container-top' : 'text-container-bottom'} relative h-16 md:h-24 w-full`}>
+        <div className={`${side === 'top' ? 'text-container-top' : 'text-container-bottom'} relative h-16 md:h-24 w-full mt-4 md:mt-8`}>
           {highlights.map((h, i) => (
-            <p key={i} className="service-name absolute inset-0 opacity-0 text-2xl md:text-5xl font-black uppercase tracking-widest text-[#0b2c3d] flex items-center justify-center drop-shadow-sm">
+            <p key={i} className="service-name absolute inset-0 opacity-0 text-3xl md:text-7xl font-black uppercase tracking-[0.1em] text-[#0b2c3d] flex items-center justify-center">
               {h.title}
             </p>
           ))}
         </div>
-        <div className="relative w-[60vw] max-w-[800px] aspect-video mx-auto mt-16 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
-          <Image 
-            src="https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?auto=format&fit=crop&q=80&w=1200"
-            alt="Sanctuary Landscape"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+        {/* The White Line from reference */}
+        <div className="w-64 md:w-[600px] h-2.5 bg-white mt-12 md:mt-20 rounded-full shadow-sm" />
       </div>
     </div>
   );
