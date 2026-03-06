@@ -1,9 +1,8 @@
-
 'use client';
 
 import * as React from 'react';
 import Image from "next/image";
-import Link from 'link';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, SendHorizontal } from "lucide-react";
