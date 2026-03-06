@@ -106,7 +106,10 @@ export default function EventsPage() {
                                     className="object-cover transition-transform duration-1000 group-hover:scale-110" 
                                     data-ai-hint={venue.hint}
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent transition-opacity duration-500 opacity-80" />
+                                {/* Signature Secondary Color Overlay with Opacity */}
+                                <div className="absolute inset-0 bg-secondary/20 group-hover:bg-secondary/40 transition-colors duration-500" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 opacity-90 group-hover:opacity-70" />
+                                
                                 <div className="absolute inset-0 p-12 flex flex-col justify-end">
                                     <div className="flex items-center gap-2 mb-4 text-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform translate-y-4 group-hover:translate-y-0">
                                         <Star className="w-4 h-4 fill-current" />
@@ -115,7 +118,7 @@ export default function EventsPage() {
                                     <h3 className="font-headline text-3xl font-bold mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                         {venue.name}
                                     </h3>
-                                    <p className="text-white/50 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 line-clamp-2">
+                                    <p className="text-white/70 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 line-clamp-2">
                                         Bespoke arrangements with high-end catering and integrated AV support.
                                     </p>
                                 </div>
@@ -124,7 +127,7 @@ export default function EventsPage() {
                     </div>
 
                     <div className="mt-20 text-center">
-                        <Button asChild size="lg" className="h-16 px-12 rounded-full text-lg font-bold bg-[#fcb101] text-black hover:bg-[#e0a000] border-none shadow-none">
+                        <Button asChild size="lg" className="h-16 px-12 rounded-full text-lg font-bold bg-secondary text-black hover:bg-[#e0a000] border-none shadow-none">
                             <Link href="/contact">Plan Your Event With Us</Link>
                         </Button>
                     </div>
