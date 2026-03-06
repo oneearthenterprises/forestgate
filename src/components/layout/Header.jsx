@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Menu, MountainSnow, User, BarChart3, LifeBuoy, Settings, LogOut, Shield } from 'lucide-react';
+import { Menu, MountainSnow, User, BarChart3, LifeBuoy, Settings, LogOut, Shield, Instagram, Heart, Eye, MessageCircle, Check, Star } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
@@ -194,6 +194,46 @@ export function Header() {
                         </Link>
                       </SheetClose>
                     ))}
+
+                    {/* Instagram Follow Card */}
+                    <div className="mt-10 w-full max-w-sm bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm">
+                        <div className="flex items-start justify-between">
+                            <div className="flex gap-4">
+                                <div className="w-14 h-14 rounded-full bg-[#0b2c3d] flex items-center justify-center shrink-0 shadow-lg">
+                                    <Instagram className="w-7 h-7 text-white" />
+                                </div>
+                                <div className="flex flex-col pt-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h4 className="font-bold text-base text-slate-900">theforestgate</h4>
+                                        <div className="bg-orange-100 p-1 rounded-lg">
+                                            <Star className="w-3 h-3 text-orange-600 fill-current" />
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-slate-400 text-[10px] font-bold">
+                                        <div className="flex items-center gap-1.5">
+                                            <Heart className="w-3.5 h-3.5" />
+                                            <span>120k</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <Eye className="w-3.5 h-3.5 text-[#085d6b]" />
+                                            <span>12.5M</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <MessageCircle className="w-3.5 h-3.5" />
+                                            <span>5.2K</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button className="w-12 h-12 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-blue-500 hover:bg-slate-50 transition-all">
+                                <Check className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <p className="mt-5 text-[11px] text-slate-400 font-medium leading-relaxed">
+                            Experience the magic of Himachal through our lens. <br/>
+                            Daily updates, guest stories, and exclusive offers.
+                        </p>
+                    </div>
                   </nav>
                   <div className="p-8 mt-auto border-t bg-muted/10 flex flex-col items-center">
                       {user ? (
