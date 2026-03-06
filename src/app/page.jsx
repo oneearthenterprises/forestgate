@@ -20,7 +20,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Flame, Heart, Star, ArrowRight } from 'lucide-react';
 import { AmenityCard } from '@/components/shared/AmenityCard';
 import { ExperiencesCarousel } from '@/components/shared/ExperiencesCarousel';
@@ -32,6 +31,7 @@ import { InfluencersCarousel } from '@/components/shared/InfluencersCarousel';
 import { HighlightsCarouselWrapper } from '@/components/shared/HighlightsCarouselWrapper';
 import { MobileRoomsCarouselWrapper } from '@/components/shared/MobileRoomsCarouselWrapper';
 import { WelcomePopup } from '@/components/shared/WelcomePopup';
+import { BoutiqueTypography } from '@/components/shared/BoutiqueTypography';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -350,6 +350,8 @@ export default function Home() {
       </motion.section>
 
       <InteractiveMapSection />
+
+      <BoutiqueTypography />
 
       <motion.section {...fadeInUp} id="experiences" className="bg-card">
         <div className="container mx-auto px-4">

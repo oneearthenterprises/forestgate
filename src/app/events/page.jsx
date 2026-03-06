@@ -2,10 +2,7 @@
 
 import * as React from 'react';
 import Image from "next/image";
-import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -14,6 +11,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from 'embla-carousel-autoplay';
+import { ArrowRight } from 'lucide-react';
+import { BoutiqueTypography } from '@/components/shared/BoutiqueTypography';
 
 const highlights = [
     { name: "Balloons", img: "balloons", hint: "party balloons" },
@@ -24,13 +23,6 @@ const highlights = [
     { name: "Floral Decor", img: "flowers", hint: "event flowers" },
     { name: "Gourmet Catering", img: "catering", hint: "gourmet food" }
 ];
-
-const fadeInUp = {
-    initial: { opacity: 0, y: 40 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-100px" },
-    transition: { duration: 0.8, ease: "easeOut" }
-};
 
 export default function EventsPage() {
     const bannerImage = "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&q=80&w=2000";
@@ -86,53 +78,8 @@ export default function EventsPage() {
                 </div>
             </section>
 
-            {/* BOUTIQUE TYPOGRAPHY SECTION */}
-            <section className="bg-white py-24 md:py-40 overflow-hidden border-y border-slate-100">
-                <div className="container mx-auto px-4 flex flex-col items-center text-[#eb5e28]">
-                    <motion.div 
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="w-full flex justify-center lg:justify-start lg:pl-20"
-                    >
-                        <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-playfair leading-none tracking-tighter">
-                            Balloon Styling
-                        </h2>
-                    </motion.div>
-
-                    <motion.div 
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="w-full flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12 mt-8 lg:mt-0"
-                    >
-                        <p className="font-kaushan text-2xl md:text-5xl text-[#eb5e28]/70 italic lowercase">
-                            We've got everything cov_
-                        </p>
-                        <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-playfair leading-none tracking-tighter">
-                            Classic Arch
-                        </h2>
-                    </motion.div>
-
-                    <motion.div 
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="w-full flex flex-col md:flex-row items-center justify-center lg:justify-end lg:pr-20 gap-4 md:gap-12 mt-8 lg:mt-4"
-                    >
-                        <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-playfair leading-none tracking-tighter">
-                            Party banner
-                        </h2>
-                        <Link href="/gallery" className="group font-kaushan text-2xl md:text-5xl text-[#eb5e28]/70 italic flex items-center gap-3 hover:text-[#eb5e28] transition-colors">
-                            Look for more 
-                            <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
-                        </Link>
-                    </motion.div>
-                </div>
-            </section>
+            {/* BOUTIQUE TYPOGRAPHY COMPONENT */}
+            <BoutiqueTypography />
 
             {/* SEAMLESS ATMOSPHERE CAROUSEL */}
             <section className="bg-[#0b2c3d] py-0 overflow-hidden relative group">
@@ -178,14 +125,14 @@ export default function EventsPage() {
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     className="absolute left-10 md:left-20 top-1/2 -translate-y-1/2 flex flex-col gap-0"
                 >
-                    <div className="w-8 h-8 md:w-12 md:h-12 bg-[#eb5e28] rounded-full" />
+                    <div className="w-8 h-8 md:w-12 md:h-12 bg-secondary rounded-full" />
                     <div className="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full -mt-2" />
                 </motion.div>
 
                 <motion.div 
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute right-10 md:right-32 top-20 w-6 h-6 md:w-10 md:h-10 bg-[#ffeb3b] rounded-full shadow-[0_0_20px_rgba(255,235,59,0.5)]" 
+                    className="absolute right-10 md:right-32 top-20 w-6 h-6 md:w-10 md:h-10 bg-secondary rounded-full shadow-[0_0_20px_rgba(252,177,1,0.5)]" 
                 />
 
                 <div className="absolute right-20 md:right-40 bottom-20">
