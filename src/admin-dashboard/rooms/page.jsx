@@ -44,7 +44,7 @@ const defaultFormValues = {
     description: '',
     longDescription: '',
     price: 10000,
-    amenities: ['Wi-Fi', 'Room Service'],
+    amenities: ['Wi-Fi', 'Room Service','Bird view'],
     images: [],
     videos: [],
 };

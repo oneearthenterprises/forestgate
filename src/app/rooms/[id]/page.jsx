@@ -1,16 +1,23 @@
-
 'use client';
 
-import { useParams, notFound } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { rooms } from '@/app/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Check, ArrowLeft, Users, Maximize, Wind, Coffee, Wifi, Tv } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  Check,
+  ArrowLeft,
+  Users,
+  Maximize,
+  Wind,
+  Coffee,
+  Wifi,
+  Tv,
+} from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import {
   Carousel,
@@ -19,6 +26,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { API } from '@/lib/api/api';
 
 const amenityIcons = {
   'Private Balcony': Wind,
@@ -34,34 +42,108 @@ const amenityIcons = {
   '2 Bedrooms': Users,
   'Living Area': Maximize,
   'Kitchenette': Coffee,
+  'AC': Wind,
+  'TV': Tv,
 };
 
 export default function RoomDetailPage() {
   const params = useParams();
-  const room = rooms.find((r) => r.id === params.id);
+  const [room, setRoom] = useState(null);
 
-  if (!room) {
-    notFound();
-  }
+  useEffect(() => {
+    const getRoom = async () => {
+      try {
+        const response = await fetch(`${API.getRoomById}/${params.id}`);
+        const data = await response.json();
+        setRoom(data.room);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  const mainImage = PlaceHolderImages.find((img) => img.id === room.images[0]);
-  
+    if (params?.id) {
+      getRoom();
+    }
+  }, [params]);
+
+if (!room) {
+  return (
+    <>
+      {/* Hero Skeleton */}
+      <section className="relative h-[70vh] min-h-[450px] flex items-center justify-center bg-gray-200 animate-pulse overflow-hidden">
+        <div className="absolute inset-0 bg-gray-300"></div>
+        <div className="absolute inset-0 bg-gray-400/40 z-10"></div>
+
+        <div className="relative z-20 px-4 max-w-5xl mx-auto text-center">
+          <div className="h-12 md:h-16 w-72 md:w-[500px] bg-gray-300 rounded mx-auto mb-6"></div>
+
+          <div className="flex items-center justify-center gap-3 mt-4">
+            <div className="h-3 w-12 bg-gray-300 rounded"></div>
+            <div className="h-3 w-2 bg-gray-300 rounded"></div>
+            <div className="h-3 w-20 bg-gray-300 rounded"></div>
+          </div>
+
+          <div className="h-8 w-64 md:w-80 bg-gray-300 rounded mx-auto mt-10"></div>
+        </div>
+
+      
+      </section>
+
+      {/* Body Skeleton */}
+      <div className="bg-[#fcfcfc] pb-24 animate-pulse">
+        <section className="pt-16">
+          <div className="container mx-auto px-4">
+
+            <div className="grid lg:grid-cols-12 gap-12">
+
+              {/* Left Section */}
+              <div className="lg:col-span-8 space-y-8">
+                <div className="w-full aspect-[16/9] bg-gray-200 rounded-[2.5rem]"></div>
+
+                <div className="space-y-4">
+                  <div className="h-8 w-56 bg-gray-200 rounded"></div>
+                  <div className="h-4 w-full bg-gray-200 rounded"></div>
+                  <div className="h-4 w-5/6 bg-gray-200 rounded"></div>
+                  <div className="h-4 w-4/6 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+
+              {/* Right Section */}
+              <div className="lg:col-span-4">
+                <div className="sticky top-20 space-y-6">
+                  <div className="h-8 w-40 bg-gray-200 rounded"></div>
+
+                  {[1, 2, 3, 4].map((item) => (
+                    <div
+                      key={item}
+                      className="h-20 bg-gray-200 rounded-3xl"
+                    ></div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+      </div>
+    </>
+  );
+}
+
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, ease: "easeOut" }
+    transition: { duration: 0.8, ease: 'easeOut' },
   };
 
   return (
     <div className="bg-[#fcfcfc] pb-24">
-      {mainImage && (
-        <PageHeader 
-          title={room.name} 
-          subtitle="Experience Himalayan Luxury" 
-          imageUrl={mainImage.imageUrl} 
-          breadcrumbLabel="Room Details"
-        />
-      )}
+      <PageHeader
+        title={room.roomName}
+        subtitle={room.shortDescription}
+        imageUrl={room.images?.[0]?.url || '/fallback.jpg'}
+        breadcrumbLabel="Room Details"
+      />
 
       <section className="pt-16">
         <div className="container mx-auto px-4">
@@ -74,115 +156,92 @@ export default function RoomDetailPage() {
             </Button>
           </motion.div>
 
-          <div className="grid lg:grid-cols-12 gap-12">
-            {/* Left Column: Gallery & Details */}
+          <div className="grid lg:grid-cols-12 gap-12 ">
             <div className="lg:col-span-8 space-y-12">
-              <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>
-                <Carousel className="w-full" opts={{ loop: true }}>
-                  <CarouselContent>
-                    {room.images.map((imgId, idx) => {
-                      const img = PlaceHolderImages.find(p => p.id === imgId);
-                      return (
+              <motion.div {...fadeInUp}>
+                {room.images?.length > 0 ? (
+                  <Carousel className="w-full" opts={{ loop: true }}>
+                    <CarouselContent>
+                      {room.images.map((img, idx) => (
                         <CarouselItem key={idx}>
-                          <div className="relative aspect-[16/9] rounded-[2.5rem] overflow-hidden shadow-2xl">
-                            {img && (
-                              <Image
-                                src={img.imageUrl}
-                                alt={`${room.name} view ${idx + 1}`}
-                                fill
-                                className="object-cover"
-                                priority={idx === 0}
-                              />
-                            )}
+                          <div className="relative aspect-[16/9] rounded-[2.5rem] overflow-hidden shadow-none">
+                            <Image
+                              src={img.url}
+                              alt={`${room.roomName} ${idx + 1}`}
+                              fill
+                              className="object-cover"
+                              priority={idx === 0}
+                            />
                           </div>
                         </CarouselItem>
-                      );
-                    })}
-                  </CarouselContent>
-                  <CarouselPrevious className="left-6 bg-white/20 backdrop-blur-md border-none text-white hover:bg-white/40" />
-                  <CarouselNext className="right-6 bg-white/20 backdrop-blur-md border-none text-white hover:bg-white/40" />
-                </Carousel>
+                      ))}
+                    </CarouselContent>
+
+                    <CarouselPrevious className="left-6 bg-white/20 backdrop-blur-md border-none text-white" />
+                    <CarouselNext className="right-6 bg-white/20 backdrop-blur-md border-none text-white" />
+                  </Carousel>
+                ) : (
+                  <div className="relative aspect-[16/9] rounded-[2.5rem] overflow-hidden shadow-none">
+                    <Image
+                      src="/fallback.jpg"
+                      alt="fallback"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
               </motion.div>
 
-              <motion.div {...fadeInUp} transition={{ delay: 0.4 }} className="space-y-8">
+              <motion.div {...fadeInUp} className="space-y-8">
                 <div>
-                  <h2 className="font-headline text-4xl font-bold mb-6">About the Room</h2>
-                  <p className="text-xl text-foreground/70 font-light leading-relaxed">
-                    {room.longDescription}
+                  <h2 className="text-4xl font-bold mb-6">About the Room</h2>
+                  <p className="text-xl text-foreground/70 leading-relaxed">
+                    {room.fullDescription}
                   </p>
                 </div>
 
-                <Separator className="bg-slate-100" />
+                <Separator />
 
-                <div>
-                  <h3 className="font-headline text-3xl font-bold mb-8">Premium Amenities</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {room.amenities.map((amenity) => {
-                      const Icon = amenityIcons[amenity.name] || Check;
-                      return (
-                        <div key={amenity.name} className="flex items-center gap-4 p-6 bg-white rounded-3xl border border-slate-50 shadow-sm transition-all hover:shadow-md hover:border-primary/20 group">
-                          <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-500">
-                            <Icon className="w-6 h-6" />
-                          </div>
-                          <span className="font-bold text-lg text-slate-700">{amenity.name}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+               
               </motion.div>
             </div>
 
-            {/* Right Column: Sticky Booking Card */}
-            <div className="lg:col-span-4">
-              <motion.div 
-                {...fadeInUp} 
-                transition={{ delay: 0.6 }}
-                className="sticky top-32"
-              >
-                <Card className="rounded-[3rem] overflow-hidden border-none shadow-2xl bg-white">
-                  <CardHeader className="bg-[#0b2c3d] text-white p-10">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60 mb-2">Starting from</p>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-5xl font-black">₹{room.price.toLocaleString()}</span>
-                      <span className="text-white/60 font-medium">/ night</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-10 space-y-8">
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center py-3 border-b border-slate-50">
-                        <span className="text-slate-400 text-sm font-bold uppercase tracking-widest">Max Guests</span>
-                        <span className="font-bold">4 Adults</span>
-                      </div>
-                      <div className="flex justify-between items-center py-3 border-b border-slate-50">
-                        <span className="text-slate-400 text-sm font-bold uppercase tracking-widest">Room Size</span>
-                        <span className="font-bold">450 sq ft</span>
-                      </div>
-                      <div className="flex justify-between items-center py-3">
-                        <span className="text-slate-400 text-sm font-bold uppercase tracking-widest">Views</span>
-                        <span className="font-bold">{room.amenities[0]?.name || 'Himalayan'}</span>
-                      </div>
-                    </div>
+<div className="lg:col-span-4">
+  <motion.div {...fadeInUp} className="sticky top-20 space-y-6">
 
-                    <div className="bg-green-50 p-6 rounded-3xl border border-green-100">
-                      <div className="flex items-center gap-3 text-green-700 font-bold text-sm mb-1">
-                        <Check className="w-4 h-4" />
-                        Free Cancellation
-                      </div>
-                      <p className="text-green-600/70 text-xs">Full refund if cancelled 10 days before check-in.</p>
-                    </div>
+    <h3 className="text-3xl font-bold">Premium Amenities</h3>
 
-                    <Button asChild size="lg" className="w-full h-16 rounded-full text-lg font-black uppercase tracking-widest">
-                      <Link href={`/booking?roomId=${room.id}`}>Book This Room</Link>
-                    </Button>
-                    
-                    <p className="text-center text-[10px] text-slate-400 uppercase font-bold tracking-widest">
-                      Secure payment processed via SSL
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+    <div className="grid grid-cols-1 gap-6">
+      {room.amenities?.map((amenity, index) => {
+        const Icon = amenityIcons[amenity] || Check;
+
+        return (
+          <Card
+            key={index}
+            className="flex items-center gap-4 p-4 border border-primary/30 rounded-2xl shadow-none"
+          >
+            <div className="w-12 h-12 rounded-full bg-[#f5e4b8] flex items-center justify-center">
+              <Icon className="w-5 h-5 text-black" />
             </div>
+
+            <span className="font-bold text-lg text-[#1f2d3d]">
+              {amenity}
+            </span>
+          </Card>
+        );
+      })}
+    </div>
+
+    <Button
+      onClick={() => window.location.href = `/booking?roomId=${room._id}`}
+      className="w-full h-12 rounded-xl"
+    >
+      Book Now Today
+    </Button>
+
+  </motion.div>
+</div>
+
           </div>
         </div>
       </section>

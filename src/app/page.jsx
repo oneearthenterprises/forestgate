@@ -33,9 +33,11 @@ import { MobileRoomsCarouselWrapper } from '@/components/shared/MobileRoomsCarou
 import { WelcomePopup } from '@/components/shared/WelcomePopup';
 import { BoutiqueTypography } from '@/components/shared/BoutiqueTypography';
 import { AtmosphereCarousel } from '@/components/shared/AtmosphereCarousel';
+import { API } from '@/lib/api/api';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [rooms, setRooms] = useState([]);
   const deluxeRoom = rooms.find((r) => r.id === 'deluxe-room');
   const singleRoom = rooms.find((r) => r.id === 'single-room');
   const doubleRoom = rooms.find((r) => r.id === 'double-room');
@@ -116,6 +118,34 @@ export default function Home() {
     </div>
   );
 
+
+useEffect(() => {
+  const getRooms = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(API.GetAllRooms, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const getRoomsData = await response.json();
+
+      setRooms(getRoomsData.rooms);
+
+      console.log(getRoomsData.rooms);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  getRooms();
+}, []);
+
+
   return (
     <div className="relative">
       <WelcomePopup />
@@ -166,6 +196,11 @@ export default function Home() {
         </div>
       </motion.section>
 
+
+      {/* rooms section */}
+
+
+
       <motion.section {...fadeInUp} id="rooms" className="bg-card">
         <div className="container mx-auto px-4">
           <p className="mb-2 text-left" style={sectionLabelStyle}>Accommodations</p>
@@ -181,158 +216,56 @@ export default function Home() {
           ) : (
             <>
               {/* Desktop Grid */}
-              <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {deluxeRoom &&
-                  (() => {
-                    const roomImage = PlaceHolderImages.find(
-                      (img) => img.id === deluxeRoom.images[0]
-                    );
-                    return (
-                      <Link
-                        href={`/rooms/${deluxeRoom.id}`}
-                        className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full"
-                      >
-                        {roomImage && (
-                          <Image
-                            src={roomImage.imageUrl}
-                            alt={deluxeRoom.name}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            data-ai-hint={roomImage.imageHint}
-                            placeholder="blur"
-                            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                          />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
-                        {deluxeRoom.badge && (
-                          <div
-                            className={
-                              'absolute top-4 left-4 flex items-center gap-2 text-white px-3 py-1 rounded-full text-sm font-bold bg-red-500/90'
-                            }
-                          >
-                            <Flame size={16} />
-                            <span>{deluxeRoom.badge.label}</span>
-                          </div>
-                        )}
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                          <h3 className="font-headline text-3xl font-bold">
-                            {deluxeRoom.name}
-                          </h3>
-                          <p className="text-lg">
-                            ₹{deluxeRoom.price.toLocaleString()} / per night
-                          </p>
-                        </div>
-                      </Link>
-                    );
-                  })()}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[singleRoom, doubleRoom, familyRoom].map(
-                    (room) =>
-                      room &&
-                      (() => {
-                        const roomImage = PlaceHolderImages.find(
-                          (img) => img.id === room.images[0]
-                        );
-                        return (
-                          <Link
-                            key={room.id}
-                            href={`/rooms/${room.id}`}
-                            className="relative group overflow-hidden rounded-2xl shadow-lg aspect-square w-full"
-                          >
-                            {roomImage && (
-                              <Image
-                                src={roomImage.imageUrl}
-                                alt={room.name}
-                                fill
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                data-ai-hint={roomImage.imageHint}
-                                placeholder="blur"
-                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                              />
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
-                            {room.badge && (
-                              <div
-                                className={`absolute top-4 left-4 flex items-center gap-2 text-white px-3 py-1 rounded-full text-xs font-bold ${
-                                  room.badge.variant === 'liked'
-                                    ? 'bg-purple-500/90'
-                                    : 'bg-red-500/90'
-                                }`}
-                              >
-                                {room.badge.variant === 'liked' ? (
-                                  <Heart size={14} />
-                                ) : (
-                                  <Flame size={14} />
-                                )}
-                                <span>{room.badge.label}</span>
-                              </div>
-                            )}
-                            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                              <h4 className="font-headline text-xl font-bold">
-                                {room.name}
-                              </h4>
-                              <p className="text-sm">
-                                ₹{room.price.toLocaleString()} / per night
-                              </p>
-                              {room.rating && (
-                                <div className="flex items-center gap-2 mt-1">
-                                  <div className="flex">
-                                    {[...Array(5)].map((_, i) => (
-                                      <Star
-                                        key={i}
-                                        size={14}
-                                        className={
-                                          i < room.rating.stars
-                                            ? 'text-yellow-400 fill-yellow-400'
-                                            : 'text-gray-400'
-                                        }
-                                      />
-                                    ))}
-                                  </div>
-                                  <span className="text-xs font-bold bg-green-600 px-2 py-0.5 rounded">
-                                    {room.rating.label}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </Link>
-                        );
-                      })()
-                  )}
-                  <Link
-                    href="/rooms"
-                    className="relative group overflow-hidden rounded-2xl shadow-lg aspect-square w-full"
-                  >
-                    <div className="grid grid-cols-2 grid-rows-2 h-full w-full">
-                      {seeMoreImages.map(
-                        (image, index) =>
-                          image && (
-                            <div
-                              key={index}
-                              className="relative h-full w-full overflow-hidden"
-                            >
-                              <Image
-                                src={image.imageUrl}
-                                alt={image.description}
-                                fill
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                data-ai-hint={image.imageHint}
-                                placeholder="blur"
-                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                              />
-                            </div>
-                          )
-                      )}
-                    </div>
-                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white">
-                      <h4 className="font-headline text-2xl font-bold">
-                        See more
-                      </h4>
-                      <p>+10 more</p>
-                    </div>
-                  </Link>
-                </div>
-              </div>
+          <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+  {/* First Big Room */}
+  {rooms[0] && (
+  <Link href={`/booking?roomId=${rooms[0]._id}`}
+      className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full"
+    >
+      <Image
+        src={rooms[0].images?.[0]?.url}
+        alt={rooms[0].roomName}
+        fill
+        className="object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+
+      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+        <h3 className="text-3xl font-bold">{rooms[0].roomName}</h3>
+        <p>₹{rooms[0].pricePerNight} / per night</p>
+        <Button onClick={() => router.push(`/booking?roomId=${rooms[0]._id}`)}/>
+        
+        
+      </div>
+    </Link>
+  )}
+
+  {/* Small Rooms */}
+  <div className="grid grid-cols-2 gap-4">
+    {rooms.slice(1, 5).map((room) => (
+      <Link href={`/booking?roomId=${room._id}`}
+        className="relative group overflow-hidden rounded-2xl shadow-lg aspect-square w-full"
+      >
+        <Image
+          src={room.images?.[0]?.url}
+          alt={room.roomName}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+          <h4 className="text-xl font-bold">{room.roomName}</h4>
+          <p>₹{room.pricePerNight} / per night</p>
+        </div>
+      </Link>
+    ))}
+  </div>
+
+</div>
 
               {/* Mobile Carousel */}
               <div className="lg:hidden">
@@ -348,6 +281,9 @@ export default function Home() {
           </div>
         </div>
       </motion.section>
+
+
+
 
       <InteractiveMapSection />
 

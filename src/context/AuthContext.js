@@ -55,6 +55,7 @@ if (storedAdminToken) {
       setUserToken(data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("userToken", data.token);
+    document.cookie = `user-auth=${data.token}; path=/; max-age=86400; samesite=lax`;
 
       return data;
     } finally {
@@ -106,6 +107,7 @@ if (storedAdminToken) {
       setAdminToken(null);
 localStorage.removeItem("adminToken");
 document.cookie = "admin-auth=; path=/; max-age=0;";
+document.cookie = "user-auth=; path=/; max-age=0;";
     }
   };
 

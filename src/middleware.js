@@ -37,17 +37,35 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  const authCookie = request.cookies.get('admin-auth');
+  const pathname = request.nextUrl.pathname;
 
-  if (request.nextUrl.pathname.startsWith('/admin-dashboard')) {
-    if (!authCookie) {
-      return NextResponse.redirect(new URL('/admin-login', request.url));
+  const userRoutes = {
+    myBookings: "/my-bookings",
+    profile: "/profile",
+    checkout: "/checkout",
+  };
+
+  const userCookie = request.cookies.get("user-auth");
+  const authCookie = request.cookies.get("admin-auth");
+
+  // user protected routes
+  if (Object.values(userRoutes).includes(pathname)) {
+    if (!userCookie) {
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
-  if (request.nextUrl.pathname === '/admin-login') {
+  // admin protected routes
+  if (pathname.startsWith("/admin-dashboard")) {
+    if (!authCookie) {
+      return NextResponse.redirect(new URL("/admin-login", request.url));
+    }
+  }
+
+  // admin login redirect
+  if (pathname === "/admin-login") {
     if (authCookie) {
-      return NextResponse.redirect(new URL('/admin-dashboard', request.url));
+      return NextResponse.redirect(new URL("/admin-dashboard", request.url));
     }
   }
 
@@ -55,5 +73,9 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin-dashboard/:path*', '/admin-login'],
-}; 
+  matcher: [
+    "/my-bookings",
+    "/admin-dashboard/:path*",
+    "/admin-login",
+  ],
+};

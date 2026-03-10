@@ -191,7 +191,7 @@ export default function AdminRoomsPage() {
   
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold font-headline">Manage Rooms</h1>
+      <h1 className="text-3xl font-bold font-headline">Manage Rooms222</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-1 space-y-8" ref={formRef}>
             <Card className="rounded-[2rem] border-none shadow-lg bg-card">
