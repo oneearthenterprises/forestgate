@@ -35,10 +35,7 @@ export const roomApi = {
     try {
       const response = await fetch(API.CreateRoom, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(roomData),
+        body: roomData,
       });
 
       if (!response.ok) {
@@ -53,29 +50,21 @@ export const roomApi = {
   },
 
   updateRoom: async (roomId, roomData) => {
-    try {
-      const response = await fetch(API.UpdateRoom(roomId), {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(roomData),
-      });
+    const response = await fetch(API.UpdateRoom(roomId), {
+      method: "PUT",
+      body: roomData,
+    });
 
-      if (!response.ok) {
-        throw new Error("Failed to update room");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error updating room:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error("Failed to update room");
     }
+
+    return await response.json();
   },
 
   deleteRoom: async (roomId) => {
     try {
-      const response = await fetch(API.DeleteRoom, {
+      const response = await fetch(API.DeleteRoom(roomId), {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -90,56 +79,6 @@ export const roomApi = {
       return await response.json();
     } catch (error) {
       console.error("Error deleting room:", error);
-      throw error;
-    }
-  },
-
-  uploadRoomImage: async (roomId, file) => {
-    try {
-      const formData = new FormData();
-      formData.append("image", file);
-      formData.append("roomId", roomId);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/Rooms/api/upload-image`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to upload image");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      throw error;
-    }
-  },
-
-  uploadRoomVideo: async (roomId, file) => {
-    try {
-      const formData = new FormData();
-      formData.append("video", file);
-      formData.append("roomId", roomId);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/Rooms/api/upload-video`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to upload video");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error uploading video:", error);
       throw error;
     }
   },

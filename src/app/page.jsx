@@ -34,10 +34,12 @@ import { WelcomePopup } from '@/components/shared/WelcomePopup';
 import { BoutiqueTypography } from '@/components/shared/BoutiqueTypography';
 import { AtmosphereCarousel } from '@/components/shared/AtmosphereCarousel';
 import { API } from '@/lib/api/api';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [rooms, setRooms] = useState([]);
+  const router = useRouter();
   const deluxeRoom = rooms.find((r) => r.id === 'deluxe-room');
   const singleRoom = rooms.find((r) => r.id === 'single-room');
   const doubleRoom = rooms.find((r) => r.id === 'double-room');

@@ -14,7 +14,8 @@ export const API = {
 
   // rooms api
   GetAllRooms: `${API_BASE_URL}/Rooms/api/rooms`,
-  getRoomById: `${API_BASE_URL}/Rooms/api/room`,
+  // getRoomById: `${API_BASE_URL}/Rooms/api/room`,
+  getRoomById: (roomId) => `${API_BASE_URL}/Rooms/api/room/${roomId}`,
 
   // create rooms
   CreateRoom: `${API_BASE_URL}/Rooms/api/create-room`,
@@ -26,6 +27,19 @@ export const API = {
     `${API_BASE_URL}/Rooms/api/room/${roomId}/image/${imageId}`,
   DeleteRoomVideo: (roomId, videoId) =>
     `${API_BASE_URL}/Rooms/api/room/${roomId}/video/${videoId}`,
+
+  // contactus
+  ContactUsPost: `${API_BASE_URL}/Contact/api/create-contact`,
+  ContactUsGet: `${API_BASE_URL}/Contact/api/contacts`,
+
+  // booking api
+  CreateBooking: `${API_BASE_URL}/Booking/api/create-booking`,
+  GetBooking: `${API_BASE_URL}/Booking/api/bookings`,
+
+  GetBookingById: (bookingId) =>
+    `${API_BASE_URL}/Booking/api/booking/${bookingId}`,
+  CancelBooking: (bookingId) =>
+    `${API_BASE_URL}/Booking/api/cancel-booking/${bookingId}`,
 };
 
 if (typeof window !== "undefined") {

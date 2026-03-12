@@ -13,12 +13,12 @@ import {
   Check,
   ImageIcon,
   ArrowRight,
+  ArrowRightCircle,
 } from "lucide-react";
 import Calendar from "react-calendar";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
-import { PlaceHolderImages } from "../../lib/placeholder-images";
 import { rooms } from "../lib/data";
 import {
   Card,
@@ -75,23 +75,8 @@ const BookingFormSchema = z
     path: ["checkOut"],
   });
 
-const RESORT_PRICE_PER_NIGHT = 57000;
-const RESORT_DETAILS = {
-  id: "resort",
-  name: "Entire Resort",
-  longDescription:
-    "For ultimate privacy and a truly bespoke experience, book the entire The Forest Gate. You'll get exclusive access to all our accommodations and world-class amenities. Perfect for large families, special events, or corporate retreats.",
-  price: RESORT_PRICE_PER_NIGHT,
-  images: ["room-suite-1", "amenity-pool", "amenity-dining", "room-cottage-1"],
-  amenities: [
-    { name: "All Rooms & Suites" },
-    { name: "Private Pool" },
-    { name: "Private Cinema" },
-    { name: "All Dining Areas" },
-    { name: "Full Staff Service" },
-    { name: "All Activities" },
-  ],
-};
+
+
 
 function BookingPageContent() {
   const searchParams = useSearchParams();
@@ -118,8 +103,7 @@ function BookingPageContent() {
   const plugins = useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
   const carouselOpts = useMemo(() => ({ loop: true }), []);
 
-  const roomToBook = rooms.find((r) => r.id === roomId);
-  const itemToBook = roomToBook || RESORT_DETAILS;
+  
 
   const searchCheckIn = searchParams.get("checkIn");
   const searchCheckOut = searchParams.get("checkOut");
@@ -163,10 +147,13 @@ function BookingPageContent() {
 
   async function onSubmit(data) {
     const bookingData = {
-      bookingType: itemToBook.name,
+      bookingType: room.fullName,
+       roomName: room.roomName,
       ...data,
       totalPrice,
       guests: numAdults + numChildren,
+      numAdults,
+      numChildren,
       checkIn: format(data.checkIn, "yyyy-MM-dd"),
       checkOut: format(data.checkOut, "yyyy-MM-dd"),
     };
@@ -179,7 +166,9 @@ function BookingPageContent() {
     params.append("checkOut", bookingData.checkOut);
     params.append("guests", bookingData.guests.toString());
     params.append("totalPrice", bookingData.totalPrice.toString());
-
+params.append("roomName", bookingData.roomName);
+params.append("numAdults", bookingData.numAdults);
+params.append("numChildren", bookingData.numChildren);
     toast({
       title: "Processing Payment...",
       description: "Please wait while we confirm your booking.",
@@ -197,28 +186,33 @@ function BookingPageContent() {
 
   const [room, setRoom] = useState(null);
 
-  useEffect(() => {
-    if (!roomId) return;
-
-    const getRoom = async () => {
-      try {
-        const response = await fetch(`${API.getRoomById}/${roomId}`);
+useEffect(() => {
+  const getRoom = async () => {
+    try {
+      if (roomId) {
+        const response = await fetch(API.getRoomById(roomId));
         const data = await response.json();
-
-        console.log("Fetched Room:", data);
 
         if (data?.room) {
           setRoom(data.room);
         }
-      } catch (error) {
-        console.log(error);
+      } else {
+        const response = await fetch(API.GetAllRooms);
+        const data = await response.json();
+
+        if (data?.rooms?.length > 0) {
+          setRoom(data.rooms[0]);
+        }
       }
-    };
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    getRoom();
-  }, [roomId]);
-  const totalPrice = room?.pricePerNight * numNights;
-
+  getRoom();
+}, [roomId]);
+const totalPrice = (room?.pricePerNight || 0) * numNights;
+if (!room) return null;
 
   return (
     <div className="pt-24 pb-16 bg-background">
@@ -643,7 +637,7 @@ function BookingPageContent() {
                 <CardContent className="p-10 space-y-8">
                   <div className="space-y-4">
                     <h4 className="text-2xl font-headline font-bold tracking-tight">
-                      {itemToBook.name}
+                      {room?.roomName}
                     </h4>
                     <div className="flex flex-col gap-3 text-sm text-muted-foreground font-bold">
                       <div className="flex justify-between items-center py-2 border-b border-muted">

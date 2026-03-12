@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -9,119 +9,193 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { format, parseISO, subDays } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-
-const contactMessages = [
-  {
-    id: 'msg-1',
-    name: 'Anxious Traveller',
-    email: 'anxious.traveller@example.com',
-    message: 'I have a question about the pet policy. Are large dogs allowed? I have a Golden Retriever who is very well-behaved.',
-    receivedAt: subDays(new Date(), 1).toISOString(),
-  },
-  {
-    id: 'msg-2',
-    name: 'Future Bride',
-    email: 'future.bride@example.com',
-    message: 'We are considering your resort for our destination wedding next year. Could you please provide some information on your wedding packages and venue availability for May 2025?',
-    receivedAt: subDays(new Date(), 2).toISOString(),
-  },
-  {
-    id: 'msg-3',
-    name: 'Corporate Planner',
-    email: 'corp.planner@example.com',
-    message: 'Hello, I am organizing a corporate retreat for a team of 25 people. We are interested in your corporate packages and team-building activities. Please send a brochure.',
-    receivedAt: subDays(new Date(), 4).toISOString(),
-  },
-  {
-    id: 'msg-4',
-    name: 'Lost & Found',
-    email: 'lostandfound@example.com',
-    message: 'Hi, I think I left my sunglasses by the pool during my stay last weekend. They are a pair of black Ray-Bans. Has anyone turned them in?',
-    receivedAt: subDays(new Date(), 7).toISOString(),
-  },
-];
+import { API } from '@/lib/api/api';
 
 export default function ContactsPage() {
-    const [selectedMessage, setSelectedMessage] = useState(null);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    return (
+  const getContactMessages = async () => {
+    try {
+        setLoading(true)
+      const response = await fetch(API.ContactUsGet);
+      const data = await response.json();
+
+      setMessages(data.contact || []);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+      setMessages([]);
+      } finally {
+    setLoading(false);
+  }
+  };
+
+  useEffect(() => {
+    getContactMessages();
+  }, []);
+
+  return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold font-headline">Contact Messages</h1>
-      
+
       <Card>
-          <CardHeader>
-              <CardTitle>Inbox</CardTitle>
-              <CardDescription>Messages received from the contact form.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="relative w-full overflow-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>From</TableHead>
-                            <TableHead>Message</TableHead>
-                            <TableHead className="text-right">Received</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {contactMessages.map((msg) => (
-                            <TableRow key={msg.id} className="cursor-pointer" onClick={() => setSelectedMessage(msg)}>
-                                <TableCell>
-                                    <div className="flex items-center gap-4">
-                                        <Avatar className="h-9 w-9">
-                                          <AvatarFallback>{msg.name.charAt(0).toUpperCase()}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <div className="font-medium">{msg.name}</div>
-                                            <div className="text-sm text-muted-foreground">{msg.email}</div>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="max-w-[400px]">
-                                    <p className="truncate">{msg.message}</p>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {format(parseISO(msg.receivedAt), 'MMM dd, yyyy')}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+        <CardHeader>
+          <CardTitle>Inbox</CardTitle>
+          <CardDescription>
+            Messages received from the contact form.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <div className="relative w-full overflow-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>From</TableHead>
+                  <TableHead>Message</TableHead>
+                  <TableHead className="text-right">Received</TableHead>
+                </TableRow>
+              </TableHeader>
+
+             <TableBody>
+  {loading ? (
+    Array.from({ length: 5 }).map((_, index) => (
+      <TableRow key={index}>
+        <TableCell>
+          <div className="flex items-center gap-4">
+            <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+              <div className="h-3 w-32 rounded bg-muted animate-pulse" />
             </div>
-          </CardContent>
+          </div>
+        </TableCell>
+
+        <TableCell>
+          <div className="h-4 w-48 rounded bg-muted animate-pulse" />
+        </TableCell>
+
+        <TableCell className="text-right">
+          <div className="ml-auto h-4 w-20 rounded bg-muted animate-pulse" />
+        </TableCell>
+      </TableRow>
+    ))
+  ) : messages.length > 0 ? (
+    messages.map((msg, index) => (
+      <TableRow
+        key={index}
+        className="cursor-pointer"
+        onClick={() => setSelectedMessage(msg)}
+      >
+        <TableCell>
+          <div className="flex items-center gap-4">
+            <Avatar className="h-9 w-9">
+              <AvatarFallback>
+                {msg.fullName?.charAt(0)?.toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+
+            <div>
+              <div className="font-medium">{msg.fullName}</div>
+              <div className="text-sm text-muted-foreground">
+                {msg.email}
+              </div>
+            </div>
+          </div>
+        </TableCell>
+
+        <TableCell className="max-w-[400px]">
+          <p className="truncate">{msg.message}</p>
+        </TableCell>
+
+        <TableCell className="text-right">
+          {msg.createdAt
+            ? format(parseISO(msg.createdAt), 'MMM dd, yyyy')
+            : '-'}
+        </TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell colSpan={3} className="text-center py-6">
+        No messages found
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
+            </Table>
+          </div>
+        </CardContent>
       </Card>
 
-      <Dialog open={!!selectedMessage} onOpenChange={(isOpen) => !isOpen && setSelectedMessage(null)}>
-            <DialogContent className="sm:max-w-[625px]">
-            {selectedMessage && (
-                <>
-                <DialogHeader>
-                    <DialogTitle>Message from {selectedMessage.name}</DialogTitle>
-                    <DialogDescription>
-                        Email: {selectedMessage.email} | Received: {format(parseISO(selectedMessage.receivedAt), 'MMM dd, yyyy, p')}
-                    </DialogDescription>
-                </DialogHeader>
-                <Separator />
-                <div className="py-4">
-                    <p className="text-sm whitespace-pre-wrap">{selectedMessage.message}</p>
-                </div>
-                <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setSelectedMessage(null)}>
-                        Close
-                    </Button>
-                    <Button type="button" asChild>
-                        <a href={`mailto:${selectedMessage.email}`}>Reply</a>
-                    </Button>
-                </DialogFooter>
-                </>
-            )}
-            </DialogContent>
+      <Dialog
+        open={!!selectedMessage}
+        onOpenChange={(isOpen) => !isOpen && setSelectedMessage(null)}
+      >
+        <DialogContent className="sm:max-w-[625px]">
+          {selectedMessage && (
+            <>
+              <DialogHeader>
+                <DialogTitle>
+                  Message from {selectedMessage.fullName}
+                </DialogTitle>
+
+                <DialogDescription>
+                  Email: {selectedMessage.email} | Received:{' '}
+                  {selectedMessage.createdAt
+                    ? format(
+                        parseISO(selectedMessage.createdAt),
+                        'MMM dd, yyyy, p'
+                      )
+                    : '-'}
+                </DialogDescription>
+              </DialogHeader>
+
+              <Separator />
+
+              <div className="py-4">
+                <p className="text-sm whitespace-pre-wrap">
+                  {selectedMessage.message}
+                </p>
+              </div>
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setSelectedMessage(null)}
+                >
+                  Close
+                </Button>
+
+                <Button type="button" asChild>
+                  <a href={`mailto:${selectedMessage.email}`}>Reply</a>
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
       </Dialog>
     </div>
   );

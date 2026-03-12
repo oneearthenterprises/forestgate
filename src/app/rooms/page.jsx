@@ -9,23 +9,21 @@ import { ChevronRight, ArrowUpRight } from 'lucide-react';
 
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
-import { rooms, galleryImages } from '../lib/data';
+import {  galleryImages } from '../lib/data';
 import { PlaceHolderImages } from '../../lib/placeholder-images';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { ManagedBySection } from '@/components/shared/ManagedBySection';
 import { RoomCarouselWrapper } from '@/components/shared/RoomCarouselWrapper';
+import { API } from '@/lib/api/api';
 
 export default function RoomsPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [rooms, setRooms] = useState([]);
   const headerImage = PlaceHolderImages.find((img) => img.id === 'room-suite-1');
 
   useEffect(() => {
-    // Simulate loading for premium feel
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
+    getApiRooms();
   }, []);
 
   const fadeInUp = {
@@ -34,6 +32,30 @@ export default function RoomsPage() {
     viewport: { once: true, margin: "-100px" },
     transition: { duration: 0.8, ease: "easeOut" }
   };
+
+const getApiRooms = async () => {
+  try {
+    setIsLoading(true);
+    const response = await fetch(API.GetAllRooms, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const getRoomsData = await response.json();
+
+    setRooms(getRoomsData.rooms);
+
+    console.log(getRoomsData.rooms);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   const RoomSkeleton = () => (
     <div className="bg-card border border-border/50 rounded-[2.5rem] p-4 md:p-6 flex flex-col md:flex-row items-center gap-8 animate-pulse">
@@ -129,7 +151,7 @@ export default function RoomsPage() {
                 ) : (
                   rooms.map((room, index) => (
                     <motion.div
-                      key={room.id}
+                     key={room._id}
                       {...fadeInUp}
                       transition={{ delay: index * 0.1 }}
                       className="group bg-card border border-border/50 rounded-[2.5rem] overflow-hidden p-4 md:p-6 flex flex-col md:flex-row items-center gap-8 transition-all duration-500 hover:border-primary/20"
@@ -146,22 +168,22 @@ export default function RoomsPage() {
                             {room.badge?.label || 'Premium Stay'}
                           </Badge>
                           <h3 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">
-                            {room.name}
+                          {room.roomName}
                           </h3>
                         </div>
                         
                         <p className="text-foreground/60 text-sm md:text-base leading-relaxed line-clamp-3 md:line-clamp-2">
-                          {room.longDescription}
+                          {room.shortDescription}
                         </p>
 
                         <div className="grid grid-cols-2 gap-x-8 gap-y-4 pt-6 border-t border-dashed">
                           <div>
                             <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Price per night</p>
-                            <p className="font-headline text-xl font-bold text-primary">₹{room.price.toLocaleString()}</p>
+                            <p className="font-headline text-xl font-bold text-primary">₹{room.pricePerNight.toLocaleString()}</p>
                           </div>
                           <div>
                             <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Key Amenity</p>
-                            <p className="text-sm font-bold truncate">{room.amenities[0]?.name || 'Mountain View'}</p>
+                            <p className="text-sm font-bold truncate">{room.amenities[0] || 'Mountain View'}</p>
                           </div>
                         </div>
                       </div>
@@ -169,10 +191,10 @@ export default function RoomsPage() {
                       {/* Right: Actions */}
                       <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed items-center md:items-start">
                         <Button asChild className="rounded-full font-bold w-full max-w-[160px] shadow-none">
-                          <Link href={`/booking?roomId=${room.id}`}>Book Now</Link>
+                          <Link href={`/booking?roomId=${room._id}`}>Book Now</Link>
                         </Button>
                         <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn w-full">
-                          <Link href={`/rooms/${room.id}`} className="flex items-center justify-center gap-2">
+                        <Link href={`/rooms/${room._id}`} className="flex items-center justify-center gap-2">
                             See Details
                             <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                           </Link>

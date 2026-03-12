@@ -22,6 +22,7 @@ import { LocationMap } from "@/components/shared/LocationMap";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { API } from "@/lib/api/api";
 
 
 const ContactFormSchema = z.object({
@@ -42,14 +43,36 @@ export default function ContactPage() {
     const form = useForm({
         resolver: zodResolver(ContactFormSchema),
         defaultValues: {
-            name: "",
-            email: "",
-            message: "",
+           fullName: "",
+      email: "",
+      message: "",
         },
     });
 
     function onSubmit(data) {
-        console.log(data);
+        try {
+             const payload = {
+                fullName: data.name,
+                email: data.email,
+                message: data.message,
+             }
+            const contactUs = async ()=>{
+                const response = await fetch(API.ContactUsPost, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const responseData = await response.json();
+                console.log(responseData);
+            }
+            contactUs();
+        } catch (error) {
+            console.log(error);
+        }
+
+
         toast({
             title: "Message Sent!",
             description: "Thank you for contacting us. We will get back to you shortly.",

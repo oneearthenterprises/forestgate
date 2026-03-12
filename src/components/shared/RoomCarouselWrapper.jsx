@@ -9,7 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+
 import Autoplay from 'embla-carousel-autoplay';
 
 export function RoomCarouselWrapper({ room }) {
@@ -29,33 +29,22 @@ export function RoomCarouselWrapper({ room }) {
   }), []);
 
   return (
-    <Carousel 
-      className="w-full group" 
-      plugins={plugins}
-      opts={carouselOpts}
-    >
+    <Carousel className="w-full group" opts={{ loop: true }}>
       <CarouselContent>
-        {room.images.map((imgId) => {
-          const img = PlaceHolderImages.find(
-            (p) => p.id === imgId
-          );
-          return (
-            <CarouselItem key={imgId}>
-              {img && (
-                <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-inner">
-                  <Image
-                    src={img.imageUrl}
-                    alt={`${room.name}`}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    data-ai-hint={img.imageHint}
-                  />
-                </div>
-              )}
-            </CarouselItem>
-          );
-        })}
+        {room.images?.map((img, index) => (
+          <CarouselItem key={img._id || index}>
+            <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-inner">
+              <Image
+                src={img.url}
+                alt={room.roomName}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+            </div>
+          </CarouselItem>
+        ))}
       </CarouselContent>
+
       <CarouselPrevious className="left-4 opacity-0 group-hover:opacity-100 transition-opacity" />
       <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 transition-opacity" />
     </Carousel>

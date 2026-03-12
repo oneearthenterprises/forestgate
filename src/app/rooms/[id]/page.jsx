@@ -53,7 +53,7 @@ export default function RoomDetailPage() {
   useEffect(() => {
     const getRoom = async () => {
       try {
-        const response = await fetch(`${API.getRoomById}/${params.id}`);
+      const response = await fetch(API.getRoomById(params.id));
         const data = await response.json();
         setRoom(data.room);
       } catch (error) {

@@ -23,10 +23,16 @@ function ConfirmationPageContent() {
     const guests = searchParams.get('guests');
     const totalPrice = searchParams.get('totalPrice');
     const paramBookingId = searchParams.get('bookingId');
+    const roomName = searchParams.get('roomName');
+    const numAdults = searchParams.get('numAdults');
+    const numChildren = searchParams.get('numChildren');
+    console.log(roomName);
 
     // Use a stable booking ID for display
-    const bookingId = useRef(paramBookingId || `HH-${Math.random().toString(36).substr(2, 9).toUpperCase()}`);
-
+const bookingId = useRef(
+  paramBookingId ||
+    `FOREST-ID-${Math.random().toString(36).substring(2, 10).toUpperCase()}`
+);
     const checkInDate = checkIn ? parseISO(checkIn) : new Date();
     const checkOutDate = checkOut ? parseISO(checkOut) : new Date();
 
@@ -91,8 +97,10 @@ function ConfirmationPageContent() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold mb-2">Reservation Details</h3>
-                                    <p className="font-medium">{bookingItem}</p>
-                                    <p className="text-muted-foreground">{guests} Guest(s)</p>
+                                    <p className="text-muted-foreground">{roomName}</p>
+                                    <p className="text-muted-foreground">Adults {numAdults} </p>
+                                    <p className="text-muted-foreground">Children {numChildren} </p>
+                                    <p className="font-medium">Total Number of Guests: {guests}</p>
                                 </div>
                             </div>
                             
@@ -110,7 +118,7 @@ function ConfirmationPageContent() {
                                 </div>
                                 <Separator/>
                                  <div className="flex justify-between items-center pt-2">
-                                    <p className="font-semibold text-lg">Total Paid</p>
+                                    <p className="font-semibold text-lg">Total Amount</p>
                                     <p className="font-bold text-xl">₹{Number(totalPrice).toLocaleString()}</p>
                                 </div>
                             </div>
