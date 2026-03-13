@@ -29,11 +29,19 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { API } from '@/lib/api/api';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ContactsPage() {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isReplying, setIsReplying] = useState(false);
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [replySubject, setReplySubject] = useState('');
+  const [replyMessage, setReplyMessage] = useState('');
+  const { toast } = useToast();
 
   const getContactMessages = async () => {
     try {
@@ -49,6 +57,59 @@ export default function ContactsPage() {
       } finally {
     setLoading(false);
   }
+  };
+  
+  const handleReplyMessage = async (e) => {
+    e.preventDefault();
+    if (!replySubject || !replyMessage) {
+      toast({
+        title: "Error",
+        description: "Subject and message are required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsReplying(true);
+      const res = await fetch(API.replyToContact, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contactId: selectedMessage._id,
+          subject: replySubject,
+          replyMessage: replyMessage,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast({
+          title: "Success",
+          description: "Reply sent successfully.",
+        });
+        setShowReplyForm(false);
+        setReplySubject('');
+        setReplyMessage('');
+        setSelectedMessage(null);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to send reply.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsReplying(false);
+    }
   };
 
   useEffect(() => {
@@ -151,7 +212,14 @@ export default function ContactsPage() {
 
       <Dialog
         open={!!selectedMessage}
-        onOpenChange={(isOpen) => !isOpen && setSelectedMessage(null)}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setSelectedMessage(null);
+            setShowReplyForm(false);
+            setReplySubject('');
+            setReplyMessage('');
+          }
+        }}
       >
         <DialogContent className="sm:max-w-[625px]">
           {selectedMessage && (
@@ -172,27 +240,71 @@ export default function ContactsPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <Separator />
+                {showReplyForm ? (
+                  <form onSubmit={handleReplyMessage} className="space-y-4 py-4">
+                    <Separator />
+                    <div className="space-y-2">
+                       <label className="text-sm font-medium">Subject</label>
+                       <Input 
+                        placeholder="Reply Subject"
+                        value={replySubject}
+                        onChange={(e) => setReplySubject(e.target.value)}
+                        required
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-sm font-medium">Message</label>
+                       <Textarea 
+                        placeholder="Type your reply here..."
+                        className="min-h-[150px]"
+                        value={replyMessage}
+                        onChange={(e) => setReplyMessage(e.target.value)}
+                        required
+                       />
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowReplyForm(false)}
+                      >
+                        Back
+                      </Button>
+                      <Button type="submit" disabled={isReplying}>
+                        {isReplying ? "Sending..." : "Send Reply"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                ) : (
+                  <>
+                    <Separator />
+                    <div className="py-4">
+                      <p className="text-sm whitespace-pre-wrap">
+                        {selectedMessage.message}
+                      </p>
+                    </div>
 
-              <div className="py-4">
-                <p className="text-sm whitespace-pre-wrap">
-                  {selectedMessage.message}
-                </p>
-              </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setSelectedMessage(null)}
+                      >
+                        Close
+                      </Button>
 
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setSelectedMessage(null)}
-                >
-                  Close
-                </Button>
-
-                <Button type="button" asChild>
-                  <a href={`mailto:${selectedMessage.email}`}>Reply</a>
-                </Button>
-              </DialogFooter>
+                      <Button 
+                        type="button" 
+                        onClick={() => {
+                          setShowReplyForm(true);
+                          setReplySubject(`Forest Gate Inquiry - ${selectedMessage.fullName}`);
+                        }}
+                      >
+                        Reply
+                      </Button>
+                    </DialogFooter>
+                  </>
+                )}
             </>
           )}
         </DialogContent>

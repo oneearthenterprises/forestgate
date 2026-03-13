@@ -31,6 +31,7 @@ export const API = {
   // contactus
   ContactUsPost: `${API_BASE_URL}/Contact/api/create-contact`,
   ContactUsGet: `${API_BASE_URL}/Contact/api/contacts`,
+  replyToContact: `${API_BASE_URL}/Contact/api/reply-contact`,
 
   // booking api
   CreateBooking: `${API_BASE_URL}/Booking/api/create-booking`,
