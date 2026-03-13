@@ -790,7 +790,7 @@ const handleDeleteVideo = async (index, video) => {
                     )}
                   </div>
                   
-                  <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
+                  <div className="flex-1 p-8 md:p-10 flex flex-col justify-center min-w-0">
                     <div className="mb-4">
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#085d6b] mb-1">
                         {room.tag || "Premium Stay"}
@@ -804,7 +804,7 @@ const handleDeleteVideo = async (index, video) => {
                       </p>
                     </div>
                     
-                    <p className="text-slate-500 text-base mb-6 font-light leading-relaxed line-clamp-3">
+                    <p className="text-slate-500 text-base mb-6 font-light leading-relaxed line-clamp-3 break-all">
                       {roomDescription}
                     </p>
 

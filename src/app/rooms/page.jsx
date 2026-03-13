@@ -162,7 +162,7 @@ const getApiRooms = async () => {
                       </div>
 
                       {/* Middle: Content */}
-                      <div className="flex-1 space-y-4 py-2">
+                      <div className="flex-1 space-y-4 py-2 min-w-0">
                         <div className="space-y-1">
                           <Badge variant="outline" className="rounded-full px-5 py-1.5 text-[10px] font-black uppercase tracking-widest bg-white border-slate-200 text-slate-900 shadow-sm mb-2">
                             {room.tag || 'Premium Stay'}
@@ -172,7 +172,7 @@ const getApiRooms = async () => {
                           </h3>
                         </div>
                         
-                        <p className="text-foreground/60 text-sm md:text-base leading-relaxed line-clamp-3 md:line-clamp-2">
+                        <p className="text-foreground/60 text-sm md:text-base leading-relaxed line-clamp-3 md:line-clamp-2 break-all">
                           {room.shortDescription}
                         </p>
 
