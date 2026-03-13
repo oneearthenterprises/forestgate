@@ -144,14 +144,14 @@ export default function RoomDetailPage() {
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-8 space-y-12">
               <motion.div {...fadeInUp}>
-                {/* Tab Switcher */}
+                {/* Media Tab Switcher */}
                 <div className="flex items-center gap-4 mb-8">
                   <button
                     onClick={() => setActiveTab('images')}
-                    className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
+                    className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
                       activeTab === 'images'
-                        ? 'bg-slate-900 text-white shadow-xl scale-105'
-                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                        ? 'bg-[#0f172a] text-white shadow-xl scale-105'
+                        : 'bg-[#f8fafc] text-[#64748b] hover:bg-slate-100'
                     }`}
                   >
                     Images
@@ -159,10 +159,10 @@ export default function RoomDetailPage() {
                   {room.videos?.length > 0 && (
                     <button
                       onClick={() => setActiveTab('video')}
-                      className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
+                      className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
                         activeTab === 'video'
-                          ? 'bg-[#5e774a] text-white shadow-xl scale-105'
-                          : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                          ? 'bg-[#0f172a] text-white shadow-xl scale-105'
+                          : 'bg-[#f8fafc] text-[#64748b] hover:bg-slate-100'
                       }`}
                     >
                       Video Tour
@@ -258,7 +258,7 @@ export default function RoomDetailPage() {
 
                 <Button
                   onClick={() => window.location.href = `/booking?roomId=${room._id}`}
-                  className="w-full h-16 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] bg-slate-900 shadow-2xl hover:bg-slate-800 transition-all hover:scale-[1.02]"
+                  className="w-full h-16 rounded-full text-[11px] font-black uppercase tracking-[0.2em] bg-[#0f172a] shadow-2xl hover:bg-black transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Book Now Today
                 </Button>
