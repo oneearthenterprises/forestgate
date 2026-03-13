@@ -164,10 +164,10 @@ const getApiRooms = async () => {
                       {/* Middle: Content */}
                       <div className="flex-1 space-y-4 py-2">
                         <div className="space-y-1">
-                          <Badge variant="outline" className="rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest bg-muted/30">
-                            {room.badge?.label || 'Premium Stay'}
+                          <Badge variant="outline" className="rounded-full px-5 py-1.5 text-[10px] font-black uppercase tracking-widest bg-white border-slate-200 text-slate-900 shadow-sm mb-2">
+                            {room.tag || 'Premium Stay'}
                           </Badge>
-                          <h3 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">
+                          <h3 className="font-headline text-3xl md:text-5xl font-black text-slate-900 leading-[1.1]">
                           {room.roomName}
                           </h3>
                         </div>
@@ -176,14 +176,14 @@ const getApiRooms = async () => {
                           {room.shortDescription}
                         </p>
 
-                        <div className="grid grid-cols-2 gap-x-8 gap-y-4 pt-6 border-t border-dashed">
+                        <div className="grid grid-cols-2 gap-x-12 gap-y-4 pt-8 border-t border-dashed border-slate-200">
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Price per night</p>
-                            <p className="font-headline text-xl font-bold text-primary">₹{room.pricePerNight.toLocaleString()}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Price per night</p>
+                            <p className="font-headline text-3xl font-black text-[#5e774a]">₹{room.pricePerNight.toLocaleString()}</p>
                           </div>
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Key Amenity</p>
-                            <p className="text-sm font-bold truncate">{room.amenities[0] || 'Mountain View'}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Key Amenity</p>
+                            <p className="font-headline text-xl font-bold text-slate-900 truncate">{room.amenities[0] || 'Mountain View'}</p>
                           </div>
                         </div>
                       </div>

@@ -13,6 +13,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -32,6 +39,7 @@ const RoomFormSchema = z.object({
   description: z.string().min(10, 'Short description is required.'),
   longDescription: z.string().min(20, 'Long description is required.'),
   price: z.coerce.number().min(1000, 'Price must be at least 1000.'),
+  tag: z.string().min(1, 'Room tag is required.'),
   amenities: z.array(z.string()).min(1, 'Please list at least one amenity.'),
   images: z.array(z.object({ 
     url: z.string().url({ message: "Please enter a valid URL." }),
@@ -50,6 +58,7 @@ const defaultFormValues = {
   description: '',
   longDescription: '',
   price: 10000,
+  tag: 'Premium Stay',
   amenities: ['Wi-Fi', 'Room Service'],
   images: [],
   videos: [],
@@ -65,6 +74,8 @@ export default function AdminRoomsPage() {
   const [amenityInput, setAmenityInput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCustomTag, setIsCustomTag] = useState(false);
+  const [customTagValue, setCustomTagValue] = useState("");
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
   const formRef = useRef(null);
@@ -119,6 +130,7 @@ useEffect(() => {
       description: editingRoom.shortDescription || '',
       longDescription: editingRoom.fullDescription || '',
       price: editingRoom.pricePerNight || 10000,
+      tag: editingRoom.tag || 'Premium Stay',
       amenities: editingRoom.amenities || [],
       images: (editingRoom.images || []).map((img) => ({
         url: img.url,
@@ -131,6 +143,17 @@ useEffect(() => {
         isNew: false,
       })),
     });
+
+    // Check if the tag is custom
+    const predefinedTags = ['Premium Stay', 'Couple Stay', 'Family Gathering', 'Birthday Party'];
+    if (editingRoom.tag && !predefinedTags.includes(editingRoom.tag)) {
+      setIsCustomTag(true);
+      setCustomTagValue(editingRoom.tag);
+      form.setValue('tag', 'Custom');
+    } else {
+      setIsCustomTag(false);
+      setCustomTagValue("");
+    }
 
     formRef.current?.scrollIntoView({ behavior: 'smooth' });
   } else {
@@ -164,6 +187,7 @@ async function onSubmit(data) {
     formData.append("shortDescription", data.description);
     formData.append("fullDescription", data.longDescription);
     formData.append("pricePerNight", data.price);
+    formData.append("tag", data.tag === 'Custom' ? customTagValue : data.tag);
 
     data.amenities.forEach((item) => {
       formData.append("amenities", item);
@@ -340,6 +364,8 @@ const handleDeleteVideo = async (index, video) => {
   const handleCancelEdit = () => {
     setEditingRoom(null);
     form.reset(defaultFormValues);
+    setIsCustomTag(false);
+    setCustomTagValue("");
     
     // Clean up any blob URLs
     imageFields.forEach(field => {
@@ -427,6 +453,54 @@ const handleDeleteVideo = async (index, video) => {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="tag"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                          Room Tag
+                        </FormLabel>
+                        <Select 
+                          onValueChange={(val) => {
+                            field.onChange(val);
+                            setIsCustomTag(val === 'Custom');
+                          }} 
+                          defaultValue={field.value} 
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="rounded-xl border-slate-100 bg-slate-50/50 h-10">
+                              <SelectValue placeholder="Select a tag" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="rounded-xl border-slate-100 shadow-xl">
+                            <SelectItem value="Premium Stay">Premium Stay</SelectItem>
+                            <SelectItem value="Couple Stay">Couple Stay</SelectItem>
+                            <SelectItem value="Family Gathering">Family Gathering</SelectItem>
+                            <SelectItem value="Birthday Party">Birthday Party</SelectItem>
+                            <SelectItem value="Custom">Custom (Type below)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {isCustomTag && (
+                    <div className="space-y-2">
+                       <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                          Enter Custom Tag
+                        </FormLabel>
+                       <Input 
+                        placeholder="e.g., Honeymoon Suite" 
+                        value={customTagValue}
+                        onChange={(e) => setCustomTagValue(e.target.value)}
+                        className="rounded-xl border-slate-100 bg-slate-50/50" 
+                      />
+                    </div>
+                  )}
                   
                   <FormField
                     control={form.control}
@@ -719,19 +793,31 @@ const handleDeleteVideo = async (index, video) => {
                   <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
                     <div className="mb-4">
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#085d6b] mb-1">
-                        Premium Accommodation
+                        {room.tag || "Premium Stay"}
                       </p>
-                      <h3 className="font-bold text-2xl lg:text-3xl leading-tight text-slate-900 font-headline">
+                      <h3 className="font-headline text-2xl lg:text-4xl font-black text-slate-900 leading-[1.1]">
                         {roomName}
                       </h3>
-                      <p className="text-secondary font-black text-xl mt-2">
-                        ₹{roomPrice.toLocaleString()} <span className="text-[10px] text-slate-400 uppercase tracking-widest">/ Night</span>
+                      <p className="text-secondary font-black text-2xl mt-4 flex items-baseline gap-2">
+                        <span className="text-sm font-black uppercase tracking-tighter text-slate-400">Price per night</span>
+                        ₹{roomPrice.toLocaleString()}
                       </p>
                     </div>
                     
-                    <p className="text-slate-500 text-base mb-8 font-light leading-relaxed line-clamp-3">
+                    <p className="text-slate-500 text-base mb-6 font-light leading-relaxed line-clamp-3">
                       {roomDescription}
                     </p>
+
+                    <div className="flex flex-wrap gap-2 mb-8">
+                       {room.amenities?.map((amenity, idx) => (
+                         <span key={idx} className="px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-bold rounded-full border border-slate-100 uppercase tracking-tighter transition-colors hover:bg-slate-100">
+                           {amenity}
+                         </span>
+                       ))}
+                       {(!room.amenities || room.amenities.length === 0) && (
+                         <span className="text-[10px] text-slate-300 italic uppercase tracking-widest">No amenities listed</span>
+                       )}
+                    </div>
                     
                     <div className="flex flex-wrap gap-3">
                       <Button 
