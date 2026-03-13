@@ -14,6 +14,8 @@ export const API = {
   getAllUsers: `${API_BASE_URL}/Auth/api/users`,
   updateUser: (id) => `${API_BASE_URL}/Auth/api/update-user/${id}`,
   deleteUser: (id) => `${API_BASE_URL}/Auth/api/delete-user/${id}`,
+  getProfile: `${API_BASE_URL}/Auth/api/me`,
+  updateProfile: `${API_BASE_URL}/Auth/api/update-profile`,
 
   // rooms api
   GetAllRooms: `${API_BASE_URL}/Rooms/api/rooms`,
