@@ -150,7 +150,7 @@ export default function RoomDetailPage() {
                     onClick={() => setActiveTab('images')}
                     className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
                       activeTab === 'images'
-                        ? 'bg-[#0f172a] text-white shadow-xl scale-105'
+                        ? 'bg-primary text-white shadow-xl scale-105 hover:bg-secondary'
                         : 'bg-[#f8fafc] text-[#64748b] hover:bg-slate-100'
                     }`}
                   >
@@ -258,7 +258,7 @@ export default function RoomDetailPage() {
 
                 <Button
                   onClick={() => window.location.href = `/booking?roomId=${room._id}`}
-                  className="w-full h-16 rounded-full text-[11px] font-black uppercase tracking-[0.2em] bg-[#0f172a] shadow-2xl hover:bg-black transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full h-16 rounded-full text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Book Now Today
                 </Button>
