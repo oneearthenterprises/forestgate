@@ -12,6 +12,8 @@ export const API = {
 
   adminApi: `${API_BASE_URL}/api/admin/admin-login`,
   getAllUsers: `${API_BASE_URL}/Auth/api/users`,
+  updateUser: (id) => `${API_BASE_URL}/Auth/api/update-user/${id}`,
+  deleteUser: (id) => `${API_BASE_URL}/Auth/api/delete-user/${id}`,
 
   // rooms api
   GetAllRooms: `${API_BASE_URL}/Rooms/api/rooms`,
