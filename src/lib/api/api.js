@@ -48,6 +48,7 @@ export const API = {
   resendOtp: `${API_BASE_URL}/Auth/api/resend-forgot-otp`,
   newsletteremail: `${API_BASE_URL}/api/newsletter/newsletteremail`,
   getnewsletter: `${API_BASE_URL}/api/newsletter/getnewsletter`,
+  sendnewsletter: `${API_BASE_URL}/api/newsletter/send`,
 };
 
 if (typeof window !== "undefined") {
