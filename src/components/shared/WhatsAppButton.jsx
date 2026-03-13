@@ -6,23 +6,35 @@ import { usePathname } from 'next/navigation';
 
 export function WhatsAppButton() {
   const pathname = usePathname();
+  const [hasAutoClicked, setHasAutoClicked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) {
+      const scrollY = window.scrollY;
+      
+      // Update visibility
+      if (scrollY > 100) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
+
+      // Auto-click at 200px
+      if (scrollY > 200 && !hasAutoClicked) {
+        const whatsappButton = document.querySelector('.floating-whatsapp-button');
+        if (whatsappButton) {
+          whatsappButton.click();
+          setHasAutoClicked(true);
+        }
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    // Initial check in case the page is already scrolled on mount
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [hasAutoClicked]);
 
   // Don't show the WhatsApp button on admin dashboard pages
   if (pathname.startsWith('/admin-dashboard')) {
