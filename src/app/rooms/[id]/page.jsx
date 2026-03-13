@@ -26,6 +26,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { Badge } from '@/components/ui/badge';
 import { API } from '@/lib/api/api';
 
 const amenityIcons = {
@@ -49,6 +50,7 @@ const amenityIcons = {
 export default function RoomDetailPage() {
   const params = useParams();
   const [room, setRoom] = useState(null);
+  const [allRooms, setAllRooms] = useState([]);
   const [activeTab, setActiveTab] = useState('images');
 
   useEffect(() => {
@@ -62,8 +64,19 @@ export default function RoomDetailPage() {
       }
     };
 
+    const getAllRooms = async () => {
+      try {
+        const response = await fetch(API.GetAllRooms);
+        const data = await response.json();
+        setAllRooms(data.rooms || []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     if (params?.id) {
       getRoom();
+      getAllRooms();
     }
   }, [params]);
 
@@ -130,7 +143,7 @@ export default function RoomDetailPage() {
         breadcrumbLabel="Room Details"
       />
 
-      <section className="pt-16">
+      <section className="pt-16 pb-24">
         <div className="container mx-auto px-4">
           <motion.div {...fadeInUp} className="mb-12">
             <Button asChild variant="ghost" className="mb-8 hover:bg-muted group">
@@ -141,7 +154,9 @@ export default function RoomDetailPage() {
             </Button>
           </motion.div>
 
+          {/* Main Grid: Media/About | Right: Amenities */}
           <div className="grid lg:grid-cols-12 gap-12">
+            {/* Left Column */}
             <div className="lg:col-span-8 space-y-12">
               <motion.div {...fadeInUp}>
                 {/* Media Tab Switcher */}
@@ -161,7 +176,7 @@ export default function RoomDetailPage() {
                       onClick={() => setActiveTab('video')}
                       className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
                         activeTab === 'video'
-                          ? 'bg-[#0f172a] text-white shadow-xl scale-105'
+                          ? 'bg-primary text-white shadow-xl scale-105 hover:bg-secondary'
                           : 'bg-[#f8fafc] text-[#64748b] hover:bg-slate-100'
                       }`}
                     >
@@ -233,6 +248,7 @@ export default function RoomDetailPage() {
               </motion.div>
             </div>
 
+            {/* Right Column (Sidebar) */}
             <div className="lg:col-span-4">
               <motion.div {...fadeInUp} className="sticky top-20 space-y-8">
                 <h3 className="text-3xl font-headline font-black text-slate-900 tracking-tight">Premium Amenities</h3>
@@ -267,6 +283,87 @@ export default function RoomDetailPage() {
           </div>
         </div>
       </section>
+
+      {/* Similar Properties Slider */}
+      {allRooms.length > 1 && (
+        <section className="py-24 bg-slate-50/50">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+              <div className="max-w-2xl">
+                <p className="font-kaushan text-[#ffae3e] text-2xl mb-2">Discover More</p>
+                <h2 className="text-4xl md:text-5xl font-headline font-black text-slate-900 tracking-tight">
+                  Similar Accommodations
+                </h2>
+              </div>
+              <Button asChild variant="outline" className="rounded-full px-8 h-12 border-slate-200 hover:bg-white transition-all hover:scale-[1.05]">
+                <Link href="/rooms">View All Rooms</Link>
+              </Button>
+            </div>
+
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full relative"
+            >
+              <CarouselContent className="-ml-4">
+                {allRooms
+                  .filter((r) => r._id !== room._id)
+                  .map((simRoom) => (
+                    <CarouselItem key={simRoom._id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                      <Link href={`/rooms/${simRoom._id}`} className="group block h-full">
+                        <div className="bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:border-primary/20 hover:-translate-y-2 h-full flex flex-col">
+                          <div className="relative aspect-[4/3] overflow-hidden">
+                            <Image
+                              src={simRoom.images?.[0]?.url || '/fallback.jpg'}
+                              alt={simRoom.roomName}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                            <div className="absolute top-6 left-6">
+                              <span className="px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/90 backdrop-blur-md text-slate-900 shadow-sm">
+                                {simRoom.tag || 'Premium Stay'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="p-8 flex-1 flex flex-col">
+                            <h3 className="font-headline text-2xl font-black text-slate-900 mb-3 group-hover:text-primary transition-colors">
+                              {simRoom.roomName}
+                            </h3>
+                            <p className="text-slate-500 text-sm line-clamp-2 mb-4 font-light leading-relaxed">
+                              {simRoom.shortDescription}
+                            </p>
+                            <div className="flex flex-wrap gap-2 mb-6">
+                              {simRoom.amenities?.slice(0, 3).map((amenity, idx) => (
+                                <Badge key={idx} variant="secondary" className="rounded-full px-3 py-0.5 text-[9px] font-black uppercase tracking-wider bg-secondary/10 text-secondary hover:bg-secondary/20 border-none shadow-none transition-colors">
+                                  {amenity}
+                                </Badge>
+                              ))}
+                            </div>
+                            <div className="flex items-center justify-between pt-6 border-t border-dashed border-slate-100 mt-auto">
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Per Night</p>
+                                <p className="text-2xl font-black text-primary">₹{simRoom.pricePerNight?.toLocaleString()}</p>
+                              </div>
+                              <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:scale-110">
+                                <ArrowLeft className="w-5 h-5 rotate-180" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </CarouselItem>
+                  ))}
+              </CarouselContent>
+              <div className="flex items-center justify-center gap-4 mt-12">
+                <CarouselPrevious className="relative static translate-y-0 translate-x-0 w-12 h-12 bg-white shadow-xl border-none hover:bg-primary hover:text-white transition-all disabled:opacity-30" />
+                <CarouselNext className="relative static translate-y-0 translate-x-0 w-12 h-12 bg-white shadow-xl border-none hover:bg-primary hover:text-white transition-all disabled:opacity-30" />
+              </div>
+            </Carousel>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

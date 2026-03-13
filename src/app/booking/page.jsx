@@ -212,10 +212,10 @@ useEffect(() => {
   getRoom();
 }, [roomId]);
 const totalPrice = (room?.pricePerNight || 0) * numNights;
-if (!room) return null;
+if (!room) return <BookingSkeleton />;
 
   return (
-    <div className="pt-24 pb-16 bg-background">
+    <div className="pt-24 pb-16 bg-[#fcfcfc]">
       <section className="pt-8">
         <div className="container mx-auto px-4">
           {/* Premium Creative Gallery Grid */}
@@ -714,15 +714,78 @@ if (!room) return null;
   );
 }
 
+const BookingSkeleton = () => (
+  <div className="bg-[#fcfcfc] min-h-screen animate-pulse">
+    {/* Page Header/Hero Skeleton */}
+    <section className="relative h-[40vh] min-h-[400px] w-full bg-gray-200 overflow-hidden">
+      <div className="absolute inset-0 bg-gray-300"></div>
+      <div className="absolute inset-0 bg-gray-400/20 z-10"></div>
+      <div className="container mx-auto px-4 h-full relative z-20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-16 w-[300px] md:w-[500px] bg-gray-300/50 rounded-2xl mx-auto mb-6"></div>
+          <div className="h-6 w-[200px] bg-gray-300/30 rounded-full mx-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <div className="container mx-auto px-4 py-16">
+      <div className="grid lg:grid-cols-12 gap-12">
+        {/* Left Column: Media & Form */}
+        <div className="lg:col-span-8 space-y-12">
+          {/* Gallery Pulse */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-[500px]">
+            <div className="lg:col-span-8 bg-gray-200 rounded-[2rem] lg:rounded-[3rem] h-[300px] lg:h-full"></div>
+            <div className="lg:col-span-4 grid grid-cols-3 lg:flex lg:flex-col gap-3 md:gap-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="aspect-square lg:flex-1 bg-gray-200 rounded-2xl lg:rounded-[2.5rem]"></div>
+              ))}
+            </div>
+          </div>
+
+          {/* Form Card Skeleton */}
+          <div className="bg-gray-100/50 rounded-[3rem] p-10 space-y-10 border border-gray-100">
+            <div className="space-y-4">
+              <div className="h-10 w-1/3 bg-gray-200 rounded-xl"></div>
+              <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-16 bg-gray-200 rounded-2xl"></div>
+              ))}
+            </div>
+            <div className="h-16 bg-gray-200 rounded-full w-full mt-8"></div>
+          </div>
+        </div>
+
+        {/* Right Column: Sidebar */}
+        <div className="lg:col-span-4">
+          <div className="sticky top-24 bg-white rounded-[3.5rem] overflow-hidden border border-gray-100 shadow-sm transition-all">
+            <div className="bg-gray-300/80 h-32"></div>
+            <div className="p-10 space-y-8">
+              <div className="space-y-6">
+                <div className="h-8 w-2/3 bg-gray-200 rounded-lg"></div>
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex justify-between border-b border-gray-100 pb-4">
+                    <div className="h-3 w-16 bg-gray-200 rounded-full"></div>
+                    <div className="h-3 w-24 bg-gray-200 rounded-full"></div>
+                  </div>
+                ))}
+              </div>
+              <div className="pt-6 border-t border-gray-100 flex justify-between items-end">
+                <div className="h-4 w-24 bg-gray-200 rounded-full"></div>
+                <div className="h-12 w-32 bg-gray-300 rounded-2xl"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function BookingPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary"></div>
-        </div>
-      }
-    >
+    <Suspense fallback={<BookingSkeleton />}>
       <BookingPageContent />
     </Suspense>
   );
