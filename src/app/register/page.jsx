@@ -3,10 +3,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { MountainSnow, ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,9 +35,11 @@ const RegisterFormSchema = z.object({
   rememberMe: z.boolean().optional(),
 });
 
-export default function RegisterPage() {
+function RegisterForm() {
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/my-bookings";
   const { register, loading } = useAuthContext();
   const heroImage = PlaceHolderImages.find(
     (img) => img.id === "gallery-pool-1",
@@ -53,6 +56,17 @@ export default function RegisterPage() {
     },
   });
 
+  // Pre-fill fields from saved booking data
+  useEffect(() => {
+    const savedData = sessionStorage.getItem("tempBookingData");
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      if (parsed.fullName) form.setValue("name", parsed.fullName);
+      if (parsed.email) form.setValue("email", parsed.email);
+      if (parsed.phone) form.setValue("phone", parsed.phone);
+    }
+  }, [form]);
+
   const onRegisterSubmit = async (values) => {
     try {
       await register(values);
@@ -62,7 +76,7 @@ export default function RegisterPage() {
         description: "Welcome to The Forest Gate. Please login to continue.",
       });
 
-      router.push("/login");
+      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
     } catch (err) {
       toast({
         title: "Registration failed",
@@ -71,7 +85,7 @@ export default function RegisterPage() {
       });
       if (err.message === "User already exists") {
         setTimeout(() => {
-          router.push("/login");
+          router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
         }, 2000);
       }
     }
@@ -237,7 +251,7 @@ export default function RegisterPage() {
               <p className="text-sm text-muted-foreground">
                 Already have an account?{" "}
                 <Link
-                  href="/login"
+                  href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
                   className="text-primary font-bold hover:underline"
                 >
                   Log In
@@ -306,3 +320,12 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
+      <RegisterForm />
+    </Suspense>
+  );
+}
+

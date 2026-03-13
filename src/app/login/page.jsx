@@ -3,10 +3,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { MountainSnow, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,16 +32,29 @@ const LoginFormSchema = z.object({
     })
 });
 
-export default function LoginPage() {
+function LoginForm() {
     const { login } = useAuthContext();
     const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl") || "/my-bookings";
     const heroImage = PlaceHolderImages.find(img => img.id === 'gallery-nature-1');
 
     const form = useForm({
         resolver: zodResolver(LoginFormSchema),
         defaultValues: { email: "", password: "" },
     });
+
+    // Pre-fill email from saved booking data
+    useEffect(() => {
+        const savedData = sessionStorage.getItem("tempBookingData");
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            if (parsed.email) {
+                form.setValue("email", parsed.email);
+            }
+        }
+    }, [form]);
 
     const onLoginSubmit = async (values) => {
         try {
@@ -51,7 +65,7 @@ export default function LoginPage() {
                 description: "Welcome back to The Forest Gate.",
             });
 
-            router.push("/my-bookings");
+            router.push(callbackUrl);
         } catch (err) {
             toast({
                 variant: "destructive",
@@ -145,7 +159,7 @@ export default function LoginPage() {
                         <div className="mt-8 text-center">
                             <p className="text-sm text-muted-foreground">
                                 Don't have an account?{" "}
-                                <Link href="/register" className="text-primary font-bold hover:underline">
+                                <Link href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-primary font-bold hover:underline">
                                     Sign Up
                                 </Link>
                             </p>
@@ -189,5 +203,13 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
+            <LoginForm />
+        </Suspense>
     );
 }

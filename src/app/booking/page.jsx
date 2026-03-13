@@ -59,6 +59,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { API } from "@/lib/api/api";
+import { useAuthContext } from "@/context/AuthContext";
 
 const BookingFormSchema = z
   .object({
@@ -79,6 +80,7 @@ const BookingFormSchema = z
 
 
 function BookingPageContent() {
+  const { user } = useAuthContext();
   const searchParams = useSearchParams();
   const roomId = searchParams.get("roomId");
   const router = useRouter();
@@ -99,21 +101,8 @@ function BookingPageContent() {
         : null,
     [],
   );
-
   const plugins = useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
   const carouselOpts = useMemo(() => ({ loop: true }), []);
-
-  
-
-  const searchCheckIn = searchParams.get("checkIn");
-  const searchCheckOut = searchParams.get("checkOut");
-  const searchGuests = searchParams.get("guests");
-
-  const defaultCheckIn = searchCheckIn ? parseISO(searchCheckIn) : new Date();
-  const defaultCheckOut = searchCheckOut
-    ? parseISO(searchCheckOut)
-    : addDays(defaultCheckIn, 1);
-  const defaultAdults = searchGuests || "2";
 
   const form = useForm({
     resolver: zodResolver(BookingFormSchema),
@@ -121,15 +110,30 @@ function BookingPageContent() {
       fullName: "",
       email: "",
       phone: "",
-      checkIn: defaultCheckIn,
-      checkOut: defaultCheckOut,
-      adults: defaultAdults,
+      checkIn: searchParams.get("checkIn") ? parseISO(searchParams.get("checkIn")) : new Date(),
+      checkOut: searchParams.get("checkOut") ? parseISO(searchParams.get("checkOut")) : addDays(new Date(), 1),
+      adults: searchParams.get("guests") || "2",
       children: "0",
     },
   });
 
+  // Restore data from sessionStorage on mount
   useEffect(() => {
-    // Scroll the form into view when the component mounts
+    const savedData = sessionStorage.getItem("tempBookingData");
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      form.reset({
+        ...parsed,
+        checkIn: new Date(parsed.checkIn),
+        checkOut: new Date(parsed.checkOut),
+      });
+      sessionStorage.removeItem("tempBookingData");
+      toast({
+        title: "Details Restored",
+        description: "We've restored your booking details.",
+      });
+    }
+
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
@@ -146,9 +150,25 @@ function BookingPageContent() {
   const numChildren = children ? parseInt(children) : 0;
 
   async function onSubmit(data) {
+    if (!user) {
+      sessionStorage.setItem("tempBookingData", JSON.stringify({
+        ...data,
+        checkIn: data.checkIn.toISOString(),
+        checkOut: data.checkOut.toISOString(),
+      }));
+      
+      const callbackUrl = window.location.pathname + window.location.search;
+      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+      toast({
+        title: "Login Required",
+        description: "Please login to complete your reservation. Your details have been saved.",
+      });
+      return;
+    }
+
     const bookingData = {
       bookingType: room.fullName,
-       roomName: room.roomName,
+      roomName: room.roomName,
       ...data,
       totalPrice,
       guests: numAdults + numChildren,
@@ -166,9 +186,10 @@ function BookingPageContent() {
     params.append("checkOut", bookingData.checkOut);
     params.append("guests", bookingData.guests.toString());
     params.append("totalPrice", bookingData.totalPrice.toString());
-params.append("roomName", bookingData.roomName);
-params.append("numAdults", bookingData.numAdults);
-params.append("numChildren", bookingData.numChildren);
+    params.append("roomName", bookingData.roomName);
+    params.append("numAdults", bookingData.numAdults);
+    params.append("numChildren", bookingData.numChildren);
+
     toast({
       title: "Processing Payment...",
       description: "Please wait while we confirm your booking.",
@@ -186,31 +207,31 @@ params.append("numChildren", bookingData.numChildren);
 
   const [room, setRoom] = useState(null);
 
-useEffect(() => {
-  const getRoom = async () => {
-    try {
-      if (roomId) {
-        const response = await fetch(API.getRoomById(roomId));
-        const data = await response.json();
+  useEffect(() => {
+    const getRoom = async () => {
+      try {
+        if (roomId) {
+          const response = await fetch(API.getRoomById(roomId));
+          const data = await response.json();
 
-        if (data?.room) {
-          setRoom(data.room);
-        }
-      } else {
-        const response = await fetch(API.GetAllRooms);
-        const data = await response.json();
+          if (data?.room) {
+            setRoom(data.room);
+          }
+        } else {
+          const response = await fetch(API.GetAllRooms);
+          const data = await response.json();
 
-        if (data?.rooms?.length > 0) {
-          setRoom(data.rooms[0]);
+          if (data?.rooms?.length > 0) {
+            setRoom(data.rooms[0]);
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    };
 
-  getRoom();
-}, [roomId]);
+    getRoom();
+  }, [roomId]);
 const totalPrice = (room?.pricePerNight || 0) * numNights;
 if (!room) return <BookingSkeleton />;
 
