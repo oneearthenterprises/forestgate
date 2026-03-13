@@ -9,8 +9,8 @@ export const AuthContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [userToken, setUserToken] = useState(null);
-const [adminToken, setAdminToken] = useState(null);
-const [adminEmail, setAdminEmail] = useState(null);
+  const [adminToken, setAdminToken] = useState(null);
+  const [adminEmail, setAdminEmail] = useState(null);
 
   useEffect(() => {
     try {
@@ -24,9 +24,9 @@ const [adminEmail, setAdminEmail] = useState(null);
 
       const storedAdminToken = localStorage.getItem("adminToken");
 
-if (storedAdminToken) {
-  setAdminToken(storedAdminToken);
-}
+      if (storedAdminToken) {
+        setAdminToken(storedAdminToken);
+      }
     } catch (err) {
       localStorage.removeItem("user");
       localStorage.removeItem("userToken");
@@ -55,7 +55,7 @@ if (storedAdminToken) {
       setUserToken(data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("userToken", data.token);
-    document.cookie = `user-auth=${data.token}; path=/; max-age=86400; samesite=lax`;
+      document.cookie = `user-auth=${data.token}; path=/; max-age=86400; samesite=lax`;
 
       return data;
     } finally {
@@ -105,59 +105,58 @@ if (storedAdminToken) {
       localStorage.removeItem("userToken");
       setLoading(false);
       setAdminToken(null);
-localStorage.removeItem("adminToken");
-document.cookie = "admin-auth=; path=/; max-age=0;";
-document.cookie = "user-auth=; path=/; max-age=0;";
+      localStorage.removeItem("adminToken");
+      document.cookie = "admin-auth=; path=/; max-age=0;";
+      document.cookie = "user-auth=; path=/; max-age=0;";
     }
   };
 
-const adminlogin = async (credentials) => {
-  try {
-    setLoading(true);
+  const adminlogin = async (credentials) => {
+    try {
+      setLoading(true);
 
-    const res = await fetch(API.adminApi, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+      const res = await fetch(API.adminApi, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
-      throw new Error(data.message || "Admin login failed");
+      if (!res.ok) {
+        throw new Error(data.message || "Admin login failed");
+      }
+
+      setAdminToken(data.token);
+      setAdminEmail(credentials.email);
+
+      document.cookie = `admin-auth=${data.token}; path=/; max-age=86400; samesite=lax`;
+
+      localStorage.setItem("adminToken", data.token);
+      localStorage.setItem("adminEmail", credentials.email);
+
+      return data;
+    } finally {
+      setLoading(false);
     }
-
-    setAdminToken(data.token);
-    setAdminEmail(credentials.email);
-
-    document.cookie = `admin-auth=${data.token}; path=/; max-age=86400; samesite=lax`;
-
-    localStorage.setItem("adminToken", data.token);
-    localStorage.setItem("adminEmail", credentials.email);
-
-
-    return data;
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <AuthContext.Provider
-  value={{
-    user,
-    userToken,
-    adminToken,
-    loading,
-    login,
-    adminEmail,
-    register,
-    logout,
-    adminlogin,
-  }}
->
+      value={{
+        user,
+        userToken,
+        adminToken,
+        loading,
+        login,
+        adminEmail,
+        register,
+        logout,
+        adminlogin,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

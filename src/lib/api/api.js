@@ -40,6 +40,14 @@ export const API = {
     `${API_BASE_URL}/Booking/api/booking/${bookingId}`,
   CancelBooking: (bookingId) =>
     `${API_BASE_URL}/Booking/api/cancel-booking/${bookingId}`,
+
+  // forgate password api
+  forgotPassword: `${API_BASE_URL}/Auth/api/forgot-password`,
+  verifyOtp: `${API_BASE_URL}/Auth/api/verify-otp`,
+  resetPassword: `${API_BASE_URL}/Auth/api/reset-password`,
+  resendOtp: `${API_BASE_URL}/Auth/api/resend-forgot-otp`,
+  newsletteremail: `${API_BASE_URL}/api/newsletter/newsletteremail`,
+  getnewsletter: `${API_BASE_URL}/api/newsletter/getnewsletter`,
 };
 
 if (typeof window !== "undefined") {

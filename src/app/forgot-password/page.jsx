@@ -26,7 +26,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-
+import { API } from "@/lib/api/api";
 const EmailSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
 });
@@ -66,37 +66,142 @@ export default function ForgotPasswordPage() {
     defaultValues: { password: "", confirmPassword: "" },
   });
 
-  const onRequestOtp = async (values) => {
+const onRequestOtp = async (values) => {
+  try {
+    const res = await fetch(API.forgotPassword, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: values.email,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
     setUserEmail(values.email);
     setStep("VERIFY_OTP");
-    toast({
-      title: "Code Sent (Demo Mode)",
-      description: "A dummy verification code has been 'sent' to your email.",
-    });
-  };
 
-  const onVerifyOtp = async () => {
+    toast({
+      title: "Code Sent",
+      description: data.message,
+    });
+
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
+  }
+};
+
+const onVerifyOtp = async (values) => {
+  try {
+    const res = await fetch(API.verifyOtp, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: userEmail,
+        otp: values.otp,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
     setStep("RESET_PASSWORD");
-    toast({
-      title: "Identity Verified",
-      description: "You can now reset your password (demo flow).",
-    });
-  };
 
-  const onResetPassword = async () => {
     toast({
-      title: "Password Updated",
-      description: "Your password has been 'reset' successfully. Please login.",
+      title: "OTP Verified",
+      description: data.message,
     });
+
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
+  }
+};
+
+const onResetPassword = async (values) => {
+  try {
+    const res = await fetch(API.resetPassword, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: userEmail,
+        newPassword: values.password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
+    toast({
+      title: "Success",
+      description: data.message,
+    });
+
     router.push("/login");
-  };
 
-  const handleResendOtp = () => {
+  } catch (error) {
     toast({
-      title: "Code Resent",
-      description: "A new verification code has been 'sent' to your email.",
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
     });
-  };
+  }
+};
+
+ const handleResendOtp = async () => {
+  try {
+    const res = await fetch(API.resendOtp, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: userEmail,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
+    toast({
+      title: "OTP Resent",
+      description: data.message,
+    });
+
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
+  }
+};
 
   return (
     <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">
