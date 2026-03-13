@@ -214,8 +214,10 @@ const { logout ,adminEmail  } = useAuthContext();
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                             <Avatar className="h-9 w-9 border border-border">
-                                <AvatarImage src="https://i.pravatar.cc/150?u=admin" />
-                                <AvatarFallback>A</AvatarFallback>
+                                <AvatarImage src={useAuthContext().user?.profileImage} />
+                                <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">
+                                    {useAuthContext().user?.name?.charAt(0) || adminEmail?.charAt(0) || "A"}
+                                </AvatarFallback>
                             </Avatar>
                         </Button>
                     </DropdownMenuTrigger>

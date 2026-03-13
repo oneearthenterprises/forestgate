@@ -13,26 +13,50 @@ export const AuthContextProvider = ({ children }) => {
   const [adminEmail, setAdminEmail] = useState(null);
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      const storedToken = localStorage.getItem("userToken");
+    const initializeAuth = async () => {
+        try {
+            const storedUser = localStorage.getItem("user");
+            const storedUserToken = localStorage.getItem("userToken");
+            const storedAdminToken = localStorage.getItem("adminToken");
+            const storedAdminEmail = localStorage.getItem("adminEmail");
 
-      if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
-        setUserToken(storedToken);
-      }
+            if (storedAdminToken) {
+                setAdminToken(storedAdminToken);
+                setAdminEmail(storedAdminEmail);
+                
+                try {
+                    const res = await fetch(API.getProfile, {
+                        headers: { Authorization: `Bearer ${storedAdminToken}` }
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.user) setUser(data.user);
+                } catch (e) { console.error("Admin profile refresh failed", e); }
+            } else if (storedUser && storedUserToken) {
+                setUser(JSON.parse(storedUser));
+                setUserToken(storedUserToken);
+                
+                try {
+                    const res = await fetch(API.getProfile, {
+                        headers: { Authorization: `Bearer ${storedUserToken}` }
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.user) {
+                        setUser(data.user);
+                        localStorage.setItem("user", JSON.stringify(data.user));
+                    }
+                } catch (e) { console.error("User profile refresh failed", e); }
+            }
+        } catch (err) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("adminToken");
+            localStorage.removeItem("adminEmail");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      const storedAdminToken = localStorage.getItem("adminToken");
-
-      if (storedAdminToken) {
-        setAdminToken(storedAdminToken);
-      }
-    } catch (err) {
-      localStorage.removeItem("user");
-      localStorage.removeItem("userToken");
-    } finally {
-      setLoading(false);
-    }
+    initializeAuth();
   }, []);
 
   const login = async (credentials) => {
@@ -147,6 +171,7 @@ export const AuthContextProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         userToken,
         adminToken,
         loading,

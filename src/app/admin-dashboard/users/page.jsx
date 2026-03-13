@@ -89,20 +89,56 @@ export default function UsersPage() {
     getAllUsers();
   }, []);
 
-  // Auto-calculate total members
+  // Auto-calculate counts and total members based on dynamic name lists
   useEffect(() => {
-    if (isSheetOpen) {
-       const adults = parseInt(editData.totalAdults) || 0;
-       const children = parseInt(editData.totalChildren) || 0;
-       const total = adults + children;
-       if (editData.totalMembers !== total) {
-           setEditData(prev => ({ ...prev, totalMembers: total }));
-       }
+    if (isSheetOpen && editData.bookingPersonName && editData.childrenNames) {
+        const adultCount = editData.bookingPersonName.length;
+        const childCount = editData.childrenNames.length;
+        const total = adultCount + childCount;
+        
+        if (editData.totalAdults !== adultCount || 
+            editData.totalChildren !== childCount || 
+            editData.totalMembers !== total) {
+            setEditData(prev => ({ 
+                ...prev, 
+                totalAdults: adultCount,
+                totalChildren: childCount,
+                totalMembers: total 
+            }));
+        }
     }
-  }, [editData.totalAdults, editData.totalChildren, isSheetOpen]);
+  }, [editData.bookingPersonName, editData.childrenNames, isSheetOpen]);
 
   const handleRowClick = (user) => {
     setSelectedUser(user);
+    
+    // Improved parsing for Name (Gender, Age) with smart splitting
+    const parseMember = (str) => {
+        if (!str) return { name: "", gender: "", age: "" };
+        // Matches "Name (Gender, Age)" or just "Name"
+        const match = str.match(/^(.*?)\s*\((.*?),\s*(.*?)\)$/);
+        if (match) {
+            return { 
+                name: match[1].trim(), 
+                gender: match[2] === 'N/A' ? '' : match[2].trim(), 
+                age: match[3] === 'N/A' ? '' : match[3].trim() 
+            };
+        }
+        return { name: str.trim(), gender: "", age: "" };
+    };
+
+    // Split by comma only if NOT inside parentheses
+    const smartSplit = (str) => {
+        if (!str) return [];
+        return str.split(/,\s*(?![^()]*\))/).filter(s => s.trim() !== "");
+    };
+
+    const kidsData = smartSplit(user.childrenNames);
+    const partnersData = smartSplit(user.bookingPersonName);
+
+    const kids = kidsData.length > 0 ? kidsData.map(parseMember) : [{ name: "", gender: "", age: "" }];
+    const partners = partnersData.length > 0 ? partnersData.map(parseMember) : [{ name: "", gender: "", age: "" }];
+
     setEditData({
         name: user.name || "",
         email: user.email || "",
@@ -113,10 +149,10 @@ export default function UsersPage() {
         address: user.address || "",
         alternatePhone: user.alternatePhone || "",
         // Booking
-        bookingPersonName: user.bookingPersonName || "",
+        bookingPersonName: partners, 
         totalAdults: user.totalAdults || 0,
         totalChildren: user.totalChildren || 0,
-        childrenNames: user.childrenNames || "",
+        childrenNames: kids,
         totalMembers: user.totalMembers || 0,
         travelDate: user.travelDate || "",
         returnDate: user.returnDate || "",
@@ -134,12 +170,32 @@ export default function UsersPage() {
   const handleUpdateUser = async () => {
     try {
       setIsUpdating(true);
+      
+      // Serialize back to Name (Gender, Age)
+      const serializeMember = (m) => {
+          if (!m.name) return "";
+          if (!m.gender && !m.age) return m.name;
+          return `${m.name} (${m.gender || 'N/A'}, ${m.age || 'N/A'})`;
+      };
+
+      const finalData = {
+          ...editData,
+          bookingPersonName: editData.bookingPersonName
+            .filter(n => n.name.trim() !== "")
+            .map(serializeMember)
+            .join(', '),
+          childrenNames: editData.childrenNames
+            .filter(n => n.name.trim() !== "")
+            .map(serializeMember)
+            .join(', ')
+      };
+
       const response = await fetch(API.updateUser(selectedUser._id), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(editData),
+        body: JSON.stringify(finalData),
       });
 
       const data = await response.json();
@@ -224,7 +280,9 @@ export default function UsersPage() {
                        <Skeleton className="h-3 w-[200px]" />
                     </div>
                   </div>
-                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-[60px]" />
+                  <Skeleton className="h-4 w-[80px]" />
                   <Skeleton className="h-4 w-[100px]" />
                 </div>
               ))}
@@ -234,6 +292,15 @@ export default function UsersPage() {
       </div>
     );
   }
+
+  const getStatusColor = (status) => {
+    switch (status) {
+        case 'Confirmed': return 'bg-green-100 text-green-700 border-green-200';
+        case 'Pending': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+        case 'Cancelled': return 'bg-red-100 text-red-700 border-red-200';
+        default: return 'bg-gray-100 text-gray-600 border-gray-200';
+    }
+  };
 
   return (
     <div className="space-y-6 text-[#1a1a1a]">
@@ -254,8 +321,10 @@ export default function UsersPage() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[300px] h-12">User</TableHead>
+                  <TableHead className="w-[280px] h-12">User</TableHead>
                   <TableHead className="h-12">Phone Number</TableHead>
+                  <TableHead className="h-12 text-center">Members</TableHead>
+                  <TableHead className="h-12 text-center">Booking Status</TableHead>
                   <TableHead className="text-right h-12 pr-6">Joined Date</TableHead>
                 </TableRow>
               </TableHeader>
@@ -284,6 +353,16 @@ export default function UsersPage() {
                       <TableCell>
                         <span className="text-sm font-medium text-muted-foreground">{user.phone}</span>
                       </TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className="font-bold text-primary bg-primary/5">
+                            {user.totalMembers || 0}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge className={`${getStatusColor(user.bookingStatus)} border`}>
+                            {user.bookingStatus || 'N/A'}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-right pr-6">
                         <span className="text-sm text-muted-foreground">
                             {user.createdAt ? format(parseISO(user.createdAt), 'MMM dd, yyyy') : '-'}
@@ -293,7 +372,7 @@ export default function UsersPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-20 text-muted-foreground">
+                    <TableCell colSpan={5} className="text-center py-20 text-muted-foreground">
                       No users found in the database.
                     </TableCell>
                   </TableRow>
@@ -363,43 +442,184 @@ export default function UsersPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2 col-span-2">
-                            <Label htmlFor="bookingPersonName">Booking Person Name</Label>
-                            <Input 
-                                id="bookingPersonName" 
-                                className="border-gray-200"
-                                value={editData.bookingPersonName} 
-                                onChange={(e) => setEditData({...editData, bookingPersonName: e.target.value})}
-                            />
+                            <Label className="flex items-center justify-between pointer-events-none">
+                                Booking Person Detail(s)
+                            </Label>
+                            <div className="space-y-4 pt-2">
+                                {editData.bookingPersonName?.map((person, index) => (
+                                    <div key={index} className="space-y-3 p-4 bg-muted/30 rounded-lg relative group border border-dashed border-gray-200">
+                                        <div className="grid grid-cols-6 gap-3 pt-4">
+                                            <div className="col-span-3 space-y-1.5">
+                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Name</Label>
+                                                <Input 
+                                                    className="border-gray-200 h-9 text-sm"
+                                                    value={person.name} 
+                                                    placeholder="Person Name"
+                                                    onChange={(e) => {
+                                                        const newNames = [...editData.bookingPersonName];
+                                                        newNames[index] = { ...person, name: e.target.value };
+                                                        setEditData({...editData, bookingPersonName: newNames});
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="col-span-2 space-y-1.5">
+                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Gender</Label>
+                                                <Select 
+                                                    value={person.gender} 
+                                                    onValueChange={(val) => {
+                                                        const newNames = [...editData.bookingPersonName];
+                                                        newNames[index] = { ...person, gender: val };
+                                                        setEditData({...editData, bookingPersonName: newNames});
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="h-9 text-sm">
+                                                        <SelectValue placeholder="G" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="Male">M</SelectItem>
+                                                        <SelectItem value="Female">F</SelectItem>
+                                                        <SelectItem value="Other">O</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="col-span-1 space-y-1.5">
+                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Age</Label>
+                                                <Input 
+                                                    className="border-gray-200 h-9 text-sm px-1 text-center"
+                                                    value={person.age} 
+                                                    placeholder="Age"
+                                                    onChange={(e) => {
+                                                        const newNames = [...editData.bookingPersonName];
+                                                        newNames[index] = { ...person, age: e.target.value };
+                                                        setEditData({...editData, bookingPersonName: newNames});
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {editData.bookingPersonName.length > 1 && (
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="absolute top-1 right-1 h-7 w-7 text-muted-foreground hover:text-destructive"
+                                                onClick={() => {
+                                                    const newNames = editData.bookingPersonName.filter((_, i) => i !== index);
+                                                    setEditData({...editData, bookingPersonName: newNames});
+                                                }}
+                                            >
+                                                ✕
+                                            </Button>
+                                        )}
+                                        <div className="absolute top-1 left-3 text-[10px] font-bold text-muted-foreground/50">PERSON #{index + 1}</div>
+                                    </div>
+                                ))}
+                                <Button 
+                                    variant="outline" 
+                                    className="w-full h-9 border-dashed text-primary font-bold hover:bg-primary/5 gap-2"
+                                    onClick={() => setEditData({...editData, bookingPersonName: [...editData.bookingPersonName, { name: "", gender: "", age: "" }]})}
+                                >
+                                    + Add Person
+                                </Button>
+                            </div>
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="totalAdults">Total Adults</Label>
                             <Input 
                                 id="totalAdults" 
-                                type="number"
-                                className="border-gray-200"
+                                readOnly
+                                className="bg-muted border-gray-200 font-medium"
                                 value={editData.totalAdults} 
-                                onChange={(e) => setEditData({...editData, totalAdults: e.target.value})}
                             />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="totalChildren">Total Children</Label>
                             <Input 
                                 id="totalChildren" 
-                                type="number"
-                                className="border-gray-200"
+                                readOnly
+                                className="bg-muted border-gray-200 font-medium"
                                 value={editData.totalChildren} 
-                                onChange={(e) => setEditData({...editData, totalChildren: e.target.value})}
                             />
                         </div>
                         <div className="grid gap-2 col-span-2">
-                            <Label htmlFor="childrenNames">Children Names (Comma Separated)</Label>
-                            <Input 
-                                id="childrenNames" 
-                                className="border-gray-200"
-                                placeholder="E.g. John, Sarah"
-                                value={editData.childrenNames} 
-                                onChange={(e) => setEditData({...editData, childrenNames: e.target.value})}
-                            />
+                            <Label className="flex items-center justify-between pointer-events-none">
+                                Children Detail(s)
+                            </Label>
+                            <div className="space-y-4 pt-2">
+                                {editData.childrenNames?.map((child, index) => (
+                                    <div key={index} className="space-y-3 p-4 bg-muted/30 rounded-lg relative group border border-dashed border-gray-200">
+                                        <div className="grid grid-cols-6 gap-3 pt-4">
+                                            <div className="col-span-3 space-y-1.5">
+                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Name</Label>
+                                                <Input 
+                                                    className="border-gray-200 h-9 text-sm"
+                                                    value={child.name} 
+                                                    placeholder="Child Name"
+                                                    onChange={(e) => {
+                                                        const newNames = [...editData.childrenNames];
+                                                        newNames[index] = { ...child, name: e.target.value };
+                                                        setEditData({...editData, childrenNames: newNames});
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="col-span-2 space-y-1.5">
+                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Gender</Label>
+                                                <Select 
+                                                    value={child.gender} 
+                                                    onValueChange={(val) => {
+                                                        const newNames = [...editData.childrenNames];
+                                                        newNames[index] = { ...child, gender: val };
+                                                        setEditData({...editData, childrenNames: newNames});
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="h-9 text-sm">
+                                                        <SelectValue placeholder="G" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="Male">M</SelectItem>
+                                                        <SelectItem value="Female">F</SelectItem>
+                                                        <SelectItem value="Other">O</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="col-span-1 space-y-1.5">
+                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Age</Label>
+                                                <Input 
+                                                    className="border-gray-200 h-9 text-sm px-1 text-center"
+                                                    value={child.age} 
+                                                    placeholder="Age"
+                                                    onChange={(e) => {
+                                                        const newNames = [...editData.childrenNames];
+                                                        newNames[index] = { ...child, age: e.target.value };
+                                                        setEditData({...editData, childrenNames: newNames});
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {editData.childrenNames.length > 1 && (
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="absolute top-1 right-1 h-7 w-7 text-muted-foreground hover:text-destructive"
+                                                onClick={() => {
+                                                    const newNames = editData.childrenNames.filter((_, i) => i !== index);
+                                                    setEditData({...editData, childrenNames: newNames});
+                                                }}
+                                            >
+                                                ✕
+                                            </Button>
+                                        )}
+                                        <div className="absolute top-1 left-3 text-[10px] font-bold text-muted-foreground/50">CHILD #{index + 1}</div>
+                                    </div>
+                                ))}
+                                <Button 
+                                    variant="outline" 
+                                    className="w-full h-9 border-dashed text-primary font-bold hover:bg-primary/5 gap-2"
+                                    onClick={() => setEditData({...editData, childrenNames: [...editData.childrenNames, { name: "", gender: "", age: "" }]})}
+                                >
+                                    + Add Child
+                                </Button>
+                            </div>
                         </div>
                         <div className="grid gap-2 col-span-2">
                             <Label htmlFor="totalMembers" className="font-bold flex items-center justify-between">

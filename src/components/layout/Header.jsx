@@ -85,16 +85,20 @@ export function Header() {
               <DropdownMenuTrigger asChild>
                 <button className="relative h-9 w-9 rounded-full overflow-hidden border-2 border-transparent hover:border-primary/20 transition-all outline-none">
                   <Avatar className="h-full w-full">
-                    <AvatarImage src={`https://i.pravatar.cc/150?u=${user.email}`} />
-                    <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                    <AvatarImage src={user.profileImage} />
+                    <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
+                        {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64 p-2 rounded-[1.5rem] border-slate-100 shadow-2xl">
                 <div className="flex items-center gap-3 p-3">
-                  <Avatar className="h-10 w-10 border">
-                    <AvatarImage src={`https://i.pravatar.cc/150?u=${user.email}`} />
-                    <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                  <Avatar className="h-10 w-10 border border-slate-100">
+                    <AvatarImage src={user.profileImage} />
+                    <AvatarFallback className="bg-primary/5 text-primary font-bold">
+                        {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
@@ -233,8 +237,10 @@ export function Header() {
                       <div className="space-y-4 w-full max-w-xs">
                         <div className="flex items-center gap-3 mb-4 justify-center">
                           <Avatar className="h-12 w-12 border shadow-sm">
-                            <AvatarImage src={`https://i.pravatar.cc/150?u=${user.email}`} />
-                            <AvatarFallback>{user.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                            <AvatarImage src={user.profileImage} />
+                            <AvatarFallback className="bg-primary/5 text-primary font-bold">
+                                {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
+                            </AvatarFallback>
                           </Avatar>
                           <div className="text-left">
                             <p className="text-sm font-bold">{user.name}</p>
