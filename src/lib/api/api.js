@@ -11,6 +11,7 @@ export const API = {
   resendForgotOtp: `${API_BASE_URL}/Auth/api/resend-forgot-otp`,
 
   adminApi: `${API_BASE_URL}/api/admin/admin-login`,
+  getAllUsers: `${API_BASE_URL}/Auth/api/users`,
 
   // rooms api
   GetAllRooms: `${API_BASE_URL}/Rooms/api/rooms`,
