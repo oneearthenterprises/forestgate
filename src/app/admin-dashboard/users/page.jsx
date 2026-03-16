@@ -163,6 +163,10 @@ export default function UsersPage() {
         // Additional
         notes: user.notes || "",
         specialRequest: user.specialRequest || "",
+
+        occupation: user.occupation || "",
+companyName: user.companyName || "",
+corporatePartyOptions: user.corporatePartyOptions || false,
     });
     setIsSheetOpen(true);
   };
@@ -634,7 +638,7 @@ export default function UsersPage() {
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="travelDate">Travel Date</Label>
+                            <Label htmlFor="travelDate">Check-in Date</Label>
                             <Input 
                                 id="travelDate" 
                                 placeholder="YYYY-MM-DD"
@@ -644,7 +648,7 @@ export default function UsersPage() {
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="returnDate">Return Date</Label>
+                            <Label htmlFor="returnDate">Check-out Date</Label>
                             <Input 
                                 id="returnDate" 
                                 placeholder="YYYY-MM-DD"
@@ -708,39 +712,54 @@ export default function UsersPage() {
 
                 <Separator className="bg-gray-100" />
 
-                {/* 3. Personal Information */}
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <div className="h-8 w-1 bg-green-500 rounded-full" />
                         <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Personal Information</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="gender">Gender</Label>
-                            <Select 
-                                value={editData.gender} 
-                                onValueChange={(value) => setEditData({...editData, gender: value})}
-                            >
-                                <SelectTrigger className="border-gray-200">
-                                    <SelectValue placeholder="Select" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Male">Male</SelectItem>
-                                    <SelectItem value="Female">Female</SelectItem>
-                                    <SelectItem value="Other">Other</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="age">Age</Label>
-                            <Input 
-                                id="age" 
-                                type="number"
-                                className="border-gray-200"
-                                value={editData.age} 
-                                onChange={(e) => setEditData({...editData, age: e.target.value})}
-                            />
-                        </div>
+                    
+                  <div className="grid gap-2">
+  <Label>Occupation</Label>
+  <Input
+    className="border-gray-200"
+    value={editData.occupation || "Not Provided"}
+    readOnly
+  />
+</div>
+
+{editData.occupation === "Business Owner" && (
+  <div className="grid gap-2">
+    <Label>Company Name</Label>
+    <Input
+      className="border-gray-200"
+      value={editData.companyName || "Not Provided"}
+      readOnly
+    />
+  </div>
+)}
+
+<div className="grid gap-2">
+  <Label>
+    {editData.occupation === "Business Owner"
+      ? "Corporate Party Interest"
+      : "Future Event Interest"}
+  </Label>
+
+  <Input
+    className="border-gray-200"
+    value={
+      editData.occupation === "Business Owner"
+        ? editData.corporatePartyOptions
+          ? "Interested in corporate party"
+          : "Not interested"
+        : "Interested in future event booking"
+    }
+    readOnly
+  />
+</div>
+
+                 
                         <div className="grid gap-2 col-span-2">
                             <Label htmlFor="address">Address</Label>
                             <Textarea 

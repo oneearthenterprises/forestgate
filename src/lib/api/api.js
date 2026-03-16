@@ -5,6 +5,7 @@ export const API = {
   register: `${API_BASE_URL}/Auth/api/register`,
   login: `${API_BASE_URL}/Auth/api/login`,
   logout: `${API_BASE_URL}/Auth/api/logout`,
+  verifyOtpRegister: `${API_BASE_URL}/Auth/api/verify-otp-register`,
   forgotPassword: `${API_BASE_URL}/Auth/api/forgot-password`,
   resetPassword: `${API_BASE_URL}/Auth/api/reset-password`,
   verifyOtp: `${API_BASE_URL}/Auth/api/verify-otp`,

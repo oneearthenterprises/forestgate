@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { MountainSnow, ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, Suspense } from "react";
+import { useEffect, Suspense, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -36,11 +41,13 @@ const RegisterFormSchema = z.object({
 });
 
 function RegisterForm() {
+  const [step, setStep] = useState("REGISTER");
+const [userEmail, setUserEmail] = useState("");
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/my-bookings";
-  const { register, loading } = useAuthContext();
+  const { register, loading, verifyOtpRegister } = useAuthContext();
   const heroImage = PlaceHolderImages.find(
     (img) => img.id === "gallery-pool-1",
   );
@@ -67,30 +74,90 @@ function RegisterForm() {
     }
   }, [form]);
 
-  const onRegisterSubmit = async (values) => {
-    try {
-      await register(values);
+const onRegisterSubmit = async (values) => {
+  try {
+    await register(values);
+
+    setUserEmail(values.email);
+    setStep("VERIFY_OTP_REGISTER");
+
+    toast({
+      title: "Registration successful",
+      description: "Please verify your email to continue.",
+    });
+
+  } catch (err) {
+    if (err.message === "OTP verification pending. Please verify your email.") {
+      setUserEmail(values.email);
+      setStep("VERIFY_OTP_REGISTER");
 
       toast({
-        title: "Registration successful",
-        description: "Welcome to The Forest Gate. Please login to continue.",
+        title: "OTP Pending",
+        description: "Please verify your email.",
       });
 
-      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
-    } catch (err) {
-      toast({
-        title: "Registration failed",
-        description: err.message,
-        variant: "destructive",
-      });
-      if (err.message === "User already exists") {
-        setTimeout(() => {
-          router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
-        }, 2000);
-      }
+      return;
     }
-  };
 
+    toast({
+      title: "Registration failed",
+      description: err.message,
+      variant: "destructive",
+    });
+
+    if (err.message === "User already exists") {
+      setTimeout(() => {
+        router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+      }, 2000);
+    }
+  }
+};
+
+
+
+const otpForm = useForm({
+  defaultValues: {
+    otp: "",
+  },
+});
+
+
+// onVerifyOtpRegister otp
+const onVerifyOtpRegister = async (values) => {
+  try {
+    await verifyOtpRegister(userEmail, values.otp);
+
+    toast({
+      title: "Email Verified",
+      description: "Your account verified successfully.",
+    });
+
+    router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+
+  } catch (err) {
+    toast({
+      title: "Verification Failed",
+      description: err.message,
+      variant: "destructive",
+    });
+  }
+};
+
+const handleResendOtp = async () => {
+  try {
+    await resendOtp(userEmail);
+    toast({
+      title: "Code Resent",
+      description: "Please check your email for the new verification code.",
+    });
+  } catch (err) {
+    toast({
+      title: "Resend Failed",
+      description: err.message,
+      variant: "destructive",
+    });
+  }
+};
   return (
     <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">
       {/* Subtle Textured Background */}
@@ -117,13 +184,15 @@ function RegisterForm() {
           </div>
 
           <div className="flex-1 flex flex-col justify-center">
-            <h1 className="text-4xl font-headline font-bold mb-2">
+           
+{step === "REGISTER" && (
+  <>
+   <h1 className="text-4xl font-headline font-bold mb-2">
               Join the Sanctuary
             </h1>
             <p className="text-muted-foreground mb-8">
               Create an account to begin your journey with us.
             </p>
-
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onRegisterSubmit)}
@@ -246,6 +315,92 @@ function RegisterForm() {
                 </Button>
               </form>
             </Form>
+  </>
+
+            )}
+
+            {step === "VERIFY_OTP_REGISTER" && (
+              <>
+                <h1 className="text-4xl font-headline font-bold mb-2">
+                  Verify Your Email
+                </h1>
+                <p className="text-muted-foreground mb-8">
+                  Enter the 6-digit code we sent to{" "}
+                  <span className="font-bold text-foreground">
+                    {userEmail}
+                  </span>
+                </p>
+
+                <Form {...otpForm}>
+                  <form
+                    onSubmit={otpForm.handleSubmit(onVerifyOtpRegister)}
+                    className="space-y-6"
+                  >
+                    <FormField
+                      control={otpForm.control}
+                      name="otp"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col items-center">
+                          <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
+                            Verification Code
+                          </FormLabel>
+                          <FormControl>
+                            <InputOTP maxLength={6} {...field}>
+                              <InputOTPGroup className="gap-2 sm:gap-4">
+                                <InputOTPSlot
+                                  index={0}
+                                  className="h-14 w-12 sm:w-14 rounded-xl border-2 border-slate-200 bg-slate-50 text-xl font-bold"
+                                />
+                                <InputOTPSlot
+                                  index={1}
+                                  className="h-14 w-12 sm:w-14 rounded-xl border-2 border-slate-200 bg-slate-50 text-xl font-bold"
+                                />
+                                <InputOTPSlot
+                                  index={2}
+                                  className="h-14 w-12 sm:w-14 rounded-xl border-2 border-slate-200 bg-slate-50 text-xl font-bold"
+                                />
+                                <InputOTPSlot
+                                  index={3}
+                                  className="h-14 w-12 sm:w-14 rounded-xl border-2 border-slate-200 bg-slate-50 text-xl font-bold"
+                                />
+                                <InputOTPSlot
+                                  index={4}
+                                  className="h-14 w-12 sm:w-14 rounded-xl border-2 border-slate-200 bg-slate-50 text-xl font-bold"
+                                />
+                                <InputOTPSlot
+                                  index={5}
+                                  className="h-14 w-12 sm:w-14 rounded-xl border-2 border-slate-200 bg-slate-50 text-xl font-bold"
+                                />
+                              </InputOTPGroup>
+                            </InputOTP>
+                          </FormControl>
+                          <FormMessage className="mt-4" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      className="w-full h-12 rounded-full bg-[#fcb101] hover:bg-[#e0a000] text-black font-bold text-base transition-all active:scale-[0.98] shadow-none mt-2"
+                    >
+                      Verify Code
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                  </form>
+                </Form>
+
+                <div className="mt-6 text-center">
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={handleResendOtp}
+                    className="text-sm font-bold text-primary hover:underline"
+                  >
+                    Resend Code
+                  </Button>
+                </div>
+              </>
+            )}
 
             <div className="mt-8 text-center">
               <p className="text-sm text-muted-foreground">

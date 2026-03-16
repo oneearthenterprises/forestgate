@@ -14,46 +14,50 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-        try {
-            const storedUser = localStorage.getItem("user");
-            const storedUserToken = localStorage.getItem("userToken");
-            const storedAdminToken = localStorage.getItem("adminToken");
-            const storedAdminEmail = localStorage.getItem("adminEmail");
+      try {
+        const storedUser = localStorage.getItem("user");
+        const storedUserToken = localStorage.getItem("userToken");
+        const storedAdminToken = localStorage.getItem("adminToken");
+        const storedAdminEmail = localStorage.getItem("adminEmail");
 
-            if (storedAdminToken) {
-                setAdminToken(storedAdminToken);
-                setAdminEmail(storedAdminEmail);
-                
-                try {
-                    const res = await fetch(API.getProfile, {
-                        headers: { Authorization: `Bearer ${storedAdminToken}` }
-                    });
-                    const data = await res.json();
-                    if (res.ok && data.user) setUser(data.user);
-                } catch (e) { console.error("Admin profile refresh failed", e); }
-            } else if (storedUser && storedUserToken) {
-                setUser(JSON.parse(storedUser));
-                setUserToken(storedUserToken);
-                
-                try {
-                    const res = await fetch(API.getProfile, {
-                        headers: { Authorization: `Bearer ${storedUserToken}` }
-                    });
-                    const data = await res.json();
-                    if (res.ok && data.user) {
-                        setUser(data.user);
-                        localStorage.setItem("user", JSON.stringify(data.user));
-                    }
-                } catch (e) { console.error("User profile refresh failed", e); }
+        if (storedAdminToken) {
+          setAdminToken(storedAdminToken);
+          setAdminEmail(storedAdminEmail);
+
+          try {
+            const res = await fetch(API.getProfile, {
+              headers: { Authorization: `Bearer ${storedAdminToken}` },
+            });
+            const data = await res.json();
+            if (res.ok && data.user) setUser(data.user);
+          } catch (e) {
+            console.error("Admin profile refresh failed", e);
+          }
+        } else if (storedUser && storedUserToken) {
+          setUser(JSON.parse(storedUser));
+          setUserToken(storedUserToken);
+
+          try {
+            const res = await fetch(API.getProfile, {
+              headers: { Authorization: `Bearer ${storedUserToken}` },
+            });
+            const data = await res.json();
+            if (res.ok && data.user) {
+              setUser(data.user);
+              localStorage.setItem("user", JSON.stringify(data.user));
             }
-        } catch (err) {
-            localStorage.removeItem("user");
-            localStorage.removeItem("userToken");
-            localStorage.removeItem("adminToken");
-            localStorage.removeItem("adminEmail");
-        } finally {
-            setLoading(false);
+          } catch (e) {
+            console.error("User profile refresh failed", e);
+          }
         }
+      } catch (err) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminEmail");
+      } finally {
+        setLoading(false);
+      }
     };
 
     initializeAuth();
@@ -167,6 +171,24 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  const verifyOtpRegister = async (email, otp) => {
+    const res = await fetch(API.verifyOtpRegister, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, otp }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
+    return data;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -180,6 +202,7 @@ export const AuthContextProvider = ({ children }) => {
         register,
         logout,
         adminlogin,
+        verifyOtpRegister,
       }}
     >
       {children}

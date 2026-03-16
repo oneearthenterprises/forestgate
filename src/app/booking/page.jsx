@@ -612,7 +612,8 @@ if (!room) return <BookingSkeleton />;
                             <FormItem>
                               {" "}
                               <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-1 mb-2">
-                                Phone Number
+                                Mobile Number 
+                                (WhatsApp)
                               </FormLabel>{" "}
                               <FormControl>
                                 <Input
