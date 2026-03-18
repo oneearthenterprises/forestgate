@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -12,6 +12,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { format, parseISO } from 'date-fns';
+import { API } from '@/lib/api/api';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Dialog, 
   DialogContent, 
@@ -22,7 +24,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { MoreHorizontal, Eye, CheckCircle, XCircle } from 'lucide-react';
+import { MoreHorizontal, Eye, CheckCircle, XCircle, AlertCircle, ThumbsUp } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,67 +34,39 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const allBookings = [
-  {
-    id: 'HH-CANCELLABLE',
-    userName: 'Rohan Mehta',
-    userEmail: 'rohan.mehta@example.com',
-    bookingType: 'Deluxe Room',
-    checkIn: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().split('T')[0],
-    checkOut: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString().split('T')[0],
-    guests: 2,
-    totalPrice: 75000,
-    status: 'Upcoming',
-  },
-  {
-    id: 'HH-NON-CANCELLABLE',
-    userName: 'Priya Desai',
-    userEmail: 'priya.desai@example.com',
-    bookingType: 'Entire Resort',
-    checkIn: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().split('T')[0],
-    checkOut: new Date(new Date().setDate(new Date().getDate() + 9)).toISOString().split('T')[0],
-    guests: 15,
-    totalPrice: 228000,
-    status: 'Upcoming',
-  },
-  {
-    id: 'HH-3G8H9I',
-    userName: 'The Sharma Family',
-    userEmail: 'sharma.family@example.com',
-    bookingType: 'Family Room',
-    checkIn: '2024-05-20',
-    checkOut: '2024-05-25',
-    guests: 4,
-    totalPrice: 100000,
-    status: 'Completed',
-  },
-  {
-    id: 'HH-K2L3M4',
-    userName: 'Anjali Verma',
-    userEmail: 'anjali.verma@example.com',
-    bookingType: 'Single Room',
-    checkIn: '2024-04-15',
-    checkOut: '2024-04-18',
-    guests: 1,
-    totalPrice: 30000,
-    status: 'Cancelled',
-  },
-   {
-    id: 'HH-5N6O7P',
-    userName: 'Vikram Singh',
-    userEmail: 'vikram.singh@example.com',
-    bookingType: 'Double Room',
-    checkIn: '2024-06-10',
-    checkOut: '2024-06-15',
-    guests: 2,
-    totalPrice: 60000,
-    status: 'Completed',
-  },
-];
-
 export default function AdminOrdersPage() {
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [bookingsList, setBookingsList] = useState(allBookings);
+  const [bookingsList, setBookingsList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch(API.GetBooking);
+        const data = await response.json();
+        // Assuming the API returns { bookings: [...] } or just an array
+        const fetchedBookings = Array.isArray(data) ? data : data.bookings || [];
+        // Map the properties if needed, or just set them if they match the backend
+        const mappedBookings = fetchedBookings.map(b => ({
+            ...b,
+            status: b.status ? b.status.charAt(0).toUpperCase() + b.status.slice(1) : 'Upcoming'
+        }));
+        setBookingsList(mappedBookings);
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load bookings.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
 
   const getBadgeVariant = (status) => {
     switch (status) {
@@ -107,8 +81,31 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const updateStatus = (id, newStatus) => {
-    setBookingsList(prev => prev.map(b => b.id === id ? { ...b, status: newStatus } : b));
+  const updateStatus = async (id, newStatus) => {
+    try {
+      const response = await fetch(API.UpdateBookingStatus(id), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+         throw new Error("Failed to update status");
+      }
+
+      setBookingsList(prev => prev.map(b => (b._id || b.id) === id ? { ...b, status: newStatus } : b));
+      toast({
+        title: "Status Updated",
+        description: `Booking status changed to ${newStatus}.`,
+      });
+    } catch (error) {
+       console.error(error);
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not update booking status.",
+      });
+    }
   };
 
   return (
@@ -137,22 +134,32 @@ export default function AdminOrdersPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {bookingsList.map((booking) => (
-                            <TableRow key={booking.id}>
-                                <TableCell className="font-medium">{booking.id}</TableCell>
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={7} className="text-center py-4">Loading bookings...</TableCell>
+                            </TableRow>
+                        ) : bookingsList.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={7} className="text-center py-4">No bookings found.</TableCell>
+                            </TableRow>
+                        ) : bookingsList.map((booking) => (
+                            <TableRow key={booking._id || booking.id}>
+                                <TableCell className="font-medium">
+                                    {booking._id ? booking._id.substring(0, 8) : booking.id}
+                                </TableCell>
                                 <TableCell>
-                                    <div className="font-medium">{booking.userName}</div>
-                                    <div className="text-sm text-muted-foreground">{booking.userEmail}</div>
+                                    <div className="font-medium">{booking.fullName || booking.userName}</div>
+                                    <div className="text-sm text-muted-foreground">{booking.email || booking.userEmail}</div>
                                 </TableCell>
                                 <TableCell>{booking.bookingType}</TableCell>
                                 <TableCell>
-                                    <div className="text-xs text-muted-foreground">In: {format(parseISO(booking.checkIn), 'MMM dd, yyyy')}</div>
-                                    <div className="text-xs text-muted-foreground">Out: {format(parseISO(booking.checkOut), 'MMM dd, yyyy')}</div>
+                                    <div className="text-xs text-muted-foreground">In: {booking.checkIn ? format(parseISO(booking.checkIn), 'MMM dd, yyyy') : 'N/A'}</div>
+                                    <div className="text-xs text-muted-foreground">Out: {booking.checkOut ? format(parseISO(booking.checkOut), 'MMM dd, yyyy') : 'N/A'}</div>
                                 </TableCell>
-                                <TableCell>₹{booking.totalPrice.toLocaleString()}</TableCell>
+                                <TableCell>₹{booking.totalAmount?.toLocaleString()}</TableCell>
                                 <TableCell>
-                                    <Badge variant={getBadgeVariant(booking.status)}>
-                                        {booking.status}
+                                    <Badge variant={getBadgeVariant(booking.status || 'Upcoming')}>
+                                        {booking.status || 'Upcoming'}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right">
@@ -169,10 +176,13 @@ export default function AdminOrdersPage() {
                                                 <Eye className="mr-2 h-4 w-4" /> View Details
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem onClick={() => updateStatus(booking.id, 'Completed')}>
+                                            <DropdownMenuItem onClick={() => updateStatus(booking._id || booking.id, 'confirmed')}>
+                                                <ThumbsUp className="mr-2 h-4 w-4 text-green-600" /> Confirm Booking
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => updateStatus(booking._id || booking.id, 'completed')}>
                                                 <CheckCircle className="mr-2 h-4 w-4 text-primary" /> Mark Completed
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => updateStatus(booking.id, 'Cancelled')}>
+                                            <DropdownMenuItem onClick={() => updateStatus(booking._id || booking.id, 'cancelled')}>
                                                 <XCircle className="mr-2 h-4 w-4 text-destructive" /> Cancel Booking
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -193,17 +203,29 @@ export default function AdminOrdersPage() {
                 <DialogHeader>
                     <DialogTitle>Booking Details</DialogTitle>
                     <DialogDescription>
-                    Full information for booking ID: {selectedBooking.id}
+                    Full information for booking ID: {selectedBooking._id || selectedBooking.id}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Guest Name</p>
-                        <p className="font-medium">{selectedBooking.userName}</p>
+                        <p className="font-medium">{selectedBooking.fullName || selectedBooking.userName}</p>
                     </div>
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Guest Email</p>
-                        <p className="font-medium">{selectedBooking.userEmail}</p>
+                        <p className="font-medium">{selectedBooking.email || selectedBooking.userEmail}</p>
+                    </div>
+                    <div className="grid grid-cols-2 items-center gap-4">
+                        <p className="text-sm text-muted-foreground">Guest Phone</p>
+                        <p className="font-medium">{selectedBooking.phone || "N/A"}</p>
+                    </div>
+                    <div className="grid grid-cols-2 items-center gap-4">
+                        <p className="text-sm text-muted-foreground">Destination</p>
+                        <p className="font-medium">{selectedBooking.destination || "Forest Gate Resort"}</p>
+                    </div>
+                    <div className="grid grid-cols-2 items-center gap-4">
+                        <p className="text-sm text-muted-foreground">Pickup Location</p>
+                        <p className="font-medium">{selectedBooking.pickupLocation || "Airport"}</p>
                     </div>
                     <Separator />
                     <div className="grid grid-cols-2 items-center gap-4">
@@ -213,26 +235,86 @@ export default function AdminOrdersPage() {
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Stay Dates</p>
                         <p className="font-medium">
-                            {format(parseISO(selectedBooking.checkIn), 'MMM dd')} - {format(parseISO(selectedBooking.checkOut), 'MMM dd, yyyy')}
+                            {selectedBooking.checkIn ? format(parseISO(selectedBooking.checkIn), 'MMM dd') : 'N/A'} - {selectedBooking.checkOut ? format(parseISO(selectedBooking.checkOut), 'MMM dd, yyyy') : 'N/A'}
                         </p>
                     </div>
-                    <div className="grid grid-cols-2 items-center gap-4">
+                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Number of Guests</p>
-                        <p className="font-medium">{selectedBooking.guests}</p>
+                        <p className="font-medium">
+                            {selectedBooking.guests?.adults || 0} Adults, {selectedBooking.guests?.children || 0} Children
+                        </p>
                     </div>
                     <Separator />
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Total Paid</p>
-                        <p className="font-bold text-xl">₹{selectedBooking.totalPrice.toLocaleString()}</p>
+                        <p className="font-bold text-xl">₹{selectedBooking.totalAmount?.toLocaleString()}</p>
                     </div>
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Current Status</p>
-                        <Badge variant={getBadgeVariant(selectedBooking.status)} className="w-fit">
-                            {selectedBooking.status}
+                        <Badge variant={getBadgeVariant(selectedBooking.status || 'Upcoming')} className="w-fit">
+                            {selectedBooking.status || 'Upcoming'}
                         </Badge>
                     </div>
+
+                    {selectedBooking.status?.toLowerCase() === 'cancelled' && (
+                        <>
+                            <Separator />
+                            <div className="p-4 bg-red-50 border border-red-100 rounded-lg space-y-3 text-red-900">
+                                <div className="flex items-center gap-2 text-red-700">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <p className="text-xs font-black uppercase tracking-widest">Cancellation Details</p>
+                                </div>
+                                {selectedBooking.cancelledAt && (
+                                    <div className="grid grid-cols-2 items-center gap-2">
+                                        <p className="text-[10px] font-bold text-red-900/60 uppercase">Date Cancelled</p>
+                                        <p className="text-xs font-medium">
+                                            {format(parseISO(selectedBooking.cancelledAt), 'MMM dd, yyyy HH:mm')}
+                                        </p>
+                                    </div>
+                                )}
+                                <div>
+                                    <p className="text-[10px] font-bold text-red-900/60 uppercase mb-1">Reasons</p>
+                                    {selectedBooking.cancellationReasons?.length > 0 ? (
+                                        <div className="flex flex-wrap gap-1">
+                                            {selectedBooking.cancellationReasons.map((reason, i) => (
+                                                <Badge key={i} variant="outline" className="text-[10px] bg-white text-red-700 border-red-200">
+                                                    {reason}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-xs text-red-700/60 italic">No reasons provided.</p>
+                                    )}
+                                </div>
+                                {selectedBooking.cancellationNote && (
+                                    <div>
+                                        <p className="text-[10px] font-bold text-red-900/60 uppercase mb-1">Additional Note</p>
+                                        <p className="text-xs bg-white/60 border border-red-100 p-2 rounded-md italic">"{selectedBooking.cancellationNote}"</p>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
                 </div>
-                <DialogFooter>
+                <DialogFooter className="flex justify-between items-center w-full">
+                    <Button type="button" variant="outline" onClick={() => {
+                        const params = new URLSearchParams();
+                        params.append("bookingType", selectedBooking.bookingType || "Room");
+                        params.append("fullName", selectedBooking.fullName || selectedBooking.userName);
+                        params.append("email", selectedBooking.email || selectedBooking.userEmail);
+                        params.append("checkIn", selectedBooking.checkIn);
+                        params.append("checkOut", selectedBooking.checkOut);
+                        params.append("guests", (selectedBooking.guests?.adults + (selectedBooking.guests?.children || 0)).toString());
+                        params.append("totalPrice", selectedBooking.totalAmount?.toString() || "0");
+                        params.append("roomName", selectedBooking.roomName || selectedBooking.bookingType);
+                        params.append("numAdults", selectedBooking.guests?.adults?.toString() || "0");
+                        params.append("numChildren", selectedBooking.guests?.children?.toString() || "0");
+                        params.append("bookingId", selectedBooking._id || selectedBooking.id);
+                        
+                        window.open(`/booking/confirmation?${params.toString()}`, '_blank');
+                    }}>
+                        Generate Invoice
+                    </Button>
                     <Button type="button" variant="secondary" onClick={() => setSelectedBooking(null)}>
                         Close
                     </Button>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { MountainSnow, Mail, X } from "lucide-react";
+import { MountainSnow, Mail, X, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -41,6 +41,8 @@ export function AuthDialog({ open, onOpenChange }) {
     const { toast } = useToast();
     const router = useRouter();
     const [mode, setMode] = useState('signup'); // 'login' or 'signup'
+    const [showLoginPw, setShowLoginPw] = useState(false);
+    const [showRegisterPw, setShowRegisterPw] = useState(false);
 
     const loginForm = useForm({
         resolver: zodResolver(LoginFormSchema),
@@ -168,7 +170,12 @@ export function AuthDialog({ open, onOpenChange }) {
                                             <FormItem>
                                                 <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4 mb-3">Password</FormLabel>
                                                 <FormControl>
-                                                    <Input type="password" placeholder="••••••••" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
+                                                    <div className="relative">
+                                                        <Input type={showLoginPw ? "text" : "password"} placeholder="••••••••" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 pr-14 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
+                                                        <button type="button" onClick={() => setShowLoginPw(!showLoginPw)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#085d6b] transition-colors">
+                                                            {showLoginPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                        </button>
+                                                    </div>
                                                 </FormControl>
                                                 <FormMessage className="ml-4" />
                                             </FormItem>
@@ -233,7 +240,12 @@ export function AuthDialog({ open, onOpenChange }) {
                                             <FormItem>
                                                 <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4 mb-3">Create Password</FormLabel>
                                                 <FormControl>
-                                                    <Input type="password" placeholder="••••••••" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
+                                                    <div className="relative">
+                                                        <Input type={showRegisterPw ? "text" : "password"} placeholder="••••••••" {...field} className="h-14 rounded-2xl border border-slate-200 bg-slate-50 px-6 pr-14 focus-visible:ring-[#085d6b]/20 font-medium placeholder:text-slate-300 shadow-sm" />
+                                                        <button type="button" onClick={() => setShowRegisterPw(!showRegisterPw)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#085d6b] transition-colors">
+                                                            {showRegisterPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                        </button>
+                                                    </div>
                                                 </FormControl>
                                                 <FormMessage className="ml-4" />
                                             </FormItem>

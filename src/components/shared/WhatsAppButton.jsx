@@ -48,7 +48,7 @@ export function WhatsAppButton() {
   return (
     <div className={`transition-opacity duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
       <FloatingWhatsApp
-        phoneNumber="+919876543210"
+        phoneNumber="+9304987505"
         accountName="The Forest Gate"
         statusMessage="Online"
         chatMessage="Hello! 👋 How can we help you plan your Himalayan getaway today?"

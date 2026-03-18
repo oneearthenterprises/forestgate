@@ -21,6 +21,8 @@ import { format, parseISO } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { API } from '@/lib/api/api';
 import { Badge } from '@/components/ui/badge';
+import { cn } from "@/lib/utils";
+import { ArrowRight, Search, AlertCircle } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -52,6 +54,12 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -62,32 +70,77 @@ export default function UsersPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   
+  // History States
+  const [userHistory, setUserHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [selectedHistoryBooking, setSelectedHistoryBooking] = useState(null);
+  const [isBookingDetailOpen, setIsBookingDetailOpen] = useState(false);
+  const [isEditingBooking, setIsEditingBooking] = useState(false);
+  const [tempBookingData, setTempBookingData] = useState(null);
+  const [isUpdatingBooking, setIsUpdatingBooking] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isBookingDeleteDialogOpen, setIsBookingDeleteDialogOpen] = useState(false);
+  
+  // Custom Entries / Manual Booking Refinement
+  const [rooms, setRooms] = useState([]);
+  const [isCustomFormOpen, setIsCustomFormOpen] = useState(false);
+  const [roomsLoading, setRoomsLoading] = useState(false);
+
   // Edit State
   const [editData, setEditData] = useState({});
   const { toast } = useToast();
 
-  const getAllUsers = async () => {
+  const getAllData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(API.getAllUsers);
-      const data = await response.json();
-      setUsers(data.users || []);
+      const [usersRes, roomsRes] = await Promise.all([
+        fetch(API.getAllUsers),
+        fetch(API.GetAllRooms),
+      ]);
+      
+      const [usersData, roomsData] = await Promise.all([
+        usersRes.json(),
+        roomsRes.json()
+      ]);
+
+      setUsers(usersData.users || []);
+      setRooms(roomsData.rooms || []);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching data:', error);
       toast({
         title: "Error",
-        description: "Failed to load users.",
+        description: "Failed to load management data.",
         variant: "destructive",
       });
-      setUsers([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getAllUsers();
+    getAllData();
   }, []);
+
+  const fetchUserHistory = async (email) => {
+    if (!email) return;
+    setLoadingHistory(true);
+    try {
+        const res = await fetch(API.GetUserHistory(email));
+        const data = await res.json();
+        setUserHistory(data.bookings || []);
+    } catch (error) {
+        console.error("Error fetching user history:", error);
+    } finally {
+        setLoadingHistory(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    const s = (status || '').toLowerCase();
+    if (s === 'confirmed') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    if (s === 'pending') return 'bg-amber-50 text-amber-700 border-amber-200';
+    return 'bg-gray-50 text-gray-700 border-gray-200';
+  };
 
   // Auto-calculate counts and total members based on dynamic name lists
   useEffect(() => {
@@ -103,25 +156,80 @@ export default function UsersPage() {
                 ...prev, 
                 totalAdults: adultCount,
                 totalChildren: childCount,
-                totalMembers: total 
+                totalMembers: total
             }));
         }
     }
   }, [editData.bookingPersonName, editData.childrenNames, isSheetOpen]);
 
-  const handleRowClick = (user) => {
+  const handleHistoryItemClick = (booking) => {
+    setSelectedHistoryBooking(booking);
+    setTempBookingData({
+        ...booking, 
+        destination: booking.destination || "Forest Gate Resort",
+        pickupLocation: booking.pickupLocation || "Airport",
+        addons: booking.addons || [],
+        customFields: booking.customFields || []
+    });
+    setIsEditingBooking(false);
+    setIsBookingDetailOpen(true);
+  };
+
+  const handleUpdateBooking = async () => {
+    try {
+        setIsUpdatingBooking(true);
+        const response = await fetch(API.UpdateBooking(tempBookingData._id), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(tempBookingData)
+        });
+
+        if (response.ok) {
+            toast({ title: "Updated", description: "Booking details have been saved." });
+            setIsEditingBooking(false);
+            fetchUserHistory(selectedUser.email); // Refresh history
+        } else {
+            const data = await response.json();
+            toast({ title: "Error", description: data.message || "Failed to update booking.", variant: "destructive" });
+        }
+    } catch (error) {
+        console.error('Error updating booking:', error);
+        toast({ title: "Error", description: "Failed to update record.", variant: "destructive" });
+    } finally {
+        setIsUpdatingBooking(false);
+    }
+  };
+
+  const handleDeleteBooking = async () => {
+    try {
+        const response = await fetch(API.DeleteBooking(selectedHistoryBooking._id), { method: 'DELETE' });
+        if (response.ok) {
+            toast({ title: "Deleted", description: "Booking has been removed successfully." });
+            setIsBookingDetailOpen(false);
+            setIsBookingDeleteDialogOpen(false);
+            fetchUserHistory(selectedUser.email);
+        } else {
+            toast({ title: "Error", description: "Failed to delete booking.", variant: "destructive" });
+        }
+    } catch (error) {
+        console.error('Error deleting booking:', error);
+        toast({ title: "Error", description: "Failed to delete record.", variant: "destructive" });
+    }
+  };
+
+  const handleEditClick = (user) => {
     setSelectedUser(user);
-    
+
     // Improved parsing for Name (Gender, Age) with smart splitting
     const parseMember = (str) => {
         if (!str) return { name: "", gender: "", age: "" };
         // Matches "Name (Gender, Age)" or just "Name"
         const match = str.match(/^(.*?)\s*\((.*?),\s*(.*?)\)$/);
         if (match) {
-            return { 
-                name: match[1].trim(), 
-                gender: match[2] === 'N/A' ? '' : match[2].trim(), 
-                age: match[3] === 'N/A' ? '' : match[3].trim() 
+            return {
+                name: match[1].trim(),
+                gender: match[2] === 'N/A' ? '' : match[2].trim(),
+                age: match[3] === 'N/A' ? '' : match[3].trim()
             };
         }
         return { name: str.trim(), gender: "", age: "" };
@@ -138,6 +246,9 @@ export default function UsersPage() {
 
     const kids = kidsData.length > 0 ? kidsData.map(parseMember) : [{ name: "", gender: "", age: "" }];
     const partners = partnersData.length > 0 ? partnersData.map(parseMember) : [{ name: "", gender: "", age: "" }];
+    
+    // Custom Fields parsing (Map -> Array)
+    const extraFields = user.customFields ? Object.entries(user.customFields).map(([k, v]) => ({ key: k, value: v })) : [];
 
     setEditData({
         name: user.name || "",
@@ -149,7 +260,7 @@ export default function UsersPage() {
         address: user.address || "",
         alternatePhone: user.alternatePhone || "",
         // Booking
-        bookingPersonName: partners, 
+        bookingPersonName: partners,
         totalAdults: user.totalAdults || 0,
         totalChildren: user.totalChildren || 0,
         childrenNames: kids,
@@ -165,16 +276,24 @@ export default function UsersPage() {
         specialRequest: user.specialRequest || "",
 
         occupation: user.occupation || "",
-companyName: user.companyName || "",
-corporatePartyOptions: user.corporatePartyOptions || false,
+        companyName: user.companyName || "",
+        corporatePartyOptions: user.corporatePartyOptions || false,
+        customFields: extraFields.length > 0 ? extraFields : [],
+        // Reset manual entry form states
+        tempManualRoom: "",
+        tempManualCheckIn: "",
+        tempManualCheckOut: "",
+        isCustomRoom: false
     });
+    setIsCustomFormOpen(false);
     setIsSheetOpen(true);
+    fetchUserHistory(user.email);
   };
 
   const handleUpdateUser = async () => {
     try {
       setIsUpdating(true);
-      
+
       // Serialize back to Name (Gender, Age)
       const serializeMember = (m) => {
           if (!m.name) return "";
@@ -182,8 +301,14 @@ corporatePartyOptions: user.corporatePartyOptions || false,
           return `${m.name} (${m.gender || 'N/A'}, ${m.age || 'N/A'})`;
       };
 
+      const customFieldsObj = {};
+      editData.customFields?.forEach(f => {
+          if (f.key?.trim()) customFieldsObj[f.key.trim()] = f.value;
+      });
+
       const finalData = {
           ...editData,
+          customFields: customFieldsObj,
           bookingPersonName: editData.bookingPersonName
             .filter(n => n.name.trim() !== "")
             .map(serializeMember)
@@ -209,7 +334,7 @@ corporatePartyOptions: user.corporatePartyOptions || false,
           description: "User information updated successfully.",
         });
         setIsSheetOpen(false);
-        getAllUsers(); // Refresh list
+        getAllData(); // Refresh list
       } else {
         toast({
           title: "Error",
@@ -244,7 +369,7 @@ corporatePartyOptions: user.corporatePartyOptions || false,
         });
         setIsDeleteDialogOpen(false);
         setIsSheetOpen(false);
-        getAllUsers(); // Refresh list
+        getAllData(); // Refresh list
       } else {
         toast({
           title: "Error",
@@ -297,7 +422,7 @@ corporatePartyOptions: user.corporatePartyOptions || false,
     );
   }
 
-  const getStatusColor = (status) => {
+  const getBookingStatusColor = (status) => {
     switch (status) {
         case 'Confirmed': return 'bg-green-100 text-green-700 border-green-200';
         case 'Pending': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
@@ -314,10 +439,23 @@ corporatePartyOptions: user.corporatePartyOptions || false,
 
       <Card className="border-none shadow-sm overflow-hidden">
         <CardHeader className="bg-white/50 border-b pb-4">
-          <CardTitle className="text-lg">All Registered Users</CardTitle>
-          <CardDescription>
-            Manage and view detailed information for all registered accounts.
-          </CardDescription>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <CardTitle className="text-lg">All Registered Users</CardTitle>
+              <CardDescription>
+                Manage and view detailed information for all registered accounts.
+              </CardDescription>
+            </div>
+            <div className="relative w-full md:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search name, email, phone, ID..." 
+                className="pl-9 bg-white/80 border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary shadow-sm h-10 rounded-xl"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
         </CardHeader>
 
         <CardContent className="p-0">
@@ -327,19 +465,27 @@ corporatePartyOptions: user.corporatePartyOptions || false,
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-[280px] h-12">User</TableHead>
                   <TableHead className="h-12">Phone Number</TableHead>
-                  <TableHead className="h-12 text-center">Members</TableHead>
-                  <TableHead className="h-12 text-center">Booking Status</TableHead>
+                  <TableHead className="h-12 text-center">Bookings</TableHead>
                   <TableHead className="text-right h-12 pr-6">Joined Date</TableHead>
                 </TableRow>
               </TableHeader>
 
               <TableBody>
-                {users.length > 0 ? (
-                  users.map((user) => (
-                    <TableRow 
-                        key={user._id} 
+                {(() => {
+                  const query = searchQuery.toLowerCase();
+                  const filteredUsers = users.filter(user => 
+                    String(user.name || "").toLowerCase().includes(query) ||
+                    String(user.email || "").toLowerCase().includes(query) ||
+                    String(user.phone || "").toLowerCase().includes(query) ||
+                    String(user._id || "").toLowerCase().includes(query)
+                  );
+
+                  return filteredUsers.length > 0 ? (
+                    filteredUsers.map((user) => (
+                    <TableRow
+                        key={user._id}
                         className="cursor-pointer hover:bg-muted/20 transition-colors h-[80px]"
-                        onClick={() => handleRowClick(user)}
+                        onClick={() => handleEditClick(user)}
                     >
                       <TableCell>
                         <div className="flex items-center gap-4">
@@ -359,12 +505,7 @@ corporatePartyOptions: user.corporatePartyOptions || false,
                       </TableCell>
                       <TableCell className="text-center">
                         <Badge variant="outline" className="font-bold text-primary bg-primary/5">
-                            {user.totalMembers || 0}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge className={`${getStatusColor(user.bookingStatus)} border`}>
-                            {user.bookingStatus || 'N/A'}
+                            {user.bookingCount || 0}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right pr-6">
@@ -376,11 +517,12 @@ corporatePartyOptions: user.corporatePartyOptions || false,
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-20 text-muted-foreground">
-                      No users found in the database.
+                    <TableCell colSpan={4} className="text-center py-20 text-muted-foreground">
+                      {searchQuery ? "No users match your search." : "No users found in the database."}
                     </TableCell>
                   </TableRow>
-                )}
+                )
+              })()}
               </TableBody>
             </Table>
           </div>
@@ -389,14 +531,14 @@ corporatePartyOptions: user.corporatePartyOptions || false,
 
       {/* Detail Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="sm:max-w-[600px] p-0 flex flex-col border-l shadow-2xl">
+        <SheetContent className="sm:max-w-[600px] p-0 flex flex-col border-l shadow-2xl overflow-hidden">
           <SheetHeader className="p-6 border-b bg-white">
             <SheetTitle className="text-xl font-bold">User Details & Booking</SheetTitle>
             <SheetDescription>
               View and manage profile and booking information for {selectedUser?.name}.
             </SheetDescription>
           </SheetHeader>
-          
+
           <div className="flex-1 overflow-y-auto px-6">
             <div className="py-6 space-y-8 pb-32">
                 {/* 1. Basic Information */}
@@ -408,309 +550,34 @@ corporatePartyOptions: user.corporatePartyOptions || false,
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2 col-span-2">
                             <Label htmlFor="name">Full Name</Label>
-                            <Input 
-                                id="name" 
+                            <Input
+                                id="name"
                                 className="border-gray-200 focus:border-primary"
-                                value={editData.name} 
+                                value={editData.name}
                                 onChange={(e) => setEditData({...editData, name: e.target.value})}
                             />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email Address</Label>
-                            <Input 
-                                id="email" 
+                            <Input
+                                id="email"
                                 className="border-gray-200"
-                                value={editData.email} 
+                                value={editData.email}
                                 onChange={(e) => setEditData({...editData, email: e.target.value})}
                             />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="phone">Phone Number</Label>
-                            <Input 
-                                id="phone" 
+                            <Input
+                                id="phone"
                                 className="border-gray-200"
-                                value={editData.phone} 
+                                value={editData.phone}
                                 onChange={(e) => setEditData({...editData, phone: e.target.value})}
                             />
                         </div>
                     </div>
                 </div>
 
-                <Separator className="bg-gray-100" />
-
-                {/* 2. Booking Information */}
-                <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                        <div className="h-8 w-1 bg-yellow-500 rounded-full" />
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Booking Information</h3>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2 col-span-2">
-                            <Label className="flex items-center justify-between pointer-events-none">
-                                Booking Person Detail(s)
-                            </Label>
-                            <div className="space-y-4 pt-2">
-                                {editData.bookingPersonName?.map((person, index) => (
-                                    <div key={index} className="space-y-3 p-4 bg-muted/30 rounded-lg relative group border border-dashed border-gray-200">
-                                        <div className="grid grid-cols-6 gap-3 pt-4">
-                                            <div className="col-span-3 space-y-1.5">
-                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Name</Label>
-                                                <Input 
-                                                    className="border-gray-200 h-9 text-sm"
-                                                    value={person.name} 
-                                                    placeholder="Person Name"
-                                                    onChange={(e) => {
-                                                        const newNames = [...editData.bookingPersonName];
-                                                        newNames[index] = { ...person, name: e.target.value };
-                                                        setEditData({...editData, bookingPersonName: newNames});
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="col-span-2 space-y-1.5">
-                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Gender</Label>
-                                                <Select 
-                                                    value={person.gender} 
-                                                    onValueChange={(val) => {
-                                                        const newNames = [...editData.bookingPersonName];
-                                                        newNames[index] = { ...person, gender: val };
-                                                        setEditData({...editData, bookingPersonName: newNames});
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="h-9 text-sm">
-                                                        <SelectValue placeholder="G" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="Male">M</SelectItem>
-                                                        <SelectItem value="Female">F</SelectItem>
-                                                        <SelectItem value="Other">O</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <div className="col-span-1 space-y-1.5">
-                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Age</Label>
-                                                <Input 
-                                                    className="border-gray-200 h-9 text-sm px-1 text-center"
-                                                    value={person.age} 
-                                                    placeholder="Age"
-                                                    onChange={(e) => {
-                                                        const newNames = [...editData.bookingPersonName];
-                                                        newNames[index] = { ...person, age: e.target.value };
-                                                        setEditData({...editData, bookingPersonName: newNames});
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {editData.bookingPersonName.length > 1 && (
-                                            <Button 
-                                                variant="ghost" 
-                                                size="icon" 
-                                                className="absolute top-1 right-1 h-7 w-7 text-muted-foreground hover:text-destructive"
-                                                onClick={() => {
-                                                    const newNames = editData.bookingPersonName.filter((_, i) => i !== index);
-                                                    setEditData({...editData, bookingPersonName: newNames});
-                                                }}
-                                            >
-                                                ✕
-                                            </Button>
-                                        )}
-                                        <div className="absolute top-1 left-3 text-[10px] font-bold text-muted-foreground/50">PERSON #{index + 1}</div>
-                                    </div>
-                                ))}
-                                <Button 
-                                    variant="outline" 
-                                    className="w-full h-9 border-dashed text-primary font-bold hover:bg-primary/5 gap-2"
-                                    onClick={() => setEditData({...editData, bookingPersonName: [...editData.bookingPersonName, { name: "", gender: "", age: "" }]})}
-                                >
-                                    + Add Person
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="totalAdults">Total Adults</Label>
-                            <Input 
-                                id="totalAdults" 
-                                readOnly
-                                className="bg-muted border-gray-200 font-medium"
-                                value={editData.totalAdults} 
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="totalChildren">Total Children</Label>
-                            <Input 
-                                id="totalChildren" 
-                                readOnly
-                                className="bg-muted border-gray-200 font-medium"
-                                value={editData.totalChildren} 
-                            />
-                        </div>
-                        <div className="grid gap-2 col-span-2">
-                            <Label className="flex items-center justify-between pointer-events-none">
-                                Children Detail(s)
-                            </Label>
-                            <div className="space-y-4 pt-2">
-                                {editData.childrenNames?.map((child, index) => (
-                                    <div key={index} className="space-y-3 p-4 bg-muted/30 rounded-lg relative group border border-dashed border-gray-200">
-                                        <div className="grid grid-cols-6 gap-3 pt-4">
-                                            <div className="col-span-3 space-y-1.5">
-                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Name</Label>
-                                                <Input 
-                                                    className="border-gray-200 h-9 text-sm"
-                                                    value={child.name} 
-                                                    placeholder="Child Name"
-                                                    onChange={(e) => {
-                                                        const newNames = [...editData.childrenNames];
-                                                        newNames[index] = { ...child, name: e.target.value };
-                                                        setEditData({...editData, childrenNames: newNames});
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="col-span-2 space-y-1.5">
-                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Gender</Label>
-                                                <Select 
-                                                    value={child.gender} 
-                                                    onValueChange={(val) => {
-                                                        const newNames = [...editData.childrenNames];
-                                                        newNames[index] = { ...child, gender: val };
-                                                        setEditData({...editData, childrenNames: newNames});
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="h-9 text-sm">
-                                                        <SelectValue placeholder="G" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="Male">M</SelectItem>
-                                                        <SelectItem value="Female">F</SelectItem>
-                                                        <SelectItem value="Other">O</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <div className="col-span-1 space-y-1.5">
-                                                <Label className="text-[10px] uppercase text-muted-foreground font-bold">Age</Label>
-                                                <Input 
-                                                    className="border-gray-200 h-9 text-sm px-1 text-center"
-                                                    value={child.age} 
-                                                    placeholder="Age"
-                                                    onChange={(e) => {
-                                                        const newNames = [...editData.childrenNames];
-                                                        newNames[index] = { ...child, age: e.target.value };
-                                                        setEditData({...editData, childrenNames: newNames});
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {editData.childrenNames.length > 1 && (
-                                            <Button 
-                                                variant="ghost" 
-                                                size="icon" 
-                                                className="absolute top-1 right-1 h-7 w-7 text-muted-foreground hover:text-destructive"
-                                                onClick={() => {
-                                                    const newNames = editData.childrenNames.filter((_, i) => i !== index);
-                                                    setEditData({...editData, childrenNames: newNames});
-                                                }}
-                                            >
-                                                ✕
-                                            </Button>
-                                        )}
-                                        <div className="absolute top-1 left-3 text-[10px] font-bold text-muted-foreground/50">CHILD #{index + 1}</div>
-                                    </div>
-                                ))}
-                                <Button 
-                                    variant="outline" 
-                                    className="w-full h-9 border-dashed text-primary font-bold hover:bg-primary/5 gap-2"
-                                    onClick={() => setEditData({...editData, childrenNames: [...editData.childrenNames, { name: "", gender: "", age: "" }]})}
-                                >
-                                    + Add Child
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="grid gap-2 col-span-2">
-                            <Label htmlFor="totalMembers" className="font-bold flex items-center justify-between">
-                                Total Members 
-                                <span className="text-[10px] text-primary italic font-normal">Auto-calculated</span>
-                            </Label>
-                            <Input 
-                                id="totalMembers" 
-                                readOnly
-                                className="bg-muted border-gray-200 font-bold"
-                                value={editData.totalMembers} 
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="travelDate">Check-in Date</Label>
-                            <Input 
-                                id="travelDate" 
-                                placeholder="YYYY-MM-DD"
-                                className="border-gray-200"
-                                value={editData.travelDate} 
-                                onChange={(e) => setEditData({...editData, travelDate: e.target.value})}
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="returnDate">Check-out Date</Label>
-                            <Input 
-                                id="returnDate" 
-                                placeholder="YYYY-MM-DD"
-                                className="border-gray-200"
-                                value={editData.returnDate} 
-                                onChange={(e) => setEditData({...editData, returnDate: e.target.value})}
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="destination">Destination</Label>
-                            <Input 
-                                id="destination" 
-                                className="border-gray-200"
-                                value={editData.destination} 
-                                onChange={(e) => setEditData({...editData, destination: e.target.value})}
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="pickupLocation">Pickup Location</Label>
-                            <Input 
-                                id="pickupLocation" 
-                                className="border-gray-200"
-                                value={editData.pickupLocation} 
-                                onChange={(e) => setEditData({...editData, pickupLocation: e.target.value})}
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="bookingStatus">Booking Status</Label>
-                            <Select 
-                                value={editData.bookingStatus} 
-                                onValueChange={(value) => setEditData({...editData, bookingStatus: value})}
-                            >
-                                <SelectTrigger className="border-gray-200">
-                                    <SelectValue placeholder="Select Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Pending">Pending</SelectItem>
-                                    <SelectItem value="Confirmed">Confirmed</SelectItem>
-                                    <SelectItem value="Cancelled">Cancelled</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="paymentStatus">Payment Status</Label>
-                            <Select 
-                                value={editData.paymentStatus} 
-                                onValueChange={(value) => setEditData({...editData, paymentStatus: value})}
-                            >
-                                <SelectTrigger className="border-gray-200">
-                                    <SelectValue placeholder="Select Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Paid">Paid</SelectItem>
-                                    <SelectItem value="Unpaid">Unpaid</SelectItem>
-                                    <SelectItem value="Partial">Partial</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                </div>
-
-                <Separator className="bg-gray-100" />
 
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
@@ -718,63 +585,61 @@ corporatePartyOptions: user.corporatePartyOptions || false,
                         <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Personal Information</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                    
-                  <div className="grid gap-2">
-  <Label>Occupation</Label>
-  <Input
-    className="border-gray-200"
-    value={editData.occupation || "Not Provided"}
-    readOnly
-  />
-</div>
+                        <div className="grid gap-2">
+                            <Label>Occupation</Label>
+                            <Input
+                                className="border-gray-200"
+                                value={editData.occupation || "Not Provided"}
+                                readOnly
+                            />
+                        </div>
 
-{editData.occupation === "Business Owner" && (
-  <div className="grid gap-2">
-    <Label>Company Name</Label>
-    <Input
-      className="border-gray-200"
-      value={editData.companyName || "Not Provided"}
-      readOnly
-    />
-  </div>
-)}
+                        {editData.occupation === "Business Owner" && (
+                            <div className="grid gap-2">
+                                <Label>Company Name</Label>
+                                <Input
+                                    className="border-gray-200"
+                                    value={editData.companyName || "Not Provided"}
+                                    readOnly
+                                />
+                            </div>
+                        )}
 
-<div className="grid gap-2">
-  <Label>
-    {editData.occupation === "Business Owner"
-      ? "Corporate Party Interest"
-      : "Future Event Interest"}
-  </Label>
+                        <div className="grid gap-2">
+                            <Label>
+                                {editData.occupation === "Business Owner"
+                                ? "Corporate Party Interest"
+                                : "Future Event Interest"}
+                            </Label>
 
-  <Input
-    className="border-gray-200"
-    value={
-      editData.occupation === "Business Owner"
-        ? editData.corporatePartyOptions
-          ? "Interested in corporate party"
-          : "Not interested"
-        : "Interested in future event booking"
-    }
-    readOnly
-  />
-</div>
+                            <Input
+                                className="border-gray-200"
+                                value={
+                                editData.occupation === "Business Owner"
+                                    ? editData.corporatePartyOptions
+                                    ? "Interested in corporate party"
+                                    : "Not interested"
+                                    : "Interested in future event booking"
+                                }
+                                readOnly
+                            />
+                        </div>
 
-                 
                         <div className="grid gap-2 col-span-2">
                             <Label htmlFor="address">Address</Label>
-                            <Textarea 
-                                id="address" 
+                            <Textarea
+                                id="address"
                                 className="min-h-[80px] border-gray-200"
-                                value={editData.address} 
+                                value={editData.address}
                                 onChange={(e) => setEditData({...editData, address: e.target.value})}
                             />
                         </div>
                         <div className="grid gap-2 col-span-2">
                             <Label htmlFor="alternatePhone">Alternate Phone Number</Label>
-                            <Input 
-                                id="alternatePhone" 
+                            <Input
+                                id="alternatePhone"
                                 className="border-gray-200"
-                                value={editData.alternatePhone} 
+                                value={editData.alternatePhone}
                                 onChange={(e) => setEditData({...editData, alternatePhone: e.target.value})}
                             />
                         </div>
@@ -782,42 +647,252 @@ corporatePartyOptions: user.corporatePartyOptions || false,
                 </div>
 
                 <Separator className="bg-gray-100" />
+ 
+                 {/* 5. Custom Entries / Manual Booking */}
+                 <div className="space-y-4">
+                     <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                             <div className="h-8 w-1 bg-cyan-500 rounded-full" />
+                             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Custom Entries</h3>
+                         </div>
+                         <Button
+                             variant="outline"
+                             size="sm"
+                             className="h-8 border-dashed text-primary font-bold hover:bg-primary/5 gap-1 text-[10px]"
+                             onClick={() => setIsCustomFormOpen(!isCustomFormOpen)}
+                         >
+                             {isCustomFormOpen ? "Close Form" : "+ Add Entry"}
+                         </Button>
+                     </div>
 
-                {/* 4. Additional Information */}
+                     {isCustomFormOpen && (
+                         <div className="space-y-4 bg-gray-50/80 p-5 rounded-2xl border border-dashed border-gray-200 animate-in fade-in slide-in-from-top-2 duration-300">
+                             <div className="grid grid-cols-2 gap-4">
+                                 <div className="space-y-1.5 col-span-2">
+                                     <Label className="text-[10px] uppercase font-bold text-muted-foreground italic pl-1">Select Room</Label>
+                                     <Select
+                                         onValueChange={(val) => {
+                                             if (val === "custom") {
+                                                 setEditData({...editData, tempManualRoom: "", isCustomRoom: true});
+                                             } else {
+                                                 setEditData({...editData, tempManualRoom: val, isCustomRoom: false});
+                                             }
+                                         }}
+                                     >
+                                         <SelectTrigger className="h-10 bg-white border-gray-200">
+                                             <SelectValue placeholder="Chose a room..." />
+                                         </SelectTrigger>
+                                         <SelectContent>
+                                            {rooms.map((room) => (
+                                                <SelectItem key={room._id} value={room.roomName}>{room.roomName}</SelectItem>
+                                            ))}
+                                            <SelectItem value="custom" className="text-primary font-bold">+ Other (Custom Name)</SelectItem>
+                                         </SelectContent>
+                                     </Select>
+                                 </div>
+
+                                 {editData.isCustomRoom && (
+                                     <div className="space-y-1.5 col-span-2 animate-in zoom-in-95 duration-200">
+                                         <Label className="text-[10px] uppercase font-bold text-muted-foreground italic pl-1">Custom Room Name</Label>
+                                         <Input 
+                                             className="h-10 bg-white border-primary/20 focus:border-primary shadow-sm"
+                                             placeholder="Enter manual room name..."
+                                             value={editData.tempManualRoom || ""}
+                                             onChange={(e) => setEditData({...editData, tempManualRoom: e.target.value})}
+                                         />
+                                     </div>
+                                 )}
+
+                                 <div className="space-y-1.5">
+                                     <Label className="text-[10px] uppercase font-bold text-muted-foreground italic pl-1">Check-In</Label>
+                                     <Input 
+                                         type="date"
+                                         className="h-10 bg-white border-gray-200"
+                                         value={editData.tempManualCheckIn || ""}
+                                         onChange={(e) => setEditData({...editData, tempManualCheckIn: e.target.value})}
+                                     />
+                                 </div>
+
+                                 <div className="space-y-1.5">
+                                     <Label className="text-[10px] uppercase font-bold text-muted-foreground italic pl-1">Check-Out</Label>
+                                     <Input 
+                                         type="date"
+                                         className="h-10 bg-white border-gray-200"
+                                         value={editData.tempManualCheckOut || ""}
+                                         onChange={(e) => setEditData({...editData, tempManualCheckOut: e.target.value})}
+                                     />
+                                 </div>
+
+                                 <div className="space-y-1.5">
+                                     <Label className="text-[10px] uppercase font-bold text-muted-foreground italic pl-1">Adults</Label>
+                                     <Input 
+                                         type="number"
+                                         className="h-10 bg-white border-gray-200"
+                                         value={editData.tempManualAdults || 1}
+                                         onChange={(e) => setEditData({...editData, tempManualAdults: e.target.value})}
+                                     />
+                                 </div>
+
+                                 <div className="space-y-1.5">
+                                     <Label className="text-[10px] uppercase font-bold text-muted-foreground italic pl-1">Children</Label>
+                                     <Input 
+                                         type="number"
+                                         className="h-10 bg-white border-gray-200"
+                                         value={editData.tempManualChildren || 0}
+                                         onChange={(e) => setEditData({...editData, tempManualChildren: e.target.value})}
+                                     />
+                                 </div>
+                             </div>
+
+                             <Button 
+                                 className="w-full h-10 font-bold rounded-xl shadow-md shadow-primary/10"
+                                 onClick={async () => {
+                                     if (!editData.tempManualRoom) {
+                                         toast({ title: "Error", description: "Please select/enter a room.", variant: "destructive" });
+                                         return;
+                                     }
+                                     
+                                     try {
+                                         setIsUpdating(true);
+                                         const bookingPayload = {
+                                             roomId: editData.isCustomRoom ? "manual" : rooms.find(r => r.roomName === editData.tempManualRoom)?._id || "manual",
+                                             roomName: editData.tempManualRoom,
+                                             checkIn: editData.tempManualCheckIn,
+                                             checkOut: editData.tempManualCheckOut,
+                                             adults: editData.tempManualAdults || 1,
+                                             children: editData.tempManualChildren || 0,
+                                             fullName: selectedUser.name,
+                                             email: selectedUser.email,
+                                             phone: selectedUser.phone.toString(),
+                                             pricePerNight: 0, 
+                                             destination: "Forest Gate Resort",
+                                             pickupLocation: "Airport",
+                                         };
+
+                                         const response = await fetch(API.CreateBooking, {
+                                             method: 'POST',
+                                             headers: { 'Content-Type': 'application/json' },
+                                             body: JSON.stringify(bookingPayload)
+                                         });
+
+                                         if (response.ok) {
+                                             toast({ title: "Success", description: "Manual booking created successfully." });
+                                             setIsCustomFormOpen(false);
+                                             setEditData({
+                                                 ...editData,
+                                                 tempManualRoom: "",
+                                                 tempManualCheckIn: "",
+                                                 tempManualCheckOut: "",
+                                                 tempManualAdults: 1,
+                                                 tempManualChildren: 0,
+                                                 isCustomRoom: false
+                                             });
+                                             // Refresh history
+                                             fetchUserHistory(selectedUser.email);
+                                         } else {
+                                             const err = await response.json();
+                                             throw new Error(err.message || "Failed to create booking");
+                                         }
+                                     } catch (error) {
+                                         toast({ title: "Error", description: error.message, variant: "destructive" });
+                                     } finally {
+                                         setIsUpdating(false);
+                                     }
+                                 }}
+                                 disabled={isUpdating}
+                             >
+                                 {isUpdating ? "Creating..." : "Confirm & Create Booking"}
+                             </Button>
+                         </div>
+                     )}
+
+                     <div className="space-y-3 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                         {editData.customFields?.map((field, index) => (
+                             <div key={index} className="flex justify-between items-center p-3 bg-white border border-gray-100 rounded-xl shadow-sm group">
+                                 <div className="flex flex-col">
+                                     <span className="text-[10px] font-bold text-muted-foreground uppercase">{field.key}</span>
+                                     <span className="text-xs font-semibold text-gray-900">{field.value}</span>
+                                 </div>
+                                 <Button
+                                     variant="ghost"
+                                     size="icon"
+                                     className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                     onClick={() => {
+                                         const newFields = editData.customFields.filter((_, i) => i !== index);
+                                         setEditData({...editData, customFields: newFields});
+                                     }}
+                                 >
+                                     ✕
+                                 </Button>
+                             </div>
+                         ))}
+                         {(!editData.customFields || editData.customFields.length === 0) && (
+                             <p className="text-[10px] text-muted-foreground italic text-center py-2">No custom entries added yet.</p>
+                         )}
+                     </div>
+                 </div>
+ 
+                 <Separator className="bg-gray-100" />
+
+                {/* 6. User Order History */}
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
-                        <div className="h-8 w-1 bg-purple-500 rounded-full" />
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Additional Information</h3>
+                        <div className="h-8 w-1 bg-blue-500 rounded-full" />
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">User Order History</h3>
                     </div>
-                    <div className="grid gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="notes">Notes / Remarks</Label>
-                            <Textarea 
-                                id="notes" 
-                                className="min-h-[100px] border-gray-200"
-                                placeholder="Internal notes..."
-                                value={editData.notes} 
-                                onChange={(e) => setEditData({...editData, notes: e.target.value})}
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="specialRequest">Special Requests</Label>
-                            <Textarea 
-                                id="specialRequest" 
-                                className="min-h-[100px] border-gray-200"
-                                placeholder="Any passenger requests..."
-                                value={editData.specialRequest} 
-                                onChange={(e) => setEditData({...editData, specialRequest: e.target.value})}
-                            />
-                        </div>
+                    <div className="space-y-3">
+                        {loadingHistory ? (
+                            <div className="space-y-2">
+                                <Skeleton className="h-24 w-full rounded-xl" />
+                                <Skeleton className="h-24 w-full rounded-xl" />
+                            </div>
+                        ) : userHistory.length > 0 ? (
+                            userHistory.map((booking) => (
+                                <div
+                                    key={booking._id}
+                                    onClick={() => handleHistoryItemClick(booking)}
+                                    className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-primary/30 hover:shadow-md cursor-pointer transition-all group active:scale-[0.98]"
+                                >
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p className="font-bold text-sm text-gray-900">{booking.bookingType || (booking.room?.roomName || "Room Booking")}</p>
+                                            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">ID: {booking._id}</p>
+                                        </div>
+                                        <Badge className={`${getBookingStatusColor(booking.status)} border text-[10px] px-2 py-0 h-5 shadow-none`}>
+                                            {booking.status}
+                                        </Badge>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 mt-3">
+                                        <div className="bg-gray-50 p-2 rounded-lg">
+                                            <p className="text-[9px] uppercase text-muted-foreground font-bold italic">Check-In</p>
+                                            <p className="text-xs font-semibold">{booking.checkIn ? format(parseISO(booking.checkIn), 'MMM dd, yyyy') : 'N/A'}</p>
+                                        </div>
+                                        <div className="bg-gray-50 p-2 rounded-lg">
+                                            <p className="text-[9px] uppercase text-muted-foreground font-bold italic">Check-Out</p>
+                                            <p className="text-xs font-semibold">{booking.checkOut ? format(parseISO(booking.checkOut), 'MMM dd, yyyy') : 'N/A'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                                        <div className="flex gap-3">
+                                            <p className="text-[10px] text-muted-foreground">Guests: <span className="text-gray-900 font-bold">{booking.guests?.adults + (booking.guests?.children || 0) || booking.guests || 0}</span></p>
+                                        </div>
+                                        <p className="text-[10px] font-bold text-primary">View Full Details →</p>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="p-8 text-center bg-gray-50 border border-dashed border-gray-200 rounded-2xl">
+                                <p className="text-sm text-muted-foreground font-medium">No booking history found for this user.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
           </div>
 
           <SheetFooter className="p-6 border-t bg-gray-50/80 sticky bottom-0 z-50 flex-col sm:flex-row gap-3">
-            <Button 
-                variant="destructive" 
+            <Button
+                variant="destructive"
                 className="w-full sm:w-auto"
                 onClick={() => setIsDeleteDialogOpen(true)}
                 disabled={isUpdating || isDeleting}
@@ -833,6 +908,550 @@ corporatePartyOptions: user.corporatePartyOptions || false,
           </SheetFooter>
         </SheetContent>
       </Sheet>
+
+      {/* Booking Detail Dialog - EDITABLE VERSION */}
+      <Dialog open={isBookingDetailOpen} onOpenChange={(open) => {
+          setIsBookingDetailOpen(open);
+          if (!open) setIsEditingBooking(false);
+      }}>
+        <DialogContent className="max-w-2xl bg-white p-0 overflow-hidden border-none shadow-2xl rounded-3xl">
+          <DialogHeader className={cn(
+              "p-6 text-white transition-colors duration-300",
+              isEditingBooking ? "bg-amber-600" : "bg-primary"
+          )}>
+            <div className="flex justify-between items-start">
+                <div>
+                    <DialogTitle className="text-2xl font-bold">
+                        {isEditingBooking ? "Edit Booking Details" : "Booking Details"}
+                    </DialogTitle>
+                    <p className="text-white/80 text-sm">
+                        {isEditingBooking ? "Modify guest info, dates, and status" : "Review specific order information"}
+                    </p>
+                </div>
+                {!isEditingBooking && (
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        className="bg-white/20 hover:bg-white/30 text-white border-none"
+                        onClick={() => setIsEditingBooking(true)}
+                    >
+                        Edit Details
+                    </Button>
+                )}
+            </div>
+          </DialogHeader>
+
+          {tempBookingData && (
+            <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+                {/* Status & Quick Dates */}
+                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] uppercase font-bold text-muted-foreground italic">Order Status</Label>
+                        {isEditingBooking ? (
+                            <Select
+                                value={tempBookingData.status}
+                                onValueChange={(val) => setTempBookingData({...tempBookingData, status: val})}
+                            >
+                                <SelectTrigger className="h-9 bg-white">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Pending">Pending</SelectItem>
+                                    <SelectItem value="Confirmed">Confirmed</SelectItem>
+                                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        ) : (
+                            <Badge className={cn("mt-1", getStatusColor(tempBookingData.status))}>
+                                {tempBookingData.status}
+                            </Badge>
+                        )}
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] uppercase font-bold text-muted-foreground italic">Payment Status</Label>
+                        {isEditingBooking ? (
+                            <Select
+                                value={tempBookingData.paymentStatus}
+                                onValueChange={(val) => setTempBookingData({...tempBookingData, paymentStatus: val})}
+                            >
+                                <SelectTrigger className="h-9 bg-white">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Paid">Paid</SelectItem>
+                                    <SelectItem value="Unpaid">Unpaid</SelectItem>
+                                    <SelectItem value="Partial">Partial</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        ) : (
+                            <Badge variant="outline" className="mt-1 bg-white font-bold">
+                                {tempBookingData.paymentStatus || 'Unpaid'}
+                            </Badge>
+                        )}
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] uppercase font-bold text-muted-foreground italic">Check-In</Label>
+                        {isEditingBooking ? (
+                            <Input
+                                type="date"
+                                className="h-9 bg-white"
+                                value={tempBookingData.checkIn?.split('T')[0] || ''}
+                                onChange={(e) => setTempBookingData({...tempBookingData, checkIn: e.target.value})}
+                            />
+                        ) : (
+                            <p className="text-sm font-bold pt-1">{tempBookingData.checkIn ? format(parseISO(tempBookingData.checkIn), 'MMM dd, yyyy') : 'N/A'}</p>
+                        )}
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] uppercase font-bold text-muted-foreground italic">Check-Out</Label>
+                        {isEditingBooking ? (
+                            <Input
+                                type="date"
+                                className="h-9 bg-white"
+                                value={tempBookingData.checkOut?.split('T')[0] || ''}
+                                onChange={(e) => setTempBookingData({...tempBookingData, checkOut: e.target.value})}
+                            />
+                        ) : (
+                            <p className="text-sm font-bold pt-1">{tempBookingData.checkOut ? format(parseISO(tempBookingData.checkOut), 'MMM dd, yyyy') : 'N/A'}</p>
+                        )}
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] uppercase font-bold text-muted-foreground italic">Destination</Label>
+                        {isEditingBooking ? (
+                            <Input
+                                className="h-9 bg-white"
+                                value={tempBookingData.destination || "Forest Gate Resort"}
+                                onChange={(e) => setTempBookingData({...tempBookingData, destination: e.target.value})}
+                            />
+                        ) : (
+                            <p className="text-sm font-bold pt-1">{tempBookingData.destination || "Forest Gate Resort"}</p>
+                        )}
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] uppercase font-bold text-muted-foreground italic">Pickup Location</Label>
+                        {isEditingBooking ? (
+                            <Input
+                                className="h-9 bg-white"
+                                value={tempBookingData.pickupLocation || "Airport"}
+                                onChange={(e) => setTempBookingData({...tempBookingData, pickupLocation: e.target.value})}
+                            />
+                        ) : (
+                            <p className="text-sm font-bold pt-1">{tempBookingData.pickupLocation || "Airport"}</p>
+                        )}
+                    </div>
+                </div>
+
+                {tempBookingData.status?.toLowerCase() === 'cancelled' && (
+                    <div className="p-4 bg-red-50 border border-red-100 rounded-xl space-y-3">
+                        <div className="flex items-center gap-2 text-destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <h4 className="text-[10px] font-bold uppercase tracking-widest">Cancellation Details</h4>
+                        </div>
+                        <div className="space-y-2">
+                            {tempBookingData.cancellationReasons?.length > 0 && (
+                                <div className="space-y-1">
+                                    <p className="text-[9px] uppercase font-bold text-muted-foreground italic">Reasons</p>
+                                    <div className="flex flex-wrap gap-1">
+                                        {tempBookingData.cancellationReasons.map((reason, i) => (
+                                            <Badge key={i} variant="outline" className="text-[10px] bg-white text-destructive border-destructive/20 h-5">
+                                                {reason}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {tempBookingData.cancellationNote && (
+                                <div className="space-y-1">
+                                    <p className="text-[9px] uppercase font-bold text-muted-foreground italic">Additional Note</p>
+                                    <p className="text-xs font-semibold italic text-destructive leading-relaxed">"{tempBookingData.cancellationNote}"</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Guest Profiles */}
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                             Guest Profiles
+                        </h4>
+                        {isEditingBooking && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-7 text-[10px] gap-1 px-2 border-dashed"
+                                onClick={() => {
+                                    const guests = [...(tempBookingData.guestDetails || [])];
+                                    guests.push({ name: "", gender: "Male", age: "", type: "adult" });
+                                    setTempBookingData({...tempBookingData, guestDetails: guests});
+                                }}
+                            >
+                                + Add Guest
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className="space-y-3">
+                        {tempBookingData.guestDetails?.map((guest, idx) => (
+                            <div key={idx} className="relative p-4 bg-gray-50/50 rounded-2xl border border-gray-100 group transition-all hover:bg-white hover:shadow-sm">
+                                {isEditingBooking ? (
+                                    <div className="grid grid-cols-12 gap-3 pt-2">
+                                        <div className="col-span-5 space-y-1">
+                                            <Label className="text-[9px] uppercase font-bold text-muted-foreground">Name</Label>
+                                            <Input
+                                                className="h-8 text-xs bg-white"
+                                                value={guest.name}
+                                                onChange={(e) => {
+                                                    const details = [...tempBookingData.guestDetails];
+                                                    details[idx].name = e.target.value;
+                                                    setTempBookingData({...tempBookingData, guestDetails: details});
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-span-3 space-y-1">
+                                            <Label className="text-[9px] uppercase font-bold text-muted-foreground">Gender</Label>
+                                            <Select
+                                                value={guest.gender}
+                                                onValueChange={(val) => {
+                                                    const details = [...tempBookingData.guestDetails];
+                                                    details[idx].gender = val;
+                                                    setTempBookingData({...tempBookingData, guestDetails: details});
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-8 text-xs bg-white">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="Male">Male</SelectItem>
+                                                    <SelectItem value="Female">Female</SelectItem>
+                                                    <SelectItem value="Other">Other</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="col-span-2 space-y-1">
+                                            <Label className="text-[9px] uppercase font-bold text-muted-foreground">Age</Label>
+                                            <Input
+                                                className="h-8 text-xs bg-white"
+                                                value={guest.age}
+                                                onChange={(e) => {
+                                                    const details = [...tempBookingData.guestDetails];
+                                                    details[idx].age = e.target.value;
+                                                    setTempBookingData({...tempBookingData, guestDetails: details});
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-span-2 space-y-1">
+                                            <Label className="text-[9px] uppercase font-bold text-muted-foreground">Type</Label>
+                                            <Select
+                                                value={guest.type}
+                                                onValueChange={(val) => {
+                                                    const details = [...tempBookingData.guestDetails];
+                                                    details[idx].type = val;
+                                                    setTempBookingData({...tempBookingData, guestDetails: details});
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-8 text-xs bg-white px-2">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="adult">Adult</SelectItem>
+                                                    <SelectItem value="child">Child</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="absolute -top-2 -right-2 h-6 w-6 bg-white shadow-sm border border-gray-100 rounded-full text-muted-foreground hover:text-destructive transition-transform group-hover:scale-110"
+                                            onClick={() => {
+                                                const details = tempBookingData.guestDetails.filter((_, i) => i !== idx);
+                                                setTempBookingData({...tempBookingData, guestDetails: details});
+                                            }}
+                                        >
+                                            ✕
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold text-gray-900">{guest.name || "Unnamed Guest"}</span>
+                                            <span className="text-[10px] text-muted-foreground font-medium uppercase">{guest.type} • {guest.gender} • {guest.age || 'N/A'} Years</span>
+                                        </div>
+                                        <Badge variant="outline" className="text-[9px] h-5 bg-white">{guest.type}</Badge>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+
+                        {(!tempBookingData.guestDetails || tempBookingData.guestDetails.length === 0) && (
+                            <div className="flex items-center justify-between p-4 bg-blue-50/50 rounded-2xl border border-blue-100 border-dashed">
+                                <div className="space-y-0.5">
+                                    <p className="text-xs font-bold text-blue-900">Legacy Guest Format</p>
+                                    <p className="text-[10px] text-blue-700/70">Using simple counts instead of full profiles.</p>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="text-center">
+                                        <p className="text-[8px] uppercase font-bold text-blue-400">Adults</p>
+                                        <p className="text-sm font-bold text-blue-900">{tempBookingData.guests?.adults || 0}</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-[8px] uppercase font-bold text-blue-400">Children</p>
+                                        <p className="text-sm font-bold text-blue-900">{tempBookingData.guests?.children || 0}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+
+                 {/* Add-ons Manager */}
+                 <div className="space-y-4 pt-2 border-t border-gray-100">
+                     <div className="flex justify-between items-center">
+                         <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                              Additional Add-ons
+                         </h4>
+                         {isEditingBooking && (
+                             <Button
+                                 variant="outline"
+                                 size="sm"
+                                 className="h-7 text-[10px] gap-1 px-2 border-dashed"
+                                 onClick={() => {
+                                     const adds = [...(tempBookingData.addons || [])];
+                                     adds.push({ name: "", price: 0, status: "active" });
+                                     setTempBookingData({...tempBookingData, addons: adds});
+                                 }}
+                             >
+                                 + Add Extra
+                             </Button>
+                         )}
+                     </div>
+ 
+                     <div className="grid grid-cols-1 gap-2">
+                         {tempBookingData.addons?.map((addon, idx) => (
+                             <div key={idx} className={cn(
+                                 "relative flex items-center gap-3 p-3 rounded-xl border transition-all hover:bg-white",
+                                 addon.status === "cancelled" ? "bg-red-50/50 border-red-100" : "bg-gray-50/50 border-gray-100"
+                             )}>
+                                 {isEditingBooking ? (
+                                     <div className="flex items-center gap-3 w-full">
+                                         <div className="flex-1 space-y-1">
+                                             <Label className="text-[8px] uppercase font-bold text-muted-foreground">Add-on Name</Label>
+                                             <Input
+                                                 className={cn("h-8 text-xs bg-white", addon.status === "cancelled" && "text-red-600 line-through")}
+                                                 placeholder="e.g. Extra Bed"
+                                                 value={addon.name}
+                                                 onChange={(e) => {
+                                                     const adds = [...tempBookingData.addons];
+                                                     adds[idx].name = e.target.value;
+                                                     setTempBookingData({...tempBookingData, addons: adds});
+                                                 }}
+                                             />
+                                         </div>
+                                         <div className="w-24 space-y-1">
+                                             <Label className="text-[8px] uppercase font-bold text-muted-foreground">Price (₹)</Label>
+                                             <Input
+                                                 type="number"
+                                                 className={cn("h-8 text-xs bg-white text-right font-bold", addon.status === "cancelled" ? "text-red-500 line-through" : "text-primary")}
+                                                 value={addon.price}
+                                                 onChange={(e) => {
+                                                     const adds = [...tempBookingData.addons];
+                                                     adds[idx].price = Number(e.target.value);
+                                                     setTempBookingData({...tempBookingData, addons: adds});
+                                                 }}
+                                             />
+                                         </div>
+                                         <div className="flex gap-1 mt-3">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className={cn("h-6 w-6", addon.status === "cancelled" ? "text-emerald-600 hover:text-emerald-700" : "text-amber-600 hover:text-amber-700")}
+                                                title={addon.status === "cancelled" ? "Restore Add-on" : "Cancel Add-on"}
+                                                onClick={() => {
+                                                    const adds = [...tempBookingData.addons];
+                                                    adds[idx].status = addon.status === "cancelled" ? "active" : "cancelled";
+                                                    setTempBookingData({...tempBookingData, addons: adds});
+                                                }}
+                                            >
+                                                {addon.status === "cancelled" ? "↺" : "⊘"}
+                                            </Button>
+                                            
+                                            {/* Delete only for NEW unsaved entries */}
+                                            {!addon._id && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                                                    onClick={() => {
+                                                        const adds = tempBookingData.addons.filter((_, i) => i !== idx);
+                                                        setTempBookingData({...tempBookingData, addons: adds});
+                                                    }}
+                                                >
+                                                    ✕
+                                                </Button>
+                                            )}
+                                         </div>
+                                     </div>
+                                 ) : (
+                                     <div className="flex justify-between items-center w-full">
+                                         <span className={cn("text-xs font-semibold", addon.status === "cancelled" ? "text-red-600 line-through" : "text-gray-700")}>
+                                             {addon.name}
+                                         </span>
+                                         <div className="flex items-center gap-2">
+                                             <span className={cn("text-xs font-bold", addon.status === "cancelled" ? "text-red-500 line-through" : "text-gray-900")}>
+                                                 ₹{(addon.price || 0).toLocaleString()}
+                                             </span>
+                                             {addon.status === "cancelled" && (
+                                                 <Badge variant="outline" className="text-[8px] h-4 bg-red-50 text-red-600 border-red-200 leading-none px-1">Cancelled</Badge>
+                                             )}
+                                         </div>
+                                     </div>
+                                 )}
+                             </div>
+                         ))}
+                         {(!tempBookingData.addons || tempBookingData.addons.length === 0) && (
+                             <p className="text-[10px] text-muted-foreground italic pl-1">No additional add-ons.</p>
+                         )}
+                     </div>
+                 </div>
+
+                 {/* Notes & Special Requests */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest pl-1">Special Requests</Label>
+                        {isEditingBooking ? (
+                            <Textarea
+                                className="min-h-[100px] text-xs resize-none bg-amber-50/30 border-amber-100 focus:border-amber-300 transition-colors"
+                                value={tempBookingData.specialRequest || ''}
+                                onChange={(e) => setTempBookingData({...tempBookingData, specialRequest: e.target.value})}
+                                placeholder="Enter guest special requests..."
+                            />
+                        ) : (
+                            <div className="p-4 bg-amber-50/50 rounded-2xl border border-amber-100/50 min-h-[100px]">
+                                <p className="text-xs text-amber-900 leading-relaxed font-medium italic">
+                                    {tempBookingData.specialRequest ? `"${tempBookingData.specialRequest}"` : "No special requests."}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest pl-1">Internal Admin Notes</Label>
+                        {isEditingBooking ? (
+                            <Textarea
+                                className="min-h-[100px] text-xs resize-none bg-blue-50/30 border-blue-100 focus:border-blue-300 transition-colors"
+                                value={tempBookingData.notes || ''}
+                                onChange={(e) => setTempBookingData({...tempBookingData, notes: e.target.value})}
+                                placeholder="Enter private admin remarks..."
+                            />
+                        ) : (
+                            <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50 min-h-[100px]">
+                                <p className="text-xs text-blue-900 leading-relaxed font-medium">
+                                    {tempBookingData.notes || "No internal notes added."}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Financial Footer */}
+                {/* Financial Footer (Dynamic) */}
+                {(() => {
+                    const checkIn = new Date(tempBookingData.checkIn);
+                    const checkOut = new Date(tempBookingData.checkOut);
+                    const nights = Math.max(0, Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24)));
+                    const basePrice = (nights * (tempBookingData.pricePerNight || 0));
+                    const addonsTotal = (tempBookingData.addons || []).reduce((sum, a) => {
+                        if (a.status === "cancelled") return sum;
+                        return sum + (Number(a.price) || 0);
+                    }, 0);
+                    const totalAmount = basePrice + addonsTotal;
+
+                    return (
+                        <div className={`p-5 rounded-3xl shadow-lg relative overflow-hidden group transition-all duration-300 ${isEditingBooking ? 'bg-primary/5 border border-primary/20' : 'bg-gray-900 text-white'}`}>
+                            {isEditingBooking ? (
+                                <div className="space-y-3 relative z-10">
+                                    <div className="flex justify-between items-center border-b border-primary/10 pb-2">
+                                        <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Pricing Calculation</p>
+                                        <Badge className="bg-primary/10 text-primary border-none text-[10px]">{nights} Nights</Badge>
+                                    </div>
+                                    <div className="space-y-1 text-xs font-medium">
+                                        <div className="flex justify-between opacity-70">
+                                            <span>Base Stay ({nights} x ₹{tempBookingData.pricePerNight})</span>
+                                            <span>₹{basePrice.toLocaleString()}</span>
+                                        </div>
+                                        {addonsTotal > 0 && (
+                                            <div className="flex justify-between opacity-70">
+                                                <span>Add-ons Total</span>
+                                                <span>₹{addonsTotal.toLocaleString()}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between pt-2 border-t border-primary/10 font-black text-sm text-primary">
+                                            <span>Dynamic Total</span>
+                                            <span>₹{totalAmount.toLocaleString()}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                                    <div className="flex justify-between items-center relative z-10">
+                                        <div>
+                                            <p className="text-[9px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Pricing</p>
+                                            <p className="text-2xl font-black text-white">₹{tempBookingData.totalAmount?.toLocaleString() || 0}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[9px] uppercase font-bold text-gray-400 tracking-widest mb-1">Stay Duration</p>
+                                            <p className="text-sm font-bold text-primary-foreground">{tempBookingData.totalNights || 0} Nights</p>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    );
+                })()}
+            </div>
+          )}
+
+          <div className="p-6 bg-gray-50 border-t flex items-center justify-between gap-3">
+             {isEditingBooking ? (
+                 <div className="flex gap-3 w-full">
+                    <Button
+                        variant="ghost"
+                        className="flex-1 rounded-xl h-11 font-bold text-muted-foreground"
+                        onClick={() => setIsEditingBooking(false)}
+                        disabled={isUpdatingBooking}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        className="flex-2 w-full max-w-[200px] rounded-xl h-11 font-bold shadow-lg shadow-primary/20"
+                        onClick={handleUpdateBooking}
+                        disabled={isUpdatingBooking}
+                    >
+                        {isUpdatingBooking ? "Saving..." : "Save Changes"}
+                    </Button>
+                 </div>
+             ) : (
+                 <>
+                    <Button
+                        variant="destructive"
+                        className="rounded-xl h-11 px-6 font-bold bg-red-50 text-red-600 border-none hover:bg-red-100 shadow-none transition-colors"
+                        onClick={() => setIsBookingDeleteDialogOpen(true)}
+                    >
+                        Delete Booking
+                    </Button>
+                    <Button
+                        className="flex-1 rounded-xl h-11 font-bold shadow-md"
+                        onClick={() => setIsBookingDetailOpen(false)}
+                    >
+                        Close Details
+                    </Button>
+                 </>
+             )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -855,6 +1474,28 @@ corporatePartyOptions: user.corporatePartyOptions || false,
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Delete Booking Confirmation */}
+      <AlertDialog open={isBookingDeleteDialogOpen} onOpenChange={setIsBookingDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove this booking record? This action is permanent.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+                onClick={handleDeleteBooking} 
+                className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              Confirm Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
+
 }

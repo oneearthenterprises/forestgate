@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, Mail, Lock, CheckCircle2, MountainSnow } from "lucide-react";
+import { ArrowRight, ShieldCheck, Mail, Lock, CheckCircle2, MountainSnow, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -50,6 +50,8 @@ export default function ForgotPasswordPage() {
 
   const [step, setStep] = useState("REQUEST_OTP");
   const [userEmail, setUserEmail] = useState("");
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
 
   const emailForm = useForm({
     resolver: zodResolver(EmailSchema),
@@ -333,12 +335,15 @@ const onResetPassword = async (values) => {
                           <FormControl>
                             <div className="relative">
                               <Input 
-                                type="password"
+                                type={showNewPw ? "text" : "password"}
                                 placeholder="••••••••" 
                                 {...field} 
-                                className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 pl-12 focus-visible:ring-primary shadow-sm"
+                                className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 pl-12 pr-12 focus-visible:ring-primary shadow-sm"
                               />
                               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                              <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                                {showNewPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              </button>
                             </div>
                           </FormControl> 
                           <FormMessage /> 
@@ -354,12 +359,15 @@ const onResetPassword = async (values) => {
                           <FormControl>
                             <div className="relative">
                               <Input 
-                                type="password"
+                                type={showConfirmPw ? "text" : "password"}
                                 placeholder="••••••••" 
                                 {...field} 
-                                className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 pl-12 focus-visible:ring-primary shadow-sm"
+                                className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 pl-12 pr-12 focus-visible:ring-primary shadow-sm"
                               />
                               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                              <button type="button" onClick={() => setShowConfirmPw(!showConfirmPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                                {showConfirmPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              </button>
                             </div>
                           </FormControl> 
                           <FormMessage /> 

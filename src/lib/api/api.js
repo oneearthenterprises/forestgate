@@ -42,11 +42,18 @@ export const API = {
   // booking api
   CreateBooking: `${API_BASE_URL}/Booking/api/create-booking`,
   GetBooking: `${API_BASE_URL}/Booking/api/bookings`,
+  GetUserHistory: (email) => `${API_BASE_URL}/Booking/api/user-history/${email}`,
 
   GetBookingById: (bookingId) =>
     `${API_BASE_URL}/Booking/api/booking/${bookingId}`,
   CancelBooking: (bookingId) =>
     `${API_BASE_URL}/Booking/api/cancel-booking/${bookingId}`,
+  UpdateBookingStatus: (bookingId) =>
+    `${API_BASE_URL}/Booking/api/update-status/${bookingId}`,
+  UpdateBooking: (bookingId) =>
+    `${API_BASE_URL}/Booking/api/update-booking/${bookingId}`,
+  DeleteBooking: (bookingId) =>
+    `${API_BASE_URL}/Booking/api/delete-booking/${bookingId}`,
 
   // forgate password api
   forgotPassword: `${API_BASE_URL}/Auth/api/forgot-password`,

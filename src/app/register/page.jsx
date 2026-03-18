@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { MountainSnow, ArrowRight, Sparkles } from "lucide-react";
+import { MountainSnow, ArrowRight, Sparkles, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, Suspense, useState } from "react";
@@ -43,6 +43,7 @@ const RegisterFormSchema = z.object({
 function RegisterForm() {
   const [step, setStep] = useState("REGISTER");
 const [userEmail, setUserEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -271,12 +272,21 @@ const handleResendOtp = async () => {
                         Password
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                          className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 focus-visible:ring-primary shadow-sm"
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            {...field}
+                            className="h-12 rounded-full bg-slate-50 border border-slate-200 px-6 pr-12 focus-visible:ring-primary shadow-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

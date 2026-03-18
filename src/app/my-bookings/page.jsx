@@ -23,82 +23,110 @@ import { useToast } from "@/hooks/use-toast";
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
-const today = new Date();
-const initialBookings = [
-    {
-        id: 'HH-CANCELLABLE',
-        bookingType: 'Deluxe Room',
-        checkIn: new Date(new Date().setDate(today.getDate() + 15)).toISOString().split('T')[0],
-        checkOut: new Date(new Date().setDate(today.getDate() + 20)).toISOString().split('T')[0],
-        guests: 2,
-        totalPrice: 75000,
-        status: 'Upcoming',
-        fullName: 'Rohan Mehta',
-        email: 'rohan.mehta@example.com',
-    },
-    {
-        id: 'HH-NON-CANCELLABLE',
-        bookingType: 'Entire Resort',
-        checkIn: new Date(new Date().setDate(today.getDate() + 5)).toISOString().split('T')[0],
-        checkOut: new Date(new Date().setDate(today.getDate() + 9)).toISOString().split('T')[0],
-        guests: 15,
-        totalPrice: 228000,
-        status: 'Upcoming',
-        fullName: 'Priya Desai',
-        email: 'priya.desai@example.com',
-    },
-    {
-        id: 'HH-3G8H9I',
-        bookingType: 'Family Room',
-        checkIn: '2024-05-20',
-        checkOut: '2024-05-25',
-        guests: 4,
-        totalPrice: 100000,
-        status: 'Completed',
-        fullName: 'The Sharma Family',
-        email: 'sharma.family@example.com',
-    },
-    {
-        id: 'HH-K2L3M4',
-        bookingType: 'Single Room',
-        checkIn: '2024-04-15',
-        checkOut: '2024-04-18',
-        guests: 1,
-        totalPrice: 30000,
-        status: 'Cancelled',
-        fullName: 'Anjali Verma',
-        email: 'anjali.verma@example.com',
-    },
-];
-
+// Using User Context
+import { useAuthContext } from "@/context/AuthContext";
+import { API } from "@/lib/api/api";
+import { useEffect } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useSearchParams } from 'next/navigation';
 
 export default function BookingHistoryPage() {
+    const { user } = useAuthContext();
+    const searchParams = useSearchParams();
+    const queryEmail = searchParams.get('email');
+    
     const headerImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
     const { toast } = useToast();
-    const [bookings, setBookings] = useState(initialBookings);
-    const [cancelReason, setCancelReason] = useState('');
-    const isLoading = false;
+    const [bookings, setBookings] = useState([]);
+    const [cancelNote, setCancelNote] = useState('');
+    const [selectedReasons, setSelectedReasons] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const handleCancelBooking = (bookingId) => {
-        setBookings(currentBookings =>
-            currentBookings.map(booking =>
-                booking.id === bookingId ? { ...booking, status: 'Cancelled' } : booking
-            )
-        );
-        toast({
-            title: "Booking Cancelled",
-            description: `Your booking ${bookingId} has been successfully cancelled.`,
-        });
-        setCancelReason('');
+    useEffect(() => {
+        const fetchUserBookings = async () => {
+            const emailToFetch = user?.email || queryEmail;
+            if (!emailToFetch) {
+                setIsLoading(false);
+                return;
+            }
+            try {
+                const response = await fetch(API.GetUserHistory(emailToFetch));
+                const data = await response.json();
+                const userBookings = data.bookings || [];
+                
+                // Map status to Title Case if needed for backwards compatibility, 
+                // but our backend stores them lowercase
+                const mappedBookings = userBookings.map(b => ({
+                    ...b,
+                    _id: b._id,
+                    status: (b.status || 'pending').charAt(0).toUpperCase() + (b.status || 'pending').slice(1)
+                }));
+                setBookings(mappedBookings);
+            } catch (error) {
+                console.error("Error fetching bookings:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUserBookings();
+    }, [user, queryEmail]);
+
+    const handleReasonChange = (reason, checked) => {
+        if (checked) {
+            setSelectedReasons(prev => [...prev, reason]);
+        } else {
+            setSelectedReasons(prev => prev.filter(r => r !== reason));
+        }
+    };
+
+    const handleCancelBooking = async (bookingId) => {
+        try {
+            const response = await fetch(API.CancelBooking(bookingId), {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    cancellationReasons: selectedReasons,
+                    cancellationNote: cancelNote
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                 throw new Error(data.message || "Cancellation failed");
+            }
+
+            setBookings(currentBookings =>
+                currentBookings.map(booking =>
+                    booking._id === bookingId ? { ...booking, status: 'Cancelled' } : booking
+                )
+            );
+            toast({
+                title: "Booking Cancelled",
+                description: `Your booking has been successfully cancelled.`,
+            });
+            setCancelNote('');
+            setSelectedReasons([]);
+        } catch (error) {
+            console.error(error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.message || "Failed to cancel booking. Please try again.",
+            });
+        }
     };
 
     const getBadgeVariant = (status) => {
-        switch (status) {
-            case 'Upcoming':
+        const lower = status.toLowerCase();
+        switch (lower) {
+            case 'pending':
+            case 'upcoming':
                 return 'default';
-            case 'Completed':
+            case 'confirmed':
+            case 'completed':
                 return 'secondary';
-            case 'Cancelled':
+            case 'cancelled':
                 return 'destructive';
             default:
                 return 'outline';
@@ -106,15 +134,20 @@ export default function BookingHistoryPage() {
     }
 
     const createInvoiceUrl = (booking) => {
+        const adults = booking.guests?.adults || 0;
+        const children = booking.guests?.children || 0;
         const params = new URLSearchParams();
-        params.append('bookingId', booking.id);
-        params.append('bookingType', booking.bookingType);
+        params.append('bookingId', booking._id);
+        params.append('bookingType', booking.bookingType || booking.room?.roomName || '');
+        params.append('roomName', booking.roomName || booking.bookingType || booking.room?.roomName || '');
         params.append('fullName', booking.fullName);
         params.append('email', booking.email);
         params.append('checkIn', booking.checkIn);
         params.append('checkOut', booking.checkOut);
-        params.append('guests', booking.guests);
-        params.append('totalPrice', booking.totalPrice);
+        params.append('numAdults', adults);
+        params.append('numChildren', children);
+        params.append('guests', adults + children);
+        params.append('totalPrice', booking.totalAmount || 0);
         return `/booking/confirmation?${params.toString()}`;
     }
 
@@ -141,86 +174,187 @@ export default function BookingHistoryPage() {
                             ))}
                         </div>
                     ) : bookings && bookings.length > 0 ? (
-                        <div className="space-y-8">
-                            {bookings.map((booking) => {
-                                const isCancellable = booking.status === 'Upcoming' && differenceInDays(parseISO(booking.checkIn), new Date()) > 10;
+                        <div className="space-y-12">
+                            {(() => {
+                                const now = new Date();
+                                const upcomingBookings = bookings.filter(b => b.status.toLowerCase() !== 'cancelled' && parseISO(b.checkOut) >= now);
+                                const previousBookings = bookings.filter(b => b.status.toLowerCase() === 'cancelled' || parseISO(b.checkOut) < now);
+
+                                const renderBookingCards = (bookingList) => (
+                                    <div className="space-y-8 mt-4">
+                                        {bookingList.map((booking) => {
+                                            const isUpcoming = ['pending', 'upcoming', 'confirmed'].includes(booking.status.toLowerCase());
+                                            const isCancellable = isUpcoming && differenceInDays(parseISO(booking.checkIn), now) > 10;
+
+                                            return (
+                                                <Card key={booking._id}>
+                                                    <CardHeader>
+                                                        <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                                                            <div>
+                                                                <CardTitle className="font-headline text-2xl">{booking.bookingType || booking.room?.roomName}</CardTitle>
+                                                                <CardDescription>Booking ID: {booking._id}</CardDescription>
+                                                            </div>
+                                                            <Badge 
+                                                                variant={getBadgeVariant(booking.status)}
+                                                                className="w-fit"
+                                                            >
+                                                                {booking.status}
+                                                            </Badge>
+                                                        </div>
+                                                    </CardHeader>
+                                                    <CardContent className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+                                                        <div className="space-y-1">
+                                                            <p className="font-semibold text-muted-foreground">Check-in</p>
+                                                            <p className="font-medium">{format(parseISO(booking.checkIn), 'EEE, MMM dd, yyyy')}</p>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="font-semibold text-muted-foreground">Check-out</p>
+                                                            <p className="font-medium">{format(parseISO(booking.checkOut), 'EEE, MMM dd, yyyy')}</p>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="font-semibold text-muted-foreground">Guests</p>
+                                                            <p className="font-medium text-xs">
+                                                                {booking.guests?.adults || 0} Adults, {booking.guests?.children || 0} Children
+                                                            </p>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="font-semibold text-muted-foreground">Total Price</p>
+                                                            <p className="font-bold text-lg">₹{(booking.totalAmount || 0).toLocaleString()}</p>
+                                                        </div>
+                                                    </CardContent>
+
+                                                    {booking.status.toLowerCase() === 'cancelled' && (
+                                                        <div className="mx-6 mb-4 p-4 bg-red-50 border border-red-100 rounded-lg space-y-2 text-red-900">
+                                                            <div className="flex items-center gap-2 text-red-700 mb-2">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                                                <p className="text-[10px] font-black uppercase tracking-widest">Cancellation Details</p>
+                                                            </div>
+                                                            {booking.cancellationReasons?.length > 0 && (
+                                                                <div>
+                                                                    <p className="text-[10px] font-bold text-red-700/70 uppercase mb-1">Reasons</p>
+                                                                    <div className="flex flex-wrap gap-1">
+                                                                        {booking.cancellationReasons.map((reason, i) => (
+                                                                            <span key={i} className="text-[10px] bg-white text-red-700 border border-red-200 rounded-full px-2 py-0.5 font-medium">
+                                                                                {reason}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {booking.cancellationNote && (
+                                                                <div>
+                                                                    <p className="text-[10px] font-bold text-red-700/70 uppercase mb-1">Additional Note</p>
+                                                                    <p className="text-xs italic leading-relaxed">"{booking.cancellationNote}"</p>
+                                                                </div>
+                                                            )}
+                                                            {booking.cancelledAt && (
+                                                                <p className="text-[10px] text-red-600/60 pt-1">
+                                                                    Cancelled on {format(parseISO(booking.cancelledAt), 'MMM dd, yyyy')}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    <CardFooter className="flex-wrap items-center gap-2">
+                                                        {['confirmed', 'completed'].includes(booking.status.toLowerCase()) && (
+                                                            <Button asChild variant="outline" size="sm">
+                                                                <Link href={createInvoiceUrl(booking)}>View Invoice</Link>
+                                                            </Button>
+                                                        )}
+                                                        {isUpcoming && isCancellable && (
+                                                            <AlertDialog>
+                                                                <AlertDialogTrigger asChild>
+                                                                    <Button variant="destructive" size="sm">Cancel Booking</Button>
+                                                                </AlertDialogTrigger>
+                                                                <AlertDialogContent>
+                                                                    <AlertDialogHeader>
+                                                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                                        <AlertDialogDescription>
+                                                                            This action cannot be undone. This will permanently cancel your booking. Please provide a reason for cancellation.
+                                                                        </AlertDialogDescription>
+                                                                    </AlertDialogHeader>
+                                                                    <div className="space-y-4 py-4">
+                                                                        <div className="space-y-3">
+                                                                            <div className="flex items-center space-x-2">
+                                                                                <Checkbox id={`check1-${booking._id}`} onCheckedChange={(checked) => handleReasonChange("I found a better option", checked)} />
+                                                                                <label htmlFor={`check1-${booking._id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                                                    I found a better option
+                                                                                </label>
+                                                                            </div>
+                                                                            <div className="flex items-center space-x-2">
+                                                                                <Checkbox id={`check2-${booking._id}`} onCheckedChange={(checked) => handleReasonChange("I changed my mind", checked)} />
+                                                                                <label htmlFor={`check2-${booking._id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                                                    I changed my mind
+                                                                                </label>
+                                                                            </div>
+                                                                            <div className="flex items-center space-x-2">
+                                                                                <Checkbox id={`check3-${booking._id}`} onCheckedChange={(checked) => handleReasonChange("I want to reschedule my booking", checked)} />
+                                                                                <label htmlFor={`check3-${booking._id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                                                    I want to reschedule my booking
+                                                                                </label>
+                                                                            </div>
+                                                                            <div className="flex items-center space-x-2">
+                                                                                <Checkbox id={`check4-${booking._id}`} onCheckedChange={(checked) => handleReasonChange("Booking price is too high", checked)} />
+                                                                                <label htmlFor={`check4-${booking._id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                                                    Booking price is too high
+                                                                                </label>
+                                                                            </div>
+                                                                            <div className="flex items-center space-x-2">
+                                                                                <Checkbox id={`check5-${booking._id}`} onCheckedChange={(checked) => handleReasonChange("Personal reason / plan changed", checked)} />
+                                                                                <label htmlFor={`check5-${booking._id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                                                    Personal reason / plan changed
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="space-y-2 mt-4">
+                                                                            <Label htmlFor={`cancel-reason-${booking._id}`}>Additional Note</Label>
+                                                                            <Textarea
+                                                                                id={`cancel-reason-${booking._id}`}
+                                                                                placeholder="Tell us more..."
+                                                                                value={cancelNote}
+                                                                                onChange={(e) => setCancelNote(e.target.value)}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <AlertDialogFooter>
+                                                                        <AlertDialogCancel onClick={() => { setCancelNote(''); setSelectedReasons([]); }}>Back</AlertDialogCancel>
+                                                                        <AlertDialogAction onClick={() => handleCancelBooking(booking._id)}>
+                                                                            Yes, Cancel Booking
+                                                                        </AlertDialogAction>
+                                                                    </AlertDialogFooter>
+                                                                </AlertDialogContent>
+                                                            </AlertDialog>
+                                                        )}
+                                                        {isUpcoming && !isCancellable && (
+                                                            <Badge variant="outline" className="text-[10px] text-orange-600 border-orange-200 bg-orange-50 font-bold px-3 py-1">
+                                                                Non-Cancellable (Policy Restricted)
+                                                            </Badge>
+                                                        )}
+                                                    </CardFooter>
+                                                </Card>
+                                            );
+                                        })}
+                                    </div>
+                                );
 
                                 return (
-                                <Card key={booking.id}>
-                                    <CardHeader>
-                                        <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                                    <>
+                                        {upcomingBookings.length > 0 && (
                                             <div>
-                                                <CardTitle className="font-headline text-2xl">{booking.bookingType}</CardTitle>
-                                                <CardDescription>Booking ID: {booking.id}</CardDescription>
+                                                <h2 className="text-2xl font-bold mb-4">Upcoming Bookings</h2>
+                                                {renderBookingCards(upcomingBookings)}
                                             </div>
-                                            <Badge 
-                                                variant={getBadgeVariant(booking.status)}
-                                                className="w-fit"
-                                            >
-                                                {booking.status}
-                                            </Badge>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 text-sm">
-                                        <div className="space-y-1">
-                                            <p className="font-semibold text-muted-foreground">Check-in</p>
-                                            <p className="font-medium">{format(parseISO(booking.checkIn), 'EEE, MMM dd, yyyy')}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="font-semibold text-muted-foreground">Check-out</p>
-                                            <p className="font-medium">{format(parseISO(booking.checkOut), 'EEE, MMM dd, yyyy')}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="font-semibold text-muted-foreground">Guests</p>
-                                            <p className="font-medium">{booking.guests}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="font-semibold text-muted-foreground">Total Price</p>
-                                            <p className="font-bold text-lg">₹{booking.totalPrice.toLocaleString()}</p>
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter className="flex-wrap items-center gap-2">
-                                        <Button asChild variant="outline" size="sm">
-                                            <Link href={createInvoiceUrl(booking)}>View Invoice</Link>
-                                        </Button>
-                                        {booking.status === 'Upcoming' && (
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button variant="destructive" size="sm" disabled={!isCancellable}>Cancel Booking</Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            This action cannot be undone. This will permanently cancel your booking. Please provide a reason for cancellation.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <div className="space-y-2">
-                                                        <Label htmlFor={`cancel-reason-${booking.id}`}>Reason for Cancellation</Label>
-                                                        <Textarea
-                                                            id={`cancel-reason-${booking.id}`}
-                                                            placeholder="Tell us why you're cancelling..."
-                                                            value={cancelReason}
-                                                            onChange={(e) => setCancelReason(e.target.value)}
-                                                        />
-                                                    </div>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel onClick={() => setCancelReason('')}>Back</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={() => handleCancelBooking(booking.id)}>
-                                                            Yes, Cancel Booking
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
                                         )}
-                                        {!isCancellable && booking.status === 'Upcoming' && (
-                                            <p className="text-xs text-muted-foreground ml-2">
-                                                Cancellation is only available up to 10 days before check-in.
-                                            </p>
+                                        {upcomingBookings.length > 0 && previousBookings.length > 0 && <hr className="border-t border-muted my-8" />}
+                                        {previousBookings.length > 0 && (
+                                            <div>
+                                                <h2 className="text-2xl font-bold mb-4">Previous Bookings</h2>
+                                                {renderBookingCards(previousBookings)}
+                                            </div>
                                         )}
-                                    </CardFooter>
-                                </Card>
-                            )})}
+                                    </>
+                                );
+                            })()}
                         </div>
                     ) : (
                         <div className="text-center py-16 border rounded-lg">

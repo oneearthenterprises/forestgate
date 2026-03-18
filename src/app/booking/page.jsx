@@ -139,6 +139,15 @@ function BookingPageContent() {
     }, 100);
   }, []);
 
+  // Auto-fill form if user is logged in
+  useEffect(() => {
+    if (user && !sessionStorage.getItem("tempBookingData")) {
+      form.setValue("fullName", user.name || "");
+      form.setValue("email", user.email || "");
+      form.setValue("phone", user.phone?.toString() || "");
+    }
+  }, [user, form]);
+
   const { checkIn, checkOut, adults, children } = form.watch();
 
   const numNights =
@@ -167,7 +176,8 @@ function BookingPageContent() {
     }
 
     const bookingData = {
-      bookingType: room.fullName,
+      roomId: room._id || room.id,
+      bookingType: room.roomName || room.fullName,
       roomName: room.roomName,
       ...data,
       totalPrice,
@@ -178,31 +188,59 @@ function BookingPageContent() {
       checkOut: format(data.checkOut, "yyyy-MM-dd"),
     };
 
-    const params = new URLSearchParams();
-    params.append("bookingType", bookingData.bookingType);
-    params.append("fullName", bookingData.fullName);
-    params.append("email", bookingData.email);
-    params.append("checkIn", bookingData.checkIn);
-    params.append("checkOut", bookingData.checkOut);
-    params.append("guests", bookingData.guests.toString());
-    params.append("totalPrice", bookingData.totalPrice.toString());
-    params.append("roomName", bookingData.roomName);
-    params.append("numAdults", bookingData.numAdults);
-    params.append("numChildren", bookingData.numChildren);
-
     toast({
-      title: "Processing Payment...",
-      description: "Please wait while we confirm your booking.",
+      title: "Processing Booking...",
+      description: "Please wait while we confirm your reservation.",
     });
 
-    // Simulate payment processing
-    setTimeout(() => {
-      toast({
-        title: "Booking Confirmed!",
-        description: `We've sent a confirmation to ${bookingData.email}.`,
+    try {
+      const response = await fetch(API.CreateBooking, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData),
       });
-      router.push(`/booking/confirmation?${params.toString()}`);
-    }, 2000);
+
+      if (!response.ok) {
+        throw new Error("Failed to create booking");
+      }
+
+      const responseData = await response.json();
+
+      const params = new URLSearchParams();
+      params.append("bookingType", bookingData.bookingType);
+      params.append("fullName", bookingData.fullName);
+      params.append("email", bookingData.email);
+      params.append("checkIn", bookingData.checkIn);
+      params.append("checkOut", bookingData.checkOut);
+      params.append("guests", bookingData.guests.toString());
+      params.append("totalPrice", bookingData.totalPrice.toString());
+      params.append("roomName", bookingData.roomName);
+      params.append("numAdults", bookingData.numAdults);
+      params.append("numChildren", bookingData.numChildren);
+      params.append("bookingId", responseData.booking?._id || "");
+      
+      const twilioStatus = responseData.booking?.notificationStatus === 'skipped' 
+        ? " (Admin Notified - Demo)" 
+        : responseData.booking?.notificationStatus === 'sent' || responseData.booking?.twilioMessageSid
+          ? " (Admin Notified via WhatsApp)" 
+          : " (Notification Pending)";
+
+      toast({
+        title: "Booking Request Sent!",
+        description: `Your reservation has been received${twilioStatus}. You will receive an update once it is confirmed.`,
+      });
+      
+      router.push(`/my-bookings?email=${encodeURIComponent(bookingData.email)}`);
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Booking Failed",
+        description: "Something went wrong while processing your booking. Please try again.",
+      });
+    }
   }
 
   const [room, setRoom] = useState(null);
@@ -598,7 +636,11 @@ if (!room) return <BookingSkeleton />;
                                   type="email"
                                   placeholder="you@example.com"
                                   {...field}
-                                  className="h-16 rounded-2xl bg-background border-none shadow-sm "
+                                  readOnly={!!user}
+                                  className={cn(
+                                    "h-16 rounded-2xl bg-background border-none shadow-sm",
+                                    user && "opacity-70 cursor-not-allowed"
+                                  )}
                                 />
                               </FormControl>{" "}
                               <FormMessage />{" "}
@@ -639,7 +681,7 @@ if (!room) return <BookingSkeleton />;
                   >
                     {form.formState.isSubmitting
                       ? "Finalizing..."
-                      : "Confirm My Reservation"}
+                      : "Confirm My Reservation On Whatsapp"}
                     <ArrowRight className="ml-2 w-6 h-6 transition-transform group-hover:translate-x-2" />
                   </Button>
                 </form>

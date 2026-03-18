@@ -158,15 +158,15 @@ export default function ContactPage() {
                                 </div>
                                  <div>
                                     <h3 className="font-bold flex items-center gap-2 mb-2"><Phone className="w-5 h-5 text-primary"/> Phone</h3>
-                                    <Link href="tel:+919876543210" className="text-foreground/80 hover:text-primary ml-7">+91 987 654 3210</Link>
+                                    <Link href="tel:+9304987505" className="text-foreground/80 hover:text-primary ml-7">+91 987 654 3210</Link>
                                 </div>
                              </div>
                              <div className="flex flex-col gap-4">
                                 <Button asChild size="lg">
-                                    <Link href="https://wa.me/919876543210" target="_blank">Chat on WhatsApp</Link>
+                                    <Link href="https://wa.me/9304987505" target="_blank">Chat on WhatsApp</Link>
                                 </Button>
                                 <Button asChild variant="secondary" size="lg">
-                                    <Link href="tel:+919876543210">Call Now</Link>
+                                    <Link href="tel:+9304987505">Call Now</Link>
                                 </Button>
                              </div>
                         </div>
