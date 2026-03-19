@@ -477,7 +477,9 @@ export default function UsersPage() {
                     String(user.name || "").toLowerCase().includes(query) ||
                     String(user.email || "").toLowerCase().includes(query) ||
                     String(user.phone || "").toLowerCase().includes(query) ||
-                    String(user._id || "").toLowerCase().includes(query)
+                    String(user._id || "").toLowerCase().includes(query) ||
+                    String(user.userId || "").toLowerCase().includes(query) ||
+                    (user.bookingIds && user.bookingIds.some(id => String(id).toLowerCase().includes(query)))
                   );
 
                   return filteredUsers.length > 0 ? (
@@ -497,6 +499,7 @@ export default function UsersPage() {
                           <div className="flex flex-col">
                             <span className="font-semibold text-foreground leading-tight">{user.name}</span>
                             <span className="text-sm text-muted-foreground">{user.email}</span>
+                            {user.userId && <span className="text-[10px] text-muted-foreground mt-0.5 font-mono bg-muted px-1.5 py-0.5 rounded w-max">{user.userId}</span>}
                           </div>
                         </div>
                       </TableCell>

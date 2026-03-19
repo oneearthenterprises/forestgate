@@ -63,6 +63,10 @@ export const API = {
   newsletteremail: `${API_BASE_URL}/api/newsletter/newsletteremail`,
   getnewsletter: `${API_BASE_URL}/api/newsletter/getnewsletter`,
   sendnewsletter: `${API_BASE_URL}/api/newsletter/send`,
+
+  // welcome popup api
+  GetWelcomePopup: `${API_BASE_URL}/api/welcome-popup`,
+  UpdateWelcomePopup: `${API_BASE_URL}/api/welcome-popup`,
 };
 
 if (typeof window !== "undefined") {

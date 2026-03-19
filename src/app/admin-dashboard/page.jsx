@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -25,78 +25,66 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-
-const allBookings = [
-  {
-    id: 'HH-CANCELLABLE',
-    userName: 'Rohan Mehta',
-    userEmail: 'rohan.mehta@example.com',
-    bookingType: 'Deluxe Room',
-    checkIn: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().split('T')[0],
-    checkOut: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString().split('T')[0],
-    guests: 2,
-    totalPrice: 75000,
-    status: 'Upcoming',
-  },
-  {
-    id: 'HH-NON-CANCELLABLE',
-    userName: 'Priya Desai',
-    userEmail: 'priya.desai@example.com',
-    bookingType: 'Entire Resort',
-    checkIn: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().split('T')[0],
-    checkOut: new Date(new Date().setDate(new Date().getDate() + 9)).toISOString().split('T')[0],
-    guests: 15,
-    totalPrice: 228000,
-    status: 'Upcoming',
-  },
-  {
-    id: 'HH-3G8H9I',
-    userName: 'The Sharma Family',
-    userEmail: 'sharma.family@example.com',
-    bookingType: 'Family Room',
-    checkIn: '2024-05-20',
-    checkOut: '2024-05-25',
-    guests: 4,
-    totalPrice: 100000,
-    status: 'Completed',
-  },
-  {
-    id: 'HH-K2L3M4',
-    userName: 'Anjali Verma',
-    userEmail: 'anjali.verma@example.com',
-    bookingType: 'Single Room',
-    checkIn: '2024-04-15',
-    checkOut: '2024-04-18',
-    guests: 1,
-    totalPrice: 30000,
-    status: 'Cancelled',
-  },
-   {
-    id: 'HH-5N6O7P',
-    userName: 'Vikram Singh',
-    userEmail: 'vikram.singh@example.com',
-    bookingType: 'Double Room',
-    checkIn: '2024-06-10',
-    checkOut: '2024-06-15',
-    guests: 2,
-    totalPrice: 60000,
-    status: 'Completed',
-  },
-];
-
-
-const chartData = [
-  { date: format(subDays(new Date(), 6), 'MMM d'), bookings: 5 },
-  { date: format(subDays(new Date(), 5), 'MMM d'), bookings: 7 },
-  { date: format(subDays(new Date(), 4), 'MMM d'), bookings: 6 },
-  { date: format(subDays(new Date(), 3), 'MMM d'), bookings: 9 },
-  { date: format(subDays(new Date(), 2), 'MMM d'), bookings: 8 },
-  { date: format(subDays(new Date(), 1), 'MMM d'), bookings: 11 },
-  { date: format(new Date(), 'MMM d'), bookings: 10 },
-];
+import { API } from '@/lib/api/api';
 
 export default function AdminDashboardPage() {
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [allBookings, setAllBookings] = useState([]);
+  const [chartData, setChartData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch(API.GetBooking);
+        const data = await response.json();
+        const fetchedBookings = Array.isArray(data) ? data : data.bookings || [];
+        
+        const mappedBookings = fetchedBookings.map(b => ({
+            id: b.bookingId || (b._id ? b._id.substring(0, 8) : b.id),
+            _rawId: b._id || b.id,
+            userName: b.fullName || b.userName || 'Unknown',
+            userEmail: b.email || b.userEmail || 'N/A',
+            bookingType: b.bookingType || b.roomName || 'Room',
+            checkIn: b.checkIn,
+            checkOut: b.checkOut,
+            createdAt: b.createdAt,
+            guests: (b.guests?.adults || 0) + (b.guests?.children || 0) || b.guests || 1,
+            totalPrice: b.totalAmount || b.totalPrice || 0,
+            status: b.status ? b.status.charAt(0).toUpperCase() + b.status.slice(1) : 'Upcoming'
+        }));
+        
+        // Sort by checkIn date descending for recent bookings
+        mappedBookings.sort((a, b) => new Date(b.createdAt || b.checkIn) - new Date(a.createdAt || a.checkIn));
+        setAllBookings(mappedBookings);
+
+        const last7Days = Array.from({ length: 7 }).map((_, i) => {
+            const date = subDays(new Date(), 6 - i);
+            return {
+                dateObj: date,
+                date: format(date, 'MMM d'),
+                bookings: 0
+            };
+        });
+
+        mappedBookings.forEach(b => {
+            if (!b.createdAt && !b.checkIn) return;
+            const bDate = b.createdAt ? new Date(b.createdAt) : new Date(b.checkIn);
+            const bDateStr = format(bDate, 'MMM d');
+            const dayBin = last7Days.find(d => d.date === bDateStr);
+            if (dayBin) {
+                dayBin.bookings += 1;
+            }
+        });
+        setChartData(last7Days);
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBookings();
+  }, []);
 
   const getBadgeVariant = (status) => {
     switch (status) {

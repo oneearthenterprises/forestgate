@@ -181,9 +181,11 @@ const getApiRooms = async () => {
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Price per night</p>
                             <p className="font-headline text-3xl font-black text-[#5e774a]">₹{room.pricePerNight.toLocaleString()}</p>
                           </div>
-                          <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Key Amenity</p>
-                            <p className="font-headline text-xl font-bold text-slate-900 truncate">{room.amenities[0] || 'Mountain View'}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Key Amenities</p>
+                            <p className="font-headline text-base font-bold text-slate-900 line-clamp-2 leading-tight">
+                              {room.amenities?.join(', ') || 'Mountain View'}
+                            </p>
                           </div>
                         </div>
                       </div>

@@ -219,7 +219,7 @@ function BookingPageContent() {
       params.append("roomName", bookingData.roomName);
       params.append("numAdults", bookingData.numAdults);
       params.append("numChildren", bookingData.numChildren);
-      params.append("bookingId", responseData.booking?._id || "");
+      params.append("bookingId", responseData.booking?.bookingId || responseData.booking?._id || "");
       
       const twilioStatus = responseData.booking?.notificationStatus === 'skipped' 
         ? " (Admin Notified - Demo)" 

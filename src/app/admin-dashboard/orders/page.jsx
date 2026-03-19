@@ -145,7 +145,7 @@ export default function AdminOrdersPage() {
                         ) : bookingsList.map((booking) => (
                             <TableRow key={booking._id || booking.id}>
                                 <TableCell className="font-medium">
-                                    {booking._id ? booking._id.substring(0, 8) : booking.id}
+                                    {booking.bookingId || (booking._id ? booking._id.substring(0, 8) : booking.id)}
                                 </TableCell>
                                 <TableCell>
                                     <div className="font-medium">{booking.fullName || booking.userName}</div>
@@ -203,7 +203,7 @@ export default function AdminOrdersPage() {
                 <DialogHeader>
                     <DialogTitle>Booking Details</DialogTitle>
                     <DialogDescription>
-                    Full information for booking ID: {selectedBooking._id || selectedBooking.id}
+                    Full information for booking ID: {selectedBooking.bookingId || selectedBooking._id || selectedBooking.id}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -309,7 +309,7 @@ export default function AdminOrdersPage() {
                         params.append("roomName", selectedBooking.roomName || selectedBooking.bookingType);
                         params.append("numAdults", selectedBooking.guests?.adults?.toString() || "0");
                         params.append("numChildren", selectedBooking.guests?.children?.toString() || "0");
-                        params.append("bookingId", selectedBooking._id || selectedBooking.id);
+                        params.append("bookingId", selectedBooking.bookingId || selectedBooking._id || selectedBooking.id);
                         
                         window.open(`/booking/confirmation?${params.toString()}`, '_blank');
                     }}>

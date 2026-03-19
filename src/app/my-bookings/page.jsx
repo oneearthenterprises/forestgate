@@ -137,7 +137,7 @@ export default function BookingHistoryPage() {
         const adults = booking.guests?.adults || 0;
         const children = booking.guests?.children || 0;
         const params = new URLSearchParams();
-        params.append('bookingId', booking._id);
+        params.append('bookingId', booking.bookingId || booking._id);
         params.append('bookingType', booking.bookingType || booking.room?.roomName || '');
         params.append('roomName', booking.roomName || booking.bookingType || booking.room?.roomName || '');
         params.append('fullName', booking.fullName);
@@ -192,7 +192,7 @@ export default function BookingHistoryPage() {
                                                         <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                                                             <div>
                                                                 <CardTitle className="font-headline text-2xl">{booking.bookingType || booking.room?.roomName}</CardTitle>
-                                                                <CardDescription>Booking ID: {booking._id}</CardDescription>
+                                                                <CardDescription>Booking ID: {booking.bookingId || booking._id}</CardDescription>
                                                             </div>
                                                             <Badge 
                                                                 variant={getBadgeVariant(booking.status)}

@@ -7,21 +7,37 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { API } from '@/lib/api/api';
 
 export function WelcomePopup() {
   const [isOpen, setIsOpen] = useState(false);
+  const [popupData, setPopupData] = useState(null);
 
   useEffect(() => {
-    // Show popup after a short delay
-    const timer = setTimeout(() => {
-      const hasSeenPopup = sessionStorage.getItem('hasSeenWelcomePopup');
-      if (!hasSeenPopup) {
-        setIsOpen(true);
-        sessionStorage.setItem('hasSeenWelcomePopup', 'true');
+    const fetchPopupData = async () => {
+      try {
+        const res = await fetch(API.GetWelcomePopup);
+        const json = await res.json();
+        if (json.success && json.data) {
+          setPopupData(json.data);
+          
+          if (json.data.isActive) {
+            const timer = setTimeout(() => {
+              const hasSeenPopup = sessionStorage.getItem('hasSeenWelcomePopup');
+              if (!hasSeenPopup) {
+                setIsOpen(true);
+                sessionStorage.setItem('hasSeenWelcomePopup', 'true');
+              }
+            }, 1500);
+            return () => clearTimeout(timer);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching welcome popup:", error);
       }
-    }, 1500);
-
-    return () => clearTimeout(timer);
+    };
+    
+    fetchPopupData();
   }, []);
 
   const heroImage = PlaceHolderImages.find(img => img.id === 'about-resort');
@@ -49,20 +65,17 @@ export function WelcomePopup() {
             {/* Left Column: Visual & Heading Overlay */}
             <div className="relative w-full md:w-2/5 h-56 md:h-full group shrink-0">
               <Image
-                src={heroImage?.imageUrl || "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?auto=format&fit=crop&q=80&w=1200"}
+                src={popupData?.imageUrl || heroImage?.imageUrl || "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?auto=format&fit=crop&q=80&w=1200"}
                 alt="The Forest Gate"
                 fill
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-black/40 p-6 md:p-8 flex flex-col justify-start">
-                <h2 className="text-white text-2xl md:text-4xl font-medium leading-tight mb-4 md:mb-6">
-                  Book entire rental <br />
-                  unit in Naggar, <br />
-                  Himachal Pradesh
+                <h2 className="text-white text-2xl md:text-4xl font-medium leading-tight mb-4 md:mb-6 whitespace-pre-line">
+                  {popupData?.title || 'Book entire rental\nunit in Naggar,\nHimachal Pradesh'}
                 </h2>
                 <p className="text-white/80 text-xs md:text-sm leading-relaxed max-w-[280px] hidden md:block">
-                  Welcome to this stunning sanctuary in the heart of Naggar - Manali, Himachal. 
-                  Located at a quiet crossroads, this cozy residence is the perfect combination of comfort and style.
+                  {popupData?.description || "Welcome to this stunning sanctuary in the heart of Naggar - Manali, Himachal. Located at a quiet crossroads, this cozy residence is the perfect combination of comfort and style."}
                 </p>
               </div>
             </div>
@@ -79,8 +92,8 @@ export function WelcomePopup() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs md:text-sm font-medium text-muted-foreground leading-tight">Naggar, Himachal Pradesh,</p>
-                    <p className="text-xs md:text-sm font-medium text-muted-foreground">India</p>
+                    <p className="text-xs md:text-sm font-medium text-muted-foreground leading-tight">{popupData?.location || "Naggar, Himachal Pradesh,"}</p>
+                    <p className="text-xs md:text-sm font-medium text-muted-foreground">{popupData?.subLocation || "India"}</p>
                   </div>
                 </div>
 
@@ -92,7 +105,7 @@ export function WelcomePopup() {
 
                 {/* Pricing */}
                 <div className="flex items-baseline gap-2 pt-1">
-                  <span className="text-2xl md:text-3xl font-bold">₹57,000</span>
+                  <span className="text-2xl md:text-3xl font-bold">₹{popupData?.price?.toLocaleString() || '57,000'}</span>
                   <span className="text-xs md:text-muted-foreground font-medium">per night</span>
                 </div>
 

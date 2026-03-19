@@ -28,6 +28,7 @@ import {
   ClipboardList,
   Newspaper,
   Users,
+  LayoutTemplate,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
@@ -173,6 +174,18 @@ const { logout ,adminEmail  } = useAuthContext();
                   <Link href="/admin-dashboard/users">
                     <Users className="h-5 w-5 shrink-0" />
                     <span className='group-data-[state=collapsed]:hidden font-medium'>Users</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isLinkActive('/admin-dashboard/popup')}
+                  tooltip="Welcome Popup"
+                >
+                  <Link href="/admin-dashboard/popup">
+                    <LayoutTemplate className="h-5 w-5 shrink-0" />
+                    <span className='group-data-[state=collapsed]:hidden font-medium'>Welcome Popup</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
