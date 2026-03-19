@@ -133,6 +133,20 @@ export default function BookingHistoryPage() {
         }
     }
 
+    const getPaymentBadgeClass = (status) => {
+        const lower = (status || 'unpaid').toLowerCase();
+        switch (lower) {
+            case 'paid':
+                return 'bg-green-100 text-green-700 border-green-200';
+            case 'unpaid':
+                return 'bg-red-100 text-red-700 border-red-200';
+            case 'partially paid':
+                return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+            default:
+                return 'bg-gray-100 text-gray-700 border-gray-200';
+        }
+    }
+
     const createInvoiceUrl = (booking) => {
         const adults = booking.guests?.adults || 0;
         const children = booking.guests?.children || 0;
@@ -194,12 +208,20 @@ export default function BookingHistoryPage() {
                                                                 <CardTitle className="font-headline text-2xl">{booking.bookingType || booking.room?.roomName}</CardTitle>
                                                                 <CardDescription>Booking ID: {booking.bookingId || booking._id}</CardDescription>
                                                             </div>
-                                                            <Badge 
-                                                                variant={getBadgeVariant(booking.status)}
-                                                                className="w-fit"
-                                                            >
-                                                                {booking.status}
-                                                            </Badge>
+                                                            <div className="flex flex-col gap-2 items-end">
+                                                                <Badge 
+                                                                    variant={getBadgeVariant(booking.status)}
+                                                                    className="w-fit"
+                                                                >
+                                                                    {booking.status}
+                                                                </Badge>
+                                                                <Badge 
+                                                                    variant="outline"
+                                                                    className={`${getPaymentBadgeClass(booking.paymentStatus)} w-fit border`}
+                                                                >
+                                                                    {booking.paymentStatus || 'Unpaid'}
+                                                                </Badge>
+                                                            </div>
                                                         </div>
                                                     </CardHeader>
                                                     <CardContent className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 text-sm">
@@ -256,7 +278,7 @@ export default function BookingHistoryPage() {
                                                     )}
 
                                                     <CardFooter className="flex-wrap items-center gap-2">
-                                                        {['confirmed', 'completed'].includes(booking.status.toLowerCase()) && (
+                                                        {booking.paymentStatus === 'Paid' && (
                                                             <Button asChild variant="outline" size="sm">
                                                                 <Link href={createInvoiceUrl(booking)}>View Invoice</Link>
                                                             </Button>

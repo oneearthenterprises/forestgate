@@ -33,40 +33,46 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Pagination } from '@/components/ui/pagination-nav';
 
 export default function AdminOrdersPage() {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [bookingsList, setBookingsList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const response = await fetch(API.GetBooking);
-        const data = await response.json();
-        // Assuming the API returns { bookings: [...] } or just an array
-        const fetchedBookings = Array.isArray(data) ? data : data.bookings || [];
-        // Map the properties if needed, or just set them if they match the backend
-        const mappedBookings = fetchedBookings.map(b => ({
-            ...b,
-            status: b.status ? b.status.charAt(0).toUpperCase() + b.status.slice(1) : 'Upcoming'
-        }));
-        setBookingsList(mappedBookings);
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load bookings.",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchBookings = async (page = 1) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API.GetBooking}?page=${page}&limit=10`);
+      const data = await response.json();
+      
+      const fetchedBookings = data.bookings || [];
+      const mappedBookings = fetchedBookings.map(b => ({
+          ...b,
+          status: b.status ? b.status.charAt(0).toUpperCase() + b.status.slice(1) : 'Upcoming'
+      }));
+      
+      setBookingsList(mappedBookings);
+      setTotalPages(data.totalPages || 1);
+      setCurrentPage(data.page || page);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load bookings.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchBookings();
-  }, []);
+  useEffect(() => {
+    fetchBookings(currentPage);
+  }, [currentPage]);
 
   const getBadgeVariant = (status) => {
     switch (status) {
@@ -108,6 +114,44 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const updatePaymentStatus = async (id, newPaymentStatus) => {
+    try {
+      const response = await fetch(API.UpdateBooking(id), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentStatus: newPaymentStatus }),
+      });
+
+      if (!response.ok) {
+         throw new Error("Failed to update payment status");
+      }
+
+      const data = await response.json();
+      setBookingsList(prev => prev.map(b => (b._id || b.id) === id ? { ...b, paymentStatus: newPaymentStatus } : b));
+      if (selectedBooking && (selectedBooking._id || selectedBooking.id) === id) {
+          setSelectedBooking(data.booking);
+      }
+      
+      toast({
+        title: "Payment Status Updated",
+        description: `Booking payment status changed to ${newPaymentStatus}.`,
+      });
+    } catch (error) {
+       console.error(error);
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not update payment status.",
+      });
+    }
+  };
+
+  const statusColors = {
+    'Paid': 'bg-green-100 text-green-700 border-green-200',
+    'Unpaid': 'bg-red-100 text-red-700 border-red-200',
+    'Partially Paid': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -130,6 +174,7 @@ export default function AdminOrdersPage() {
                             <TableHead>Dates</TableHead>
                             <TableHead>Total Price</TableHead>
                             <TableHead>Status</TableHead>
+                            <TableHead>Payment</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -162,6 +207,11 @@ export default function AdminOrdersPage() {
                                         {booking.status || 'Upcoming'}
                                     </Badge>
                                 </TableCell>
+                                <TableCell>
+                                    <Badge className={statusColors[booking.paymentStatus || 'Unpaid']}>
+                                        {booking.paymentStatus || 'Unpaid'}
+                                    </Badge>
+                                </TableCell>
                                 <TableCell className="text-right">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -185,6 +235,14 @@ export default function AdminOrdersPage() {
                                             <DropdownMenuItem onClick={() => updateStatus(booking._id || booking.id, 'cancelled')}>
                                                 <XCircle className="mr-2 h-4 w-4 text-destructive" /> Cancel Booking
                                             </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground">Payment Status</DropdownMenuLabel>
+                                            <DropdownMenuItem onClick={() => updatePaymentStatus(booking._id || booking.id, 'Paid')}>
+                                                <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Mark as Paid
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => updatePaymentStatus(booking._id || booking.id, 'Unpaid')}>
+                                                <XCircle className="mr-2 h-4 w-4 text-red-600" /> Mark as Unpaid
+                                            </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
@@ -193,6 +251,12 @@ export default function AdminOrdersPage() {
                     </TableBody>
                 </Table>
               </div>
+              <Pagination 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                className="mt-4"
+              />
           </CardContent>
       </Card>
 
@@ -238,21 +302,35 @@ export default function AdminOrdersPage() {
                             {selectedBooking.checkIn ? format(parseISO(selectedBooking.checkIn), 'MMM dd') : 'N/A'} - {selectedBooking.checkOut ? format(parseISO(selectedBooking.checkOut), 'MMM dd, yyyy') : 'N/A'}
                         </p>
                     </div>
-                     <div className="grid grid-cols-2 items-center gap-4">
+                    <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Number of Guests</p>
                         <p className="font-medium">
                             {selectedBooking.guests?.adults || 0} Adults, {selectedBooking.guests?.children || 0} Children
                         </p>
                     </div>
+                    {selectedBooking.addons?.length > 0 && (
+                        <>
+                            <Separator />
+                            <div className="space-y-2">
+                                <p className="text-sm font-semibold">Additional Add-ons</p>
+                                {selectedBooking.addons.filter(a => a.status !== "cancelled").map((addon, i) => (
+                                    <div key={i} className="flex justify-between items-center text-sm">
+                                        <p className="text-muted-foreground">{addon.name}</p>
+                                        <p className="font-medium">₹{(addon.price || 0).toLocaleString()}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
                     <Separator />
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Total Paid</p>
                         <p className="font-bold text-xl">₹{selectedBooking.totalAmount?.toLocaleString()}</p>
                     </div>
                     <div className="grid grid-cols-2 items-center gap-4">
-                        <p className="text-sm text-muted-foreground">Current Status</p>
-                        <Badge variant={getBadgeVariant(selectedBooking.status || 'Upcoming')} className="w-fit">
-                            {selectedBooking.status || 'Upcoming'}
+                        <p className="text-sm text-muted-foreground">Payment Status</p>
+                        <Badge className={`${statusColors[selectedBooking.paymentStatus || 'Unpaid']} w-fit`}>
+                            {selectedBooking.paymentStatus || 'Unpaid'}
                         </Badge>
                     </div>
 
@@ -297,24 +375,29 @@ export default function AdminOrdersPage() {
                     )}
                 </div>
                 <DialogFooter className="flex justify-between items-center w-full">
-                    <Button type="button" variant="outline" onClick={() => {
-                        const params = new URLSearchParams();
-                        params.append("bookingType", selectedBooking.bookingType || "Room");
-                        params.append("fullName", selectedBooking.fullName || selectedBooking.userName);
-                        params.append("email", selectedBooking.email || selectedBooking.userEmail);
-                        params.append("checkIn", selectedBooking.checkIn);
-                        params.append("checkOut", selectedBooking.checkOut);
-                        params.append("guests", (selectedBooking.guests?.adults + (selectedBooking.guests?.children || 0)).toString());
-                        params.append("totalPrice", selectedBooking.totalAmount?.toString() || "0");
-                        params.append("roomName", selectedBooking.roomName || selectedBooking.bookingType);
-                        params.append("numAdults", selectedBooking.guests?.adults?.toString() || "0");
-                        params.append("numChildren", selectedBooking.guests?.children?.toString() || "0");
-                        params.append("bookingId", selectedBooking.bookingId || selectedBooking._id || selectedBooking.id);
-                        
-                        window.open(`/booking/confirmation?${params.toString()}`, '_blank');
-                    }}>
-                        Generate Invoice
-                    </Button>
+                    {selectedBooking.paymentStatus === "Paid" && (
+                        <Button type="button" variant="outline" onClick={() => {
+                            const params = new URLSearchParams();
+                            params.append("bookingType", selectedBooking.bookingType || "Room");
+                            params.append("fullName", selectedBooking.fullName || selectedBooking.userName);
+                            params.append("email", selectedBooking.email || selectedBooking.userEmail);
+                            params.append("checkIn", selectedBooking.checkIn);
+                            params.append("checkOut", selectedBooking.checkOut);
+                            params.append("guests", (selectedBooking.guests?.adults + (selectedBooking.guests?.children || 0)).toString());
+                            params.append("totalPrice", selectedBooking.totalAmount?.toString() || "0");
+                            params.append("roomName", selectedBooking.roomName || selectedBooking.bookingType);
+                            params.append("numAdults", selectedBooking.guests?.adults?.toString() || "0");
+                            params.append("numChildren", selectedBooking.guests?.children?.toString() || "0");
+                            params.append("bookingId", selectedBooking.bookingId || selectedBooking._id || selectedBooking.id);
+                            if (selectedBooking.addons?.length > 0) {
+                                params.append("addons", JSON.stringify(selectedBooking.addons.filter(a => a.status !== "cancelled")));
+                            }
+                            
+                            window.open(`/booking/confirmation?${params.toString()}`, '_blank');
+                        }}>
+                            Generate Invoice
+                        </Button>
+                    )}
                     <Button type="button" variant="secondary" onClick={() => setSelectedBooking(null)}>
                         Close
                     </Button>

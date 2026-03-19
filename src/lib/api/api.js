@@ -43,6 +43,8 @@ export const API = {
   CreateBooking: `${API_BASE_URL}/Booking/api/create-booking`,
   GetBooking: `${API_BASE_URL}/Booking/api/bookings`,
   GetUserHistory: (email) => `${API_BASE_URL}/Booking/api/user-history/${email}`,
+  GetRoomAvailability: (roomId) => `${API_BASE_URL}/Booking/api/room-availability/${roomId}`,
+
 
   GetBookingById: (bookingId) =>
     `${API_BASE_URL}/Booking/api/booking/${bookingId}`,

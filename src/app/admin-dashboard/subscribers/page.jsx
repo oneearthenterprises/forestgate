@@ -35,6 +35,7 @@ import {
 import { API } from '@/lib/api/api';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Pagination } from '@/components/ui/pagination-nav';
 
 export default function SubscribersPage() {
   const [loading, setLoading] = useState(false);
@@ -44,13 +45,15 @@ export default function SubscribersPage() {
   const [message, setMessage] = useState('Hello [Name],\n\nWelcome to our latest newsletter! We have some exciting updates to share with you.');
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { toast } = useToast();
 
-  const getSubscribers = async () => {
+  const getSubscribers = async (page = 1) => {
     try {
       setLoading(true);
 
-      const response = await fetch(API.getnewsletter, {
+      const response = await fetch(`${API.getnewsletter}?page=${page}&limit=10`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -59,12 +62,18 @@ export default function SubscribersPage() {
 
       const data = await response.json();
       setNews(data.users || []);
+      setTotalPages(data.totalPages || 1);
+      setCurrentPage(data.page || page);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getSubscribers(currentPage);
+  }, [currentPage]);
 
   const handleSendNewsletter = async (e) => {
     e.preventDefault();
@@ -120,9 +129,6 @@ export default function SubscribersPage() {
     }
   };
 
-  useEffect(() => {
-    getSubscribers();
-  }, []);
   if (loading) {
     return (
       <div className="space-y-6">
@@ -268,6 +274,12 @@ export default function SubscribersPage() {
               </TableBody>
             </Table>
           </div>
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            className="mt-4"
+          />
         </CardContent>
       </Card>
     </div>

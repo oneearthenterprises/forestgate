@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { format, parseISO, differenceInDays, addDays } from "date-fns";
+import { format, parseISO, differenceInDays, addDays, isWithinInterval, areIntervalsOverlapping, startOfDay, endOfDay } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import {
   CalendarIcon,
@@ -88,6 +88,8 @@ function BookingPageContent() {
 
   const [isCheckInOpen, setCheckInOpen] = useState(false);
   const [isCheckOutOpen, setCheckOutOpen] = useState(false);
+  const [bookedDates, setBookedDates] = useState([]);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const formRef = useRef(null);
 
   const autoplay = useMemo(
@@ -270,6 +272,58 @@ function BookingPageContent() {
 
     getRoom();
   }, [roomId]);
+
+  // 🔹 Fetch Booked Dates for the selected room
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (!room?._id && !room?.id) return;
+      
+      setIsCheckingAvailability(true);
+      try {
+        const id = room._id || room.id;
+        const response = await fetch(API.GetRoomAvailability(id));
+        const data = await response.json();
+        
+        if (data?.bookings) {
+          // Flatten bookings into a list of intervals
+          const intervals = data.bookings.map(b => ({
+            start: startOfDay(parseISO(b.checkIn)),
+            end: endOfDay(parseISO(b.checkOut))
+          }));
+          setBookedDates(intervals);
+        }
+      } catch (error) {
+        console.error("Error fetching availability:", error);
+      } finally {
+        setIsCheckingAvailability(false);
+      }
+    };
+
+    fetchAvailability();
+  }, [room]);
+
+  // 🔹 Helper to check if a single date is booked
+  const isDateBooked = (date) => {
+    return bookedDates.some(interval => 
+      isWithinInterval(startOfDay(date), interval)
+    );
+  };
+
+  // 🔹 Helper to check if a range is available
+  const isRangeAvailable = (start, end) => {
+    if (!start || !end) return true;
+    const selectedInterval = { start: startOfDay(start), end: endOfDay(end) };
+    
+    return !bookedDates.some(bookedInterval => 
+      areIntervalsOverlapping(selectedInterval, bookedInterval)
+    );
+  };
+
+  const isSelectedRangeValid = useMemo(() => {
+    if (!checkIn || !checkOut) return true;
+    return isRangeAvailable(checkIn, checkOut);
+  }, [checkIn, checkOut, bookedDates]);
+
 const totalPrice = (room?.pricePerNight || 0) * numNights;
 if (!room) return <BookingSkeleton />;
 
@@ -466,6 +520,7 @@ if (!room) return <BookingSkeleton />;
                                     }}
                                     value={field.value}
                                     minDate={new Date()}
+                                    tileDisabled={({ date }) => isDateBooked(date)}
                                   />
                                 </PopoverContent>
                               </Popover>
@@ -517,6 +572,7 @@ if (!room) return <BookingSkeleton />;
                                       form.getValues("checkIn") || new Date(),
                                       1,
                                     )}
+                                    tileDisabled={({ date }) => isDateBooked(date)}
                                   />
                                 </PopoverContent>
                               </Popover>
@@ -673,17 +729,24 @@ if (!room) return <BookingSkeleton />;
                     </CardContent>
                   </Card>
 
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full h-16 rounded-full text-lg font-black uppercase tracking-widest shadow-none group transition-all"
-                    disabled={form.formState.isSubmitting}
-                  >
-                    {form.formState.isSubmitting
-                      ? "Finalizing..."
-                      : "Confirm My Reservation On Whatsapp"}
-                    <ArrowRight className="ml-2 w-6 h-6 transition-transform group-hover:translate-x-2" />
-                  </Button>
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className={cn(
+                        "w-full h-16 rounded-full text-lg font-black uppercase tracking-widest shadow-none group transition-all",
+                        !isSelectedRangeValid && "bg-destructive hover:bg-destructive/90"
+                      )}
+                      disabled={form.formState.isSubmitting || !isSelectedRangeValid || isCheckingAvailability}
+                    >
+                      {isCheckingAvailability 
+                        ? "Checking Availability..." 
+                        : form.formState.isSubmitting
+                          ? "Finalizing..."
+                          : !isSelectedRangeValid
+                            ? "Room Not Available on these dates"
+                            : "Confirm My Reservation On Whatsapp"}
+                      <ArrowRight className="ml-2 w-6 h-6 transition-transform group-hover:translate-x-2" />
+                    </Button>
                 </form>
               </Form>
             </div>

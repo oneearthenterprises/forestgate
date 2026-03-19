@@ -60,6 +60,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Pagination } from '@/components/ui/pagination-nav';
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -69,6 +70,8 @@ export default function UsersPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   // History States
   const [userHistory, setUserHistory] = useState([]);
@@ -90,11 +93,11 @@ export default function UsersPage() {
   const [editData, setEditData] = useState({});
   const { toast } = useToast();
 
-  const getAllData = async () => {
+  const getAllData = async (page = 1) => {
     try {
       setLoading(true);
       const [usersRes, roomsRes] = await Promise.all([
-        fetch(API.getAllUsers),
+        fetch(`${API.getAllUsers}?page=${page}&limit=10`),
         fetch(API.GetAllRooms),
       ]);
       
@@ -104,6 +107,8 @@ export default function UsersPage() {
       ]);
 
       setUsers(usersData.users || []);
+      setTotalPages(usersData.totalPages || 1);
+      setCurrentPage(usersData.page || page);
       setRooms(roomsData.rooms || []);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -118,8 +123,8 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
-    getAllData();
-  }, []);
+    getAllData(currentPage);
+  }, [currentPage]);
 
   const fetchUserHistory = async (email) => {
     if (!email) return;
@@ -529,6 +534,12 @@ export default function UsersPage() {
               </TableBody>
             </Table>
           </div>
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            className="pb-4 pt-2 -mt-2 bg-white/50"
+          />
         </CardContent>
       </Card>
 
@@ -1384,12 +1395,22 @@ export default function UsersPage() {
                                             <span>₹{basePrice.toLocaleString()}</span>
                                         </div>
                                         {addonsTotal > 0 && (
-                                            <div className="flex justify-between opacity-70">
-                                                <span>Add-ons Total</span>
-                                                <span>₹{addonsTotal.toLocaleString()}</span>
-                                            </div>
+                                            <>
+                                                <div className="space-y-1 mt-2 mb-1 border-t border-primary/10 pt-1">
+                                                    {(tempBookingData.addons || []).filter(a => a.status !== "cancelled").map((addon, i) => (
+                                                        <div key={i} className="flex justify-between opacity-60 text-[10px]">
+                                                            <span>+ {addon.name}</span>
+                                                            <span>₹{(addon.price || 0).toLocaleString()}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <div className="flex justify-between opacity-80 font-bold">
+                                                    <span>Add-ons Total</span>
+                                                    <span>₹{addonsTotal.toLocaleString()}</span>
+                                                </div>
+                                            </>
                                         )}
-                                        <div className="flex justify-between pt-2 border-t border-primary/10 font-black text-sm text-primary">
+                                        <div className="flex justify-between pt-2 border-t border-primary/20 font-black text-sm text-primary">
                                             <span>Dynamic Total</span>
                                             <span>₹{totalAmount.toLocaleString()}</span>
                                         </div>

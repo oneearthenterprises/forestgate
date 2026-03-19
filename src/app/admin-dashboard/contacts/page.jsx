@@ -32,6 +32,7 @@ import { API } from '@/lib/api/api';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { Pagination } from '@/components/ui/pagination-nav';
 
 export default function ContactsPage() {
   const [selectedMessage, setSelectedMessage] = useState(null);
@@ -41,15 +42,19 @@ export default function ContactsPage() {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replySubject, setReplySubject] = useState('');
   const [replyMessage, setReplyMessage] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { toast } = useToast();
 
-  const getContactMessages = async () => {
+  const getContactMessages = async (page = 1) => {
     try {
         setLoading(true)
-      const response = await fetch(API.ContactUsGet);
+      const response = await fetch(`${API.ContactUsGet}?page=${page}&limit=10`);
       const data = await response.json();
 
       setMessages(data.contact || []);
+      setTotalPages(data.totalPages || 1);
+      setCurrentPage(data.page || page);
       console.log(data);
     } catch (error) {
       console.log(error);
@@ -58,6 +63,10 @@ export default function ContactsPage() {
     setLoading(false);
   }
   };
+
+  useEffect(() => {
+    getContactMessages(currentPage);
+  }, [currentPage]);
   
   const handleReplyMessage = async (e) => {
     e.preventDefault();
@@ -112,9 +121,6 @@ export default function ContactsPage() {
     }
   };
 
-  useEffect(() => {
-    getContactMessages();
-  }, []);
 
   return (
     <div className="space-y-6">
@@ -207,6 +213,12 @@ export default function ContactsPage() {
 </TableBody>
             </Table>
           </div>
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            className="mt-4"
+          />
         </CardContent>
       </Card>
 

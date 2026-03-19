@@ -26,7 +26,14 @@ function ConfirmationPageContent() {
     const roomName = searchParams.get('roomName');
     const numAdults = searchParams.get('numAdults');
     const numChildren = searchParams.get('numChildren');
-    console.log(roomName);
+    const addonsRaw = searchParams.get('addons');
+    
+    let addons = [];
+    try {
+        addons = addonsRaw ? JSON.parse(addonsRaw) : [];
+    } catch (e) {
+        console.error("Failed to parse addons", e);
+    }
 
     // Use a stable booking ID for display
 const bookingId = useRef(
@@ -116,6 +123,22 @@ const bookingId = useRef(
                                         <p>{format(checkOutDate, 'eeee, MMM dd, yyyy')}</p>
                                     </div>
                                 </div>
+                                
+                                {addons.length > 0 && (
+                                    <>
+                                        <Separator className="my-2" />
+                                        <div className="space-y-2">
+                                            <p className="font-semibold">Additional Add-ons</p>
+                                            {addons.map((addon, i) => (
+                                                <div key={i} className="flex justify-between items-center text-sm">
+                                                    <p className="text-muted-foreground">{addon.name}</p>
+                                                    <p className="font-medium">₹{(addon.price || 0).toLocaleString()}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                                
                                 <Separator/>
                                  <div className="flex justify-between items-center pt-2">
                                     <p className="font-semibold text-lg">Total Amount</p>

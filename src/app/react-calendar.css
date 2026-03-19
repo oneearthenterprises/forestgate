@@ -58,9 +58,11 @@
 }
 
 .react-calendar__tile:disabled {
-  background-color: hsl(var(--card));
-  color: hsl(var(--muted-foreground));
-  opacity: 0.5;
+  background-color: #fee2e2 !important; /* light red tint */
+  color: #ef4444 !important; /* red text */
+  opacity: 0.6;
+  text-decoration: line-through;
+  cursor: not-allowed;
 }
 
 .react-calendar__tile:enabled:hover,
