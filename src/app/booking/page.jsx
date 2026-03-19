@@ -471,10 +471,10 @@ if (!room) return <BookingSkeleton />;
                   >
                     <CardHeader className="pb-10">
                       <CardTitle className="font-headline text-4xl font-bold mb-2">
-                        Guest Information
+                        Booking Contact Details
                       </CardTitle>
                       <CardDescription className="text-lg">
-                        Please provide your details to secure this booking.
+                        Please provide contact details for this reservation. Note: This will not change your main account profile.
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-8">
@@ -664,7 +664,7 @@ if (!room) return <BookingSkeleton />;
                           <FormItem>
                             {" "}
                             <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-1 mb-2">
-                              Full Name
+                              Booking Full Name
                             </FormLabel>{" "}
                             <FormControl>
                               <Input
@@ -685,7 +685,7 @@ if (!room) return <BookingSkeleton />;
                             <FormItem>
                               {" "}
                               <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-1 mb-2">
-                                Email Address
+                                Booking Email Address
                               </FormLabel>{" "}
                               <FormControl>
                                 <Input

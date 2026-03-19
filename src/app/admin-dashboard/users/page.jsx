@@ -259,6 +259,10 @@ export default function UsersPage() {
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
+        // Booking Primary Info
+        bookingName: user.bookingName || user.name || "",
+        bookingEmail: user.bookingEmail || user.email || "",
+        bookingPhone: user.bookingPhone || user.phone || "",
         // Personal
         gender: user.gender || "",
         age: user.age || "",
@@ -324,12 +328,15 @@ export default function UsersPage() {
             .join(', ')
       };
 
+      // Ensure registration details are not updated from this booking-focused sheet
+      const { name, email, phone, password, role, ...payload } = finalData;
+
       const response = await fetch(API.updateUser(selectedUser._id), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(finalData),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -555,38 +562,73 @@ export default function UsersPage() {
 
           <div className="flex-1 overflow-y-auto px-6">
             <div className="py-6 space-y-8 pb-32">
-                {/* 1. Basic Information */}
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <div className="h-8 w-1 bg-primary rounded-full" />
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Basic Information</h3>
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Account Information</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label className="text-muted-foreground opacity-70">Registration Name</Label>
+                            <Input
+                                className="bg-gray-50 border-gray-100 text-muted-foreground cursor-not-allowed"
+                                value={editData.name}
+                                disabled
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label className="text-muted-foreground opacity-70">Registration Email</Label>
+                            <Input
+                                className="bg-gray-50 border-gray-100 text-muted-foreground cursor-not-allowed"
+                                value={editData.email}
+                                disabled
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label className="text-muted-foreground opacity-70">Registration Phone</Label>
+                            <Input
+                                className="bg-gray-50 border-gray-100 text-muted-foreground cursor-not-allowed"
+                                value={editData.phone}
+                                disabled
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                        <div className="h-8 w-1 bg-secondary rounded-full" />
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Primary Booking Profile</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2 col-span-2">
-                            <Label htmlFor="name">Full Name</Label>
+                            <Label htmlFor="bookingName">Booking Full Name</Label>
                             <Input
-                                id="name"
+                                id="bookingName"
+                                placeholder="Name used for future bookings"
                                 className="border-gray-200 focus:border-primary"
-                                value={editData.name}
-                                onChange={(e) => setEditData({...editData, name: e.target.value})}
+                                value={editData.bookingName}
+                                onChange={(e) => setEditData({...editData, bookingName: e.target.value})}
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email Address</Label>
+                            <Label htmlFor="bookingEmail">Booking Email Address</Label>
                             <Input
-                                id="email"
+                                id="bookingEmail"
+                                placeholder="Contact email for bookings"
                                 className="border-gray-200"
-                                value={editData.email}
-                                onChange={(e) => setEditData({...editData, email: e.target.value})}
+                                value={editData.bookingEmail}
+                                onChange={(e) => setEditData({...editData, bookingEmail: e.target.value})}
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="phone">Phone Number</Label>
+                            <Label htmlFor="bookingPhone">Booking Phone Number (WhatsApp)</Label>
                             <Input
-                                id="phone"
+                                id="bookingPhone"
+                                placeholder="WhatsApp number for booking notifications"
                                 className="border-gray-200"
-                                value={editData.phone}
-                                onChange={(e) => setEditData({...editData, phone: e.target.value})}
+                                value={editData.bookingPhone}
+                                onChange={(e) => setEditData({...editData, bookingPhone: e.target.value})}
                             />
                         </div>
                     </div>
