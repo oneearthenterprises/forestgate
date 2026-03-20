@@ -7,11 +7,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format, parseISO, differenceInDays, addDays, isWithinInterval, areIntervalsOverlapping, startOfDay, endOfDay } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { allocateRooms } from "@/lib/utils/allocation";
 import {
   CalendarIcon,
   Users,
   Check,
   ImageIcon,
+  Plus,
   ArrowRight,
   ArrowRightCircle,
 } from "lucide-react";
@@ -70,11 +72,19 @@ const BookingFormSchema = z
     checkOut: z.date({ required_error: "Check-out date is required." }),
     adults: z.string().min(1, "At least one adult is required."),
     children: z.string(),
+    guestDetails: z.array(z.object({
+      name: z.string().min(2, "Name is required."),
+      gender: z.string().min(1, "Gender is required."),
+      age: z.string().min(1, "Age is required."),
+      type: z.enum(["Adult", "Child"]),
+    })).optional(),
   })
   .refine((data) => data.checkOut > data.checkIn, {
     message: "Check-out date must be after check-in date.",
     path: ["checkOut"],
   });
+
+
 
 
 
@@ -86,11 +96,43 @@ function BookingPageContent() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const [room, setRoom] = useState(null);
+  const [allRooms, setAllRooms] = useState([]);
+  const [selectedAdditionalRooms, setSelectedAdditionalRooms] = useState([]);
   const [isCheckInOpen, setCheckInOpen] = useState(false);
   const [isCheckOutOpen, setCheckOutOpen] = useState(false);
   const [bookedDates, setBookedDates] = useState([]);
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const formRef = useRef(null);
+
+  useEffect(() => {
+    const getRoomData = async () => {
+      try {
+        if (roomId) {
+          const response = await fetch(API.getRoomById(roomId));
+          const data = await response.json();
+          if (data?.room) setRoom(data.room);
+        } else {
+          const response = await fetch(API.GetAllRooms);
+          const data = await response.json();
+          if (data?.rooms?.length > 0) setRoom(data.rooms[0]);
+        }
+        
+        // Fetch all rooms for recommendations
+        const allRoomsRes = await fetch(API.GetAllRooms);
+        const allRoomsData = await allRoomsRes.json();
+        if (allRoomsData?.rooms) {
+          const otherRooms = allRoomsData.rooms
+            .filter(r => (r._id || r.id) !== roomId)
+            .sort((a, b) => a.pricePerNight - b.pricePerNight);
+          setAllRooms(otherRooms);
+        }
+      } catch (error) {
+        console.error("Error fetching room data:", error);
+      }
+    };
+    getRoomData();
+  }, [roomId]);
 
   const autoplay = useMemo(
     () =>
@@ -116,8 +158,33 @@ function BookingPageContent() {
       checkOut: searchParams.get("checkOut") ? parseISO(searchParams.get("checkOut")) : addDays(new Date(), 1),
       adults: searchParams.get("guests") || "2",
       children: "0",
+      guestDetails: [],
     },
   });
+
+  const { checkIn, checkOut, adults, children, guestDetails: guestDetailsWatch } = form.watch();
+
+  const numNights =
+    checkIn && checkOut && differenceInDays(checkOut, checkIn) > 0
+      ? differenceInDays(checkOut, checkIn)
+      : 1;
+
+  const numAdults = adults ? parseInt(adults) : 0;
+  const numChildren = children ? parseInt(children) : 0;
+
+  const isSelectedRangeValid = useMemo(() => {
+    if (!checkIn || !checkOut || !bookedDates.length) return true;
+    try {
+      return !bookedDates.some(interval => 
+        areIntervalsOverlapping(
+          { start: startOfDay(checkIn), end: endOfDay(checkOut) },
+          interval
+        )
+      );
+    } catch (e) {
+      return true;
+    }
+  }, [checkIn, checkOut, bookedDates]);
 
   // Restore data from sessionStorage on mount
   useEffect(() => {
@@ -141,6 +208,26 @@ function BookingPageContent() {
     }, 100);
   }, []);
 
+  // 🔹 Synchronize guestDetails array with adults/children count
+  useEffect(() => {
+    const currentDetails = form.getValues("guestDetails") || [];
+    const totalCount = numAdults + numChildren;
+    
+    if (totalCount !== currentDetails.length) {
+      const newDetails = [];
+      // Add adults
+      for (let i = 0; i < numAdults; i++) {
+        newDetails.push(currentDetails[i] || { name: "", gender: "Male", age: "25", type: "Adult" });
+      }
+      // Add children
+      for (let i = 0; i < numChildren; i++) {
+        const childIdx = numAdults + i;
+        newDetails.push(currentDetails[childIdx] || { name: "", gender: "Male", age: "5", type: "Child" });
+      }
+      form.setValue("guestDetails", newDetails);
+    }
+  }, [numAdults, numChildren, form]);
+
   // Auto-fill form if user is logged in
   useEffect(() => {
     if (user && !sessionStorage.getItem("tempBookingData")) {
@@ -150,15 +237,88 @@ function BookingPageContent() {
     }
   }, [user, form]);
 
-  const { checkIn, checkOut, adults, children } = form.watch();
 
-  const numNights =
-    checkIn && checkOut && differenceInDays(checkOut, checkIn) > 0
-      ? differenceInDays(checkOut, checkIn)
-      : 1;
+  // 🔹 New Dynamic Allocation Logic (Hybrid: Manual + Auto)
+  const allocation = useMemo(() => {
+    if (!room || numAdults < 1) return { allocatedRooms: [], totalRooms: 0, totalPrice: 0 };
+    
+    // Start with the primary room
+    let rooms = [];
+    let remainingAdults = numAdults;
+    let remainingChildren = numChildren;
+    
+    const basePrice = room.pricePerNight || 0;
+    const beddingCharge = 1500;
 
-  const numAdults = adults ? parseInt(adults) : 0;
-  const numChildren = children ? parseInt(children) : 0;
+    // 1. Assign Primary Room
+    let primaryRoom = { adults: 0, children: 0, extraBedding: false, name: room.roomName, price: basePrice };
+    if (remainingAdults >= 3 && selectedAdditionalRooms.length === 0 && remainingAdults === numAdults) {
+       // Only if no manual rooms and we have 3 adults, use the primary as the 3-adult room
+       primaryRoom.adults = 3;
+       primaryRoom.extraBedding = true;
+       remainingAdults -= 3;
+    } else {
+       primaryRoom.adults = Math.min(2, remainingAdults);
+       remainingAdults -= primaryRoom.adults;
+       primaryRoom.children = Math.min(2, remainingChildren);
+       remainingChildren -= primaryRoom.children;
+    }
+    rooms.push(primaryRoom);
+
+    // 2. Assign Manual Selections (Selected Additional Rooms)
+    selectedAdditionalRooms.forEach((addonRoom) => {
+      if (remainingAdults > 0 || remainingChildren > 0) {
+        let r = { adults: 0, children: 0, extraBedding: false, name: addonRoom.roomName, price: addonRoom.pricePerNight * 0.9 };
+        if (remainingAdults >= 3) {
+          r.adults = 3;
+          r.extraBedding = true;
+          r.price += beddingCharge;
+          remainingAdults -= 3;
+        } else {
+          r.adults = Math.min(2, remainingAdults);
+          remainingAdults -= r.adults;
+          r.children = Math.min(2, remainingChildren);
+          remainingChildren -= r.children;
+        }
+        rooms.push(r);
+      }
+    });
+
+    // 3. Auto-allocate remaining guests using primary room type
+    if (remainingAdults > 0 || remainingChildren > 0) {
+      const remainingResult = allocateRooms(remainingAdults, remainingChildren, basePrice, beddingCharge);
+      // Apply discount since these are additional rooms
+      const adjustedRemaining = remainingResult.allocatedRooms.map(r => ({
+        ...r,
+        name: room.roomName,
+        price: (r.price - (r.extraBedding ? beddingCharge : 0)) * 0.9 + (r.extraBedding ? beddingCharge : 0)
+      }));
+      rooms.push(...adjustedRemaining);
+    }
+
+    const totalAllocationPrice = rooms.reduce((sum, r) => sum + r.price, 0);
+
+    return {
+      allocatedRooms: rooms,
+      totalRooms: rooms.length,
+      totalPrice: totalAllocationPrice,
+    };
+  }, [numAdults, numChildren, room, selectedAdditionalRooms]);
+
+  const totalPrice = allocation.totalPrice * numNights;
+  const totalRoomsNeeded = allocation.totalRooms;
+
+  const autoAddons = useMemo(() => {
+    const addons = [];
+    if (allocation.allocatedRooms.some(r => r.extraBedding)) {
+      addons.push("Extra Bedding Required");
+    }
+    return addons;
+  }, [allocation]);
+
+  // 🔹 Capacity Check for manual recommendations
+  const currentRoomMaxCapacity = 4; // 2 Adult + 2 Child (Based on user rules)
+  const isCapacityExceeded = (numAdults + numChildren) > currentRoomMaxCapacity || numAdults > 2;
 
   async function onSubmit(data) {
     if (!user) {
@@ -186,6 +346,8 @@ function BookingPageContent() {
       guests: numAdults + numChildren,
       numAdults,
       numChildren,
+      allocation: allocation.allocatedRooms,
+      totalRooms: totalRoomsNeeded,
       checkIn: format(data.checkIn, "yyyy-MM-dd"),
       checkOut: format(data.checkOut, "yyyy-MM-dd"),
     };
@@ -245,34 +407,6 @@ function BookingPageContent() {
     }
   }
 
-  const [room, setRoom] = useState(null);
-
-  useEffect(() => {
-    const getRoom = async () => {
-      try {
-        if (roomId) {
-          const response = await fetch(API.getRoomById(roomId));
-          const data = await response.json();
-
-          if (data?.room) {
-            setRoom(data.room);
-          }
-        } else {
-          const response = await fetch(API.GetAllRooms);
-          const data = await response.json();
-
-          if (data?.rooms?.length > 0) {
-            setRoom(data.rooms[0]);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getRoom();
-  }, [roomId]);
-
   // 🔹 Fetch Booked Dates for the selected room
   useEffect(() => {
     const fetchAvailability = async () => {
@@ -310,21 +444,7 @@ function BookingPageContent() {
   };
 
   // 🔹 Helper to check if a range is available
-  const isRangeAvailable = (start, end) => {
-    if (!start || !end) return true;
-    const selectedInterval = { start: startOfDay(start), end: endOfDay(end) };
-    
-    return !bookedDates.some(bookedInterval => 
-      areIntervalsOverlapping(selectedInterval, bookedInterval)
-    );
-  };
 
-  const isSelectedRangeValid = useMemo(() => {
-    if (!checkIn || !checkOut) return true;
-    return isRangeAvailable(checkIn, checkOut);
-  }, [checkIn, checkOut, bookedDates]);
-
-const totalPrice = (room?.pricePerNight || 0) * numNights;
 if (!room) return <BookingSkeleton />;
 
   return (
@@ -638,7 +758,7 @@ if (!room) return <BookingSkeleton />;
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {[...Array(6)]
+                                  {[...Array(11)]
                                     .map((_, i) => i)
                                     .map((g) => (
                                       <SelectItem
@@ -656,6 +776,58 @@ if (!room) return <BookingSkeleton />;
                           )}
                         />
                       </div>
+
+                      {/* 🔹 Room Capacity Suggestions (New) */}
+                      {isCapacityExceeded && allRooms.length > 0 && (
+                        <div className="bg-primary/5 p-8 rounded-[2.5rem] border border-primary/10 space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                              <ArrowRightCircle className="w-6 h-6 text-primary" />
+                            </div>
+                            <div>
+                              <h4 className="font-headline text-xl font-bold">Sanctuary Capacity Suggestions</h4>
+                              <p className="text-sm text-muted-foreground font-medium">Your selection exceeds one room's capacity. We've found the best deals for your additional guests:</p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {allRooms.slice(0, 2).map((r, i) => (
+                              <div key={i} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-primary/30 transition-all">
+                                <div className="flex items-center gap-4">
+                                  <div className="w-16 h-16 rounded-2xl relative overflow-hidden bg-slate-100 flex-shrink-0">
+                                    {r.images?.[0] && <Image src={r.images[0].url} fill className="object-cover" alt={r.roomName} />}
+                                  </div>
+                                  <div>
+                                    <p className="font-bold text-sm">{r.roomName}</p>
+                                    <p className="text-primary font-black text-xs">₹{r.pricePerNight.toLocaleString()}/night</p>
+                                  </div>
+                                </div>
+                                <Button 
+                                  type="button" 
+                                  variant={selectedAdditionalRooms.some(sr => sr._id === r._id) ? "default" : "ghost"} 
+                                  className={`rounded-full w-10 h-10 p-0 ${selectedAdditionalRooms.some(sr => sr._id === r._id) ? "bg-primary text-white" : "hover:bg-primary/10 text-primary"}`}
+                                  onClick={() => {
+                                    if (selectedAdditionalRooms.some(sr => sr._id === r._id)) {
+                                      setSelectedAdditionalRooms(prev => prev.filter(sr => sr._id !== r._id));
+                                    } else {
+                                      setSelectedAdditionalRooms(prev => [...prev, r]);
+                                      toast({
+                                        title: "Room Added",
+                                        description: `${r.roomName} has been added to your sanctuary allocation.`,
+                                      });
+                                    }
+                                  }}
+                                >
+                                  {selectedAdditionalRooms.some(sr => sr._id === r._id) ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center font-bold">
+                            * Auto-allocation ensures the best price and 10% multi-room discount
+                          </p>
+                        </div>
+                      )}
 
                       <FormField
                         control={form.control}
@@ -726,6 +898,81 @@ if (!room) return <BookingSkeleton />;
                           )}
                         />
                       </div>
+
+                      {/* 🔹 Guest Profiles Section */}
+                      <div className="pt-8 space-y-6">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-headline text-2xl font-bold flex items-center gap-2">
+                            <Users className="w-5 h-5 text-secondary" />
+                            Guest Profiles
+                          </h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground bg-white/50 p-4 rounded-xl border border-white/20 font-medium">
+                          Please provide details for each guest. This helps us prepare the right bedding and amenities for your sanctuary stay.
+                        </p>
+                        
+                        <div className="space-y-4">
+                          {guestDetailsWatch.map((guest, idx) => (
+                            <div key={idx} className="bg-white/40 p-6 rounded-[2rem] border border-white/30 space-y-4">
+                              <div className="flex justify-between items-center">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#0b2c3d]">
+                                  Guest {idx + 1} ({guest.type})
+                                </span>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <FormField
+                                  control={form.control}
+                                  name={`guestDetails.${idx}.name`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">Full Name</FormLabel>
+                                      <FormControl>
+                                        <Input {...field} placeholder="Guest name" className="bg-white border-none rounded-xl h-12" />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name={`guestDetails.${idx}.gender`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">Gender</FormLabel>
+                                      <Select onValueChange={field.onChange} value={field.value}>
+                                        <FormControl>
+                                          <SelectTrigger className="bg-white border-none rounded-xl h-12">
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                          <SelectItem value="Male">Male</SelectItem>
+                                          <SelectItem value="Female">Female</SelectItem>
+                                          <SelectItem value="Other">Other</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name={`guestDetails.${idx}.age`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">Age</FormLabel>
+                                      <FormControl>
+                                        <Input type="number" {...field} className="bg-white border-none rounded-xl h-12" />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
 
@@ -767,7 +1014,17 @@ if (!room) return <BookingSkeleton />;
                       {room?.roomName}
                     </h4>
                     <div className="flex flex-col gap-3 text-sm text-muted-foreground font-bold">
+                    {totalRoomsNeeded > 1 && (
                       <div className="flex justify-between items-center py-2 border-b border-muted">
+                        <span className="uppercase tracking-widest text-[10px]">
+                          Allocation
+                        </span>
+                        <span className="text-foreground font-black">
+                          {totalRoomsNeeded} Rooms
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center py-2 border-b border-muted">
                         <span className="uppercase tracking-widest text-[10px]">
                           Check-in
                         </span>
@@ -797,13 +1054,22 @@ if (!room) return <BookingSkeleton />;
                   <div className="space-y-4 pt-4">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-muted-foreground font-medium">
-                        ₹{room?.pricePerNight.toLocaleString()} x {numNights}
-                        nights
+                        Room Allocation Price
                       </span>
                       <span className="font-black text-foreground">
-                        ₹{(room?.pricePerNight * numNights).toLocaleString()}
+                        ₹{totalPrice.toLocaleString()}
                       </span>
                     </div>
+                    {totalRoomsNeeded > 1 && (
+                      <div className="flex flex-col gap-1 pt-2">
+                        {allocation.allocatedRooms.map((r, i) => (
+                          <div key={i} className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>Room {i+1}: {r.name} ({r.adults}A, {r.children}C{r.extraBedding ? " + Bed" : ""})</span>
+                            <span>₹{r.price.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-muted-foreground font-medium">
                         Service Fee
@@ -812,6 +1078,17 @@ if (!room) return <BookingSkeleton />;
                         COMPLIMENTARY
                       </span>
                     </div>
+                    {autoAddons.length > 0 && (
+                      <div className="space-y-2 mt-4">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-secondary/80">Stay Requirements:</span>
+                        {autoAddons.map((addon, i) => (
+                          <div key={i} className="flex justify-between items-center text-[11px] bg-secondary/5 p-3 rounded-xl border border-secondary/10">
+                            <span className="text-secondary font-bold">{addon}</span>
+                            <span className="text-secondary font-black">REQUIRED</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <Separator className="bg-muted" />

@@ -5,7 +5,16 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ChevronRight, ArrowUpRight } from 'lucide-react';
+import { ChevronRight, ArrowUpRight, Maximize2, Waves, Bed, Bath } from 'lucide-react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { allocateRooms } from '@/lib/utils/allocation';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -18,6 +27,14 @@ import { RoomCarouselWrapper } from '@/components/shared/RoomCarouselWrapper';
 import { API } from '@/lib/api/api';
 
 export default function RoomsPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const adults = searchParams.get('guests') || '2';
+  const childrenCount = searchParams.get('children') || '0';
+  
+  const numAdults = parseInt(adults);
+  const numChildren = parseInt(childrenCount);
+
   const [isLoading, setIsLoading] = useState(true);
   const [rooms, setRooms] = useState([]);
   const headerImage = PlaceHolderImages.find((img) => img.id === 'room-suite-1');
@@ -140,6 +157,58 @@ const getApiRooms = async () => {
                 </Button>
               </motion.div>
 
+              {/* 🔹 Dynamic Guest Search Bar */}
+              <div className="max-w-4xl mx-auto mb-16 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-wrap items-center justify-center gap-8">
+                <div className="flex items-center gap-6">
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Adults (12+ Yrs)</p>
+                    <Select 
+                      value={adults} 
+                      onValueChange={(val) => {
+                        const params = new URLSearchParams(searchParams);
+                        params.set('guests', val);
+                        router.push(`?${params.toString()}`, { scroll: false });
+                      }}
+                    >
+                      <SelectTrigger className="w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
+                        <SelectValue placeholder="Adults" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                        {[...Array(11)].map((_, i) => (
+                          <SelectItem key={i+1} value={String(i+1)} className="font-medium">{i+1} {i === 0 ? 'Adult' : 'Adults'}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Children (0-11 Yrs)</p>
+                    <Select 
+                      value={childrenCount} 
+                      onValueChange={(val) => {
+                        const params = new URLSearchParams(searchParams);
+                        params.set('children', val);
+                        router.push(`?${params.toString()}`, { scroll: false });
+                      }}
+                    >
+                      <SelectTrigger className="w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
+                        <SelectValue placeholder="Children" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                        {[...Array(11)].map((_, i) => (
+                          <SelectItem key={i} value={String(i)} className="font-medium">{i} {i === 1 ? 'Child' : 'Children'}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="md:border-l md:border-dashed border-slate-200 md:pl-8">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Total Group Size</p>
+                   <p className="font-headline text-3xl font-bold text-slate-900">{numAdults + numChildren} Guests</p>
+                </div>
+              </div>
+
               <div className="flex flex-col gap-8 max-w-6xl mx-auto">
                 {isLoading ? (
                   <>
@@ -168,9 +237,49 @@ const getApiRooms = async () => {
                             {room.tag || 'Premium Stay'}
                           </Badge>
                           <h3 className="font-headline text-3xl md:text-5xl font-black text-slate-900 leading-[1.1]">
-                          {room.roomName}
+                          {(() => {
+                            const allocation = numAdults > 0 ? allocateRooms(numAdults, numChildren, room.pricePerNight) : null;
+                            const totalRooms = allocation ? allocation.totalRooms : 1;
+                            return totalRooms > 1 ? `${totalRooms} x ${room.roomName}` : room.roomName;
+                          })()}
                           </h3>
                         </div>
+                        
+                        <div className="flex flex-wrap gap-x-6 gap-y-2 py-1">
+                          <div className="flex items-center gap-2 text-slate-500">
+                            <Maximize2 className="w-4 h-4" />
+                            <span className="text-xs font-bold">144 sq.ft (13 sq.mt)</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-500">
+                            <Waves className="w-4 h-4" />
+                            <span className="text-xs font-bold">Swimming Pool View</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-500">
+                            <Bed className="w-4 h-4" />
+                            <span className="text-xs font-bold">1 King Bed</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-500">
+                            <Bath className="w-4 h-4" />
+                            <span className="text-xs font-bold">1 Bathroom</span>
+                          </div>
+                        </div>
+
+                        {numAdults > 0 && numAdults + numChildren > 1 && (
+                          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Room Allocation Breakdown</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+                              {allocateRooms(numAdults, numChildren, room.pricePerNight).allocatedRooms.map((r, i) => (
+                                <div key={i} className="flex items-center gap-2">
+                                  <span className="text-xs font-bold text-slate-900 whitespace-nowrap">Room {i + 1}:</span>
+                                  <span className="text-xs font-medium text-slate-600">
+                                    {r.adults} Adults {r.children > 0 ? `+ ${r.children} ${r.children === 1 ? 'Child' : 'Children'}` : ''}
+                                    {r.extraBedding ? ' (+ Extra Bed)' : ''}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                         
                         <p className="text-foreground/60 text-sm md:text-base leading-relaxed line-clamp-3 md:line-clamp-2 break-all">
                           {room.shortDescription}
