@@ -157,7 +157,7 @@ function BookingPageContent() {
       checkIn: searchParams.get("checkIn") ? parseISO(searchParams.get("checkIn")) : new Date(),
       checkOut: searchParams.get("checkOut") ? parseISO(searchParams.get("checkOut")) : addDays(new Date(), 1),
       adults: searchParams.get("guests") || "2",
-      children: "0",
+      children: searchParams.get("children") || "0",
       guestDetails: [],
     },
   });
@@ -585,6 +585,49 @@ if (!room) return <BookingSkeleton />;
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-12 pt-12"
                 >
+                  {/* 🔹 Interactive Guest Summary Bar (New) */}
+                  <div className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-wrap items-center justify-center gap-8 mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <div className="flex items-center gap-6">
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Adults (12+ Yrs)</p>
+                        <Select 
+                          value={adults} 
+                          onValueChange={(val) => form.setValue("adults", val)}
+                        >
+                          <SelectTrigger className="w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
+                            <SelectValue placeholder="Adults" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                            {[...Array(10)].map((_, i) => (
+                              <SelectItem key={i+1} value={String(i+1)} className="font-medium">{i+1} {i === 0 ? 'Adult' : 'Adults'}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Children (0-11 Yrs)</p>
+                        <Select 
+                          value={children} 
+                          onValueChange={(val) => form.setValue("children", val)}
+                        >
+                          <SelectTrigger className="w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
+                            <SelectValue placeholder="Children" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                            {[...Array(11)].map((_, i) => (
+                              <SelectItem key={i} value={String(i)} className="font-medium">{i} {i === 1 ? 'Child' : 'Children'}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="md:border-l md:border-dashed border-slate-200 md:pl-8 text-center md:text-left">
+                       <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Total Group Size</p>
+                       <p className="font-headline text-3xl font-bold text-slate-900">{numAdults + numChildren} Guests</p>
+                    </div>
+                  </div>
                   <Card
                     ref={formRef}
                     className="border-none shadow-none bg-primary/20 rounded-[3rem]"
