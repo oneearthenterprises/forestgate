@@ -73,11 +73,12 @@ const BookingFormSchema = z
     adults: z.string().min(1, "At least one adult is required."),
     children: z.string(),
     guestDetails: z.array(z.object({
-      name: z.string().min(2, "Name is required."),
-      gender: z.string().min(1, "Gender is required."),
-      age: z.string().min(1, "Age is required."),
+      name: z.string().optional(),
+      gender: z.string().default("Male"),
+      age: z.string().optional(),
       type: z.enum(["Adult", "Child"]),
     })).optional(),
+    provideDetailsLater: z.boolean().default(false),
   })
   .refine((data) => data.checkOut > data.checkIn, {
     message: "Check-out date must be after check-in date.",
@@ -970,13 +971,38 @@ if (!room) return <BookingSkeleton />;
                             <Users className="w-5 h-5 text-secondary" />
                             Guest Profiles
                           </h3>
+                          <FormField
+                            control={form.control}
+                            name="provideDetailsLater"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center space-x-2 space-y-0">
+                                <FormControl>
+                                  <div className="flex items-center gap-2 bg-secondary/10 px-4 py-2 rounded-full border border-secondary/20 transition-all hover:bg-secondary/20 cursor-pointer" onClick={() => field.onChange(!field.value)}>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-[#0b2c3d]">Provide Later</span>
+                                    <div className={cn(
+                                      "w-8 h-4 rounded-full relative transition-colors duration-200",
+                                      field.value ? "bg-secondary" : "bg-slate-300"
+                                    )}>
+                                      <div className={cn(
+                                        "absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all duration-200 shadow-sm",
+                                        field.value ? "left-0.5 translate-x-4" : "left-0.5"
+                                      )} />
+                                    </div>
+                                  </div>
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
                         </div>
                         <p className="text-sm text-muted-foreground bg-white/50 p-4 rounded-xl border border-white/20 font-medium">
-                          Please provide details for each guest. This helps us prepare the right bedding and amenities for your sanctuary stay.
+                          {form.watch("provideDetailsLater") 
+                            ? "You've chosen to provide details later. An admin will contact you to collect this information before your stay."
+                            : "Please provide details for each guest. This helps us prepare the right bedding and amenities for your sanctuary stay."}
                         </p>
                         
-                        <div className="space-y-4">
-                          {guestDetailsWatch.map((guest, idx) => (
+                        {!form.watch("provideDetailsLater") && (
+                          <div className="space-y-4">
+                            {guestDetailsWatch.map((guest, idx) => (
                             <div key={idx} className="bg-white/40 p-6 rounded-[2rem] border border-white/30 space-y-4">
                               <div className="flex justify-between items-center">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-[#0b2c3d]">
@@ -1036,6 +1062,7 @@ if (!room) return <BookingSkeleton />;
                             </div>
                           ))}
                         </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>

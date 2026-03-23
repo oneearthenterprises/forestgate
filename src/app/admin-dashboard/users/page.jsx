@@ -22,7 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { API } from '@/lib/api/api';
 import { Badge } from '@/components/ui/badge';
 import { cn } from "@/lib/utils";
-import { ArrowRight, Search, AlertCircle } from "lucide-react";
+import { ArrowRight, Search, AlertCircle, Users } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -1192,6 +1192,27 @@ export default function UsersPage() {
                                 + Add Guest
                             </Button>
                         )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm">
+                                <Users className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] uppercase font-bold text-muted-foreground/60 leading-none mb-1">Total Adults</p>
+                                <p className="text-xl font-black text-primary leading-none">{tempBookingData.guests?.adults || 0}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-secondary shadow-sm">
+                                <Users className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] uppercase font-bold text-muted-foreground/60 leading-none mb-1">Total Children</p>
+                                <p className="text-xl font-black text-secondary leading-none">{tempBookingData.guests?.children || 0}</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="space-y-3">
