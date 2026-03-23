@@ -62,6 +62,7 @@ export const API = {
   verifyOtp: `${API_BASE_URL}/Auth/api/verify-otp`,
   resetPassword: `${API_BASE_URL}/Auth/api/reset-password`,
   resendOtp: `${API_BASE_URL}/Auth/api/resend-forgot-otp`,
+  resendRegistrationOtp: `${API_BASE_URL}/Auth/api/resend-registration-otp`,
   newsletteremail: `${API_BASE_URL}/api/newsletter/newsletteremail`,
   getnewsletter: `${API_BASE_URL}/api/newsletter/getnewsletter`,
   sendnewsletter: `${API_BASE_URL}/api/newsletter/send`,

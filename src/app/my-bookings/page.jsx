@@ -162,6 +162,17 @@ export default function BookingHistoryPage() {
         params.append('numChildren', children);
         params.append('guests', adults + children);
         params.append('totalPrice', booking.totalAmount || 0);
+        
+        if (booking.addons?.length > 0) {
+            params.append('addons', JSON.stringify(booking.addons));
+        }
+        if (booking.allocation) {
+            params.append('allocation', JSON.stringify(booking.allocation));
+        }
+        if (booking.specialRequests) {
+            params.append('specialRequests', booking.specialRequests);
+        }
+        
         return `/booking/confirmation?${params.toString()}`;
     }
 

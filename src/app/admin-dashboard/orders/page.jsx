@@ -390,7 +390,16 @@ export default function AdminOrdersPage() {
                             params.append("numChildren", selectedBooking.guests?.children?.toString() || "0");
                             params.append("bookingId", selectedBooking.bookingId || selectedBooking._id || selectedBooking.id);
                             if (selectedBooking.addons?.length > 0) {
-                                params.append("addons", JSON.stringify(selectedBooking.addons.filter(a => a.status !== "cancelled")));
+                                params.append("addons", JSON.stringify(selectedBooking.addons));
+                            }
+                            if (selectedBooking.allocation) {
+                                params.append("allocation", JSON.stringify(selectedBooking.allocation));
+                            }
+                            if (selectedBooking.specialRequests) {
+                                params.append("specialRequests", selectedBooking.specialRequests);
+                            }
+                            if (selectedBooking.internalNotes) {
+                                params.append("internalNotes", selectedBooking.internalNotes);
                             }
                             
                             window.open(`/booking/confirmation?${params.toString()}`, '_blank');

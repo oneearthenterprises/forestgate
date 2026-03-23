@@ -10,12 +10,12 @@
  * @returns {Object} - Allocation details including room breakdown, total rooms, and total price.
  */
 export function allocateRooms(adults, children, basePrice, beddingCharge = 1500) {
-  if (adults < 1) {
-    throw new Error("At least 1 adult is required");
+  let remainingAdults = adults || 0;
+  let remainingChildren = children || 0;
+  
+  if (remainingAdults < 1 && remainingChildren < 1) {
+    return { allocatedRooms: [], totalRooms: 0, totalPrice: 0 };
   }
-
-  let remainingAdults = adults;
-  let remainingChildren = children;
   let rooms = [];
 
   while (remainingAdults > 0 || remainingChildren > 0) {

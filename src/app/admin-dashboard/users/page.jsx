@@ -729,9 +729,15 @@ export default function UsersPage() {
                                      <Select
                                          onValueChange={(val) => {
                                              if (val === "custom") {
-                                                 setEditData({...editData, tempManualRoom: "", isCustomRoom: true});
+                                                 setEditData({...editData, tempManualRoom: "", isCustomRoom: true, tempPricePerNight: 0});
                                              } else {
-                                                 setEditData({...editData, tempManualRoom: val, isCustomRoom: false});
+                                                 const selectedRoom = rooms.find(r => r.roomName === val);
+                                                 setEditData({
+                                                     ...editData, 
+                                                     tempManualRoom: val, 
+                                                     isCustomRoom: false,
+                                                     tempPricePerNight: selectedRoom?.pricePerNight || 0
+                                                 });
                                              }
                                          }}
                                      >
@@ -755,6 +761,19 @@ export default function UsersPage() {
                                              placeholder="Enter manual room name..."
                                              value={editData.tempManualRoom || ""}
                                              onChange={(e) => setEditData({...editData, tempManualRoom: e.target.value})}
+                                         />
+                                     </div>
+                                 )}
+
+                                 {editData.isCustomRoom && (
+                                     <div className="space-y-1.5 col-span-2 animate-in zoom-in-95 duration-200">
+                                         <Label className="text-[10px] uppercase font-bold text-muted-foreground italic pl-1">Custom Price per Night (₹)</Label>
+                                         <Input 
+                                             type="number"
+                                             className="h-10 bg-white border-primary/20 focus:border-primary shadow-sm"
+                                             placeholder="Enter price..."
+                                             value={editData.tempPricePerNight || ""}
+                                             onChange={(e) => setEditData({...editData, tempPricePerNight: Number(e.target.value)})}
                                          />
                                      </div>
                                  )}
@@ -800,6 +819,30 @@ export default function UsersPage() {
                                  </div>
                              </div>
 
+                             {/* Pricing Calculation (New) */}
+                             {editData.tempManualCheckIn && editData.tempManualCheckOut && (
+                                 <div className="p-4 rounded-2xl bg-gray-900 shadow-lg relative overflow-hidden">
+                                     <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl -mr-12 -mt-12" />
+                                     <div className="flex justify-between items-center relative z-10">
+                                         <div>
+                                             <p className="text-[8px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Pricing</p>
+                                             <p className="text-xl font-black text-white">
+                                                 ₹{(
+                                                     Math.max(1, Math.ceil((new Date(editData.tempManualCheckOut) - new Date(editData.tempManualCheckIn)) / (1000 * 60 * 60 * 24))) * 
+                                                     (editData.tempPricePerNight || 0)
+                                                 ).toLocaleString()}
+                                             </p>
+                                         </div>
+                                         <div className="text-right">
+                                             <p className="text-[8px] uppercase font-bold text-gray-400 tracking-widest mb-1">Stay Duration</p>
+                                             <p className="text-xs font-bold text-primary-foreground">
+                                                 {Math.max(1, Math.ceil((new Date(editData.tempManualCheckOut) - new Date(editData.tempManualCheckIn)) / (1000 * 60 * 60 * 24)))} Nights
+                                             </p>
+                                         </div>
+                                     </div>
+                                 </div>
+                             )}
+
                              <Button 
                                  className="w-full h-10 font-bold rounded-xl shadow-md shadow-primary/10"
                                  onClick={async () => {
@@ -820,8 +863,11 @@ export default function UsersPage() {
                                              fullName: selectedUser.name,
                                              email: selectedUser.email,
                                              phone: selectedUser.phone.toString(),
-                                             pricePerNight: 0, 
-                                             destination: "Forest Gate Resort",
+                                             pricePerNight: editData.tempPricePerNight || 0, 
+                                             totalPrice: (
+                                                Math.max(1, Math.ceil((new Date(editData.tempManualCheckOut) - new Date(editData.tempManualCheckIn)) / (1000 * 60 * 60 * 24))) * 
+                                                (editData.tempPricePerNight || 0)
+                                            ),                                             destination: "Forest Gate Resort",
                                              pickupLocation: "Airport",
                                          };
 

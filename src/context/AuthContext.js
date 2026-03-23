@@ -189,6 +189,24 @@ export const AuthContextProvider = ({ children }) => {
     return data;
   };
 
+  const resendRegistrationOtp = async (email) => {
+    const res = await fetch(API.resendRegistrationOtp, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
+    return data;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -203,6 +221,7 @@ export const AuthContextProvider = ({ children }) => {
         logout,
         adminlogin,
         verifyOtpRegister,
+        resendRegistrationOtp,
       }}
     >
       {children}

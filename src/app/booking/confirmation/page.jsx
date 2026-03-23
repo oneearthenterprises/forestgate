@@ -27,12 +27,22 @@ function ConfirmationPageContent() {
     const numAdults = searchParams.get('numAdults');
     const numChildren = searchParams.get('numChildren');
     const addonsRaw = searchParams.get('addons');
+    const allocationRaw = searchParams.get('allocation');
+    const specialRequests = searchParams.get('specialRequests');
+    const internalNotes = searchParams.get('internalNotes');
     
     let addons = [];
     try {
         addons = addonsRaw ? JSON.parse(addonsRaw) : [];
     } catch (e) {
         console.error("Failed to parse addons", e);
+    }
+
+    let allocation = null;
+    try {
+        allocation = allocationRaw ? JSON.parse(allocationRaw) : null;
+    } catch (e) {
+        console.error("Failed to parse allocation", e);
     }
 
     // Use a stable booking ID for display
@@ -127,14 +137,58 @@ const bookingId = useRef(
                                 {addons.length > 0 && (
                                     <>
                                         <Separator className="my-2" />
-                                        <div className="space-y-2">
-                                            <p className="font-semibold">Additional Add-ons</p>
-                                            {addons.map((addon, i) => (
-                                                <div key={i} className="flex justify-between items-center text-sm">
-                                                    <p className="text-muted-foreground">{addon.name}</p>
-                                                    <p className="font-medium">₹{(addon.price || 0).toLocaleString()}</p>
+                                        <div className="space-y-2 text-left">
+                                            <p className="font-semibold text-sm uppercase tracking-wider text-muted-foreground/70">Additional Add-ons</p>
+                                            {addons.map((addon, i) => {
+                                                const isCancelled = addon.status === 'cancelled';
+                                                return (
+                                                    <div key={i} className="flex justify-between items-center text-sm">
+                                                        <p className={isCancelled ? "text-red-500/60 line-through" : "text-muted-foreground"}>
+                                                            {addon.name} {isCancelled && <span className="text-[10px] font-bold ml-1">(Cancelled)</span>}
+                                                        </p>
+                                                        <p className={isCancelled ? "text-red-500/60 font-medium line-through" : "font-medium"}>
+                                                            ₹{(addon.price || 0).toLocaleString()}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </>
+                                )}
+
+                                {allocation && (
+                                     <>
+                                        <Separator className="my-2" />
+                                        <div className="space-y-2 text-left">
+                                            <p className="font-semibold text-sm uppercase tracking-wider text-muted-foreground/70">Guest Allotment</p>
+                                            <div className="grid grid-cols-1 gap-2">
+                                                {Object.entries(allocation).filter(([_, details]) => details.count > 0).map(([room, details], i) => (
+                                                    <div key={i} className="flex justify-between items-center text-sm border-b border-gray-100 last:border-0 pb-1">
+                                                        <p className="text-muted-foreground font-medium">{room}</p>
+                                                        <p className="text-primary font-bold">{details.count} Guests</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                     </>
+                                )}
+
+                                {(specialRequests || internalNotes) && (
+                                    <>
+                                        <Separator className="my-2" />
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                                            {specialRequests && (
+                                                <div className="space-y-1">
+                                                     <p className="font-semibold text-sm uppercase tracking-wider text-muted-foreground/70">Special Requests</p>
+                                                     <p className="text-xs italic bg-orange-50/50 p-2 rounded border border-orange-100/50">"{specialRequests}"</p>
                                                 </div>
-                                            ))}
+                                            )}
+                                            {internalNotes && (
+                                                <div className="space-y-1">
+                                                     <p className="font-semibold text-sm uppercase tracking-wider text-muted-foreground/70">Admin Notes</p>
+                                                     <p className="text-xs italic bg-blue-50/50 p-2 rounded border border-blue-100/50">"{internalNotes}"</p>
+                                                </div>
+                                            )}
                                         </div>
                                     </>
                                 )}

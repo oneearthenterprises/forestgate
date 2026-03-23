@@ -48,7 +48,18 @@ const [userEmail, setUserEmail] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/my-bookings";
-  const { register, loading, verifyOtpRegister } = useAuthContext();
+  const { register, loading, verifyOtpRegister, resendRegistrationOtp } = useAuthContext();
+  const [resendTimer, setResendTimer] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
   const heroImage = PlaceHolderImages.find(
     (img) => img.id === "gallery-pool-1",
   );
@@ -145,8 +156,11 @@ const onVerifyOtpRegister = async (values) => {
 };
 
 const handleResendOtp = async () => {
+  if (resendTimer > 0) return;
+  
   try {
-    await resendOtp(userEmail);
+    await resendRegistrationOtp(userEmail);
+    setResendTimer(60);
     toast({
       title: "Code Resent",
       description: "Please check your email for the new verification code.",
@@ -400,14 +414,20 @@ const handleResendOtp = async () => {
                 </Form>
 
                 <div className="mt-6 text-center">
-                  <Button
+                  <button
                     type="button"
-                    variant="link"
+                    disabled={resendTimer > 0}
                     onClick={handleResendOtp}
-                    className="text-sm font-bold text-primary hover:underline"
+                    className={`text-sm font-bold transition-colors ${
+                      resendTimer > 0 
+                        ? "text-muted-foreground cursor-not-allowed" 
+                        : "text-primary hover:text-primary/80 hover:underline"
+                    }`}
                   >
-                    Resend Code
-                  </Button>
+                    {resendTimer > 0 
+                      ? `Resend Code in ${Math.floor(resendTimer / 60)}:${(resendTimer % 60).toString().padStart(2, '0')}` 
+                      : "Resend Code"}
+                  </button>
                 </div>
               </>
             )}

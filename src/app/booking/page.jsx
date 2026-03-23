@@ -277,11 +277,24 @@ function BookingPageContent() {
         } else {
           r.adults = Math.min(2, remainingAdults);
           remainingAdults -= r.adults;
+          // Fill children to capacity (2) - but let's wait until we see what's left
           r.children = Math.min(2, remainingChildren);
           remainingChildren -= r.children;
         }
         rooms.push(r);
       }
+    });
+
+    // 2.5 Try to "overflow" children into existing rooms if they have space
+    // Primary room and manual rooms can fit up to 2 children. 
+    // If they have space, put remaining children there first.
+    rooms.forEach(r => {
+        if (remainingChildren > 0 && r.children < 2 && !r.extraBedding) {
+            const space = 2 - r.children;
+            const toAdd = Math.min(space, remainingChildren);
+            r.children += toAdd;
+            remainingChildren -= toAdd;
+        }
     });
 
     // 3. Auto-allocate remaining guests using primary room type
@@ -833,39 +846,47 @@ if (!room) return <BookingSkeleton />;
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {allRooms.slice(0, 2).map((r, i) => (
-                              <div key={i} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-primary/30 transition-all">
-                                <div className="flex items-center gap-4">
-                                  <div className="w-16 h-16 rounded-2xl relative overflow-hidden bg-slate-100 flex-shrink-0">
-                                    {r.images?.[0] && <Image src={r.images[0].url} fill className="object-cover" alt={r.roomName} />}
+                          <Carousel opts={{ align: "start" }} className="w-full">
+                            <CarouselContent className="-ml-4">
+                              {allRooms.map((r, i) => (
+                                <CarouselItem key={i} className="pl-4 basis-full md:basis-1/2">
+                                  <div className="bg-white p-5 h-full rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-primary/30 transition-all">
+                                    <div className="flex items-center gap-4">
+                                      <div className="w-16 h-16 rounded-2xl relative overflow-hidden bg-slate-100 flex-shrink-0">
+                                        {r.images?.[0] && <Image src={r.images[0].url} fill className="object-cover" alt={r.roomName} />}
+                                      </div>
+                                      <div>
+                                        <p className="font-bold text-sm line-clamp-1">{r.roomName}</p>
+                                        <p className="text-primary font-black text-xs">₹{r.pricePerNight.toLocaleString()}/night</p>
+                                      </div>
+                                    </div>
+                                    <Button 
+                                      type="button" 
+                                      variant={selectedAdditionalRooms.some(sr => sr._id === r._id) ? "default" : "ghost"} 
+                                      className={`rounded-full w-10 h-10 p-0 flex-shrink-0 ${selectedAdditionalRooms.some(sr => sr._id === r._id) ? "bg-primary text-white" : "hover:bg-primary/10 text-primary"}`}
+                                      onClick={() => {
+                                        if (selectedAdditionalRooms.some(sr => sr._id === r._id)) {
+                                          setSelectedAdditionalRooms(prev => prev.filter(sr => sr._id !== r._id));
+                                        } else {
+                                          setSelectedAdditionalRooms(prev => [...prev, r]);
+                                          toast({
+                                            title: "Room Added",
+                                            description: `${r.roomName} has been added to your sanctuary allocation.`,
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      {selectedAdditionalRooms.some(sr => sr._id === r._id) ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                                    </Button>
                                   </div>
-                                  <div>
-                                    <p className="font-bold text-sm">{r.roomName}</p>
-                                    <p className="text-primary font-black text-xs">₹{r.pricePerNight.toLocaleString()}/night</p>
-                                  </div>
-                                </div>
-                                <Button 
-                                  type="button" 
-                                  variant={selectedAdditionalRooms.some(sr => sr._id === r._id) ? "default" : "ghost"} 
-                                  className={`rounded-full w-10 h-10 p-0 ${selectedAdditionalRooms.some(sr => sr._id === r._id) ? "bg-primary text-white" : "hover:bg-primary/10 text-primary"}`}
-                                  onClick={() => {
-                                    if (selectedAdditionalRooms.some(sr => sr._id === r._id)) {
-                                      setSelectedAdditionalRooms(prev => prev.filter(sr => sr._id !== r._id));
-                                    } else {
-                                      setSelectedAdditionalRooms(prev => [...prev, r]);
-                                      toast({
-                                        title: "Room Added",
-                                        description: `${r.roomName} has been added to your sanctuary allocation.`,
-                                      });
-                                    }
-                                  }}
-                                >
-                                  {selectedAdditionalRooms.some(sr => sr._id === r._id) ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                                </Button>
-                              </div>
-                            ))}
-                          </div>
+                                </CarouselItem>
+                              ))}
+                            </CarouselContent>
+                            <div className="flex items-center justify-center gap-4 mt-6">
+                              <CarouselPrevious className="static translate-y-0 h-10 w-10 rounded-full border-primary/20 text-primary hover:bg-primary hover:text-white" />
+                              <CarouselNext className="static translate-y-0 h-10 w-10 rounded-full border-primary/20 text-primary hover:bg-primary hover:text-white" />
+                            </div>
+                          </Carousel>
                           <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center font-bold">
                             * Auto-allocation ensures the best price and 10% multi-room discount
                           </p>
