@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Calendar from "react-calendar";
 import Image from "next/image";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 import { cn } from "@/lib/utils";
 import { rooms } from "../lib/data";
@@ -104,6 +105,8 @@ function BookingPageContent() {
   const [isCheckOutOpen, setCheckOutOpen] = useState(false);
   const [bookedDates, setBookedDates] = useState([]);
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+  const [isCustomAdults, setIsCustomAdults] = useState(false);
+  const [isCustomChildren, setIsCustomChildren] = useState(false);
   const formRef = useRef(null);
 
   useEffect(() => {
@@ -267,23 +270,23 @@ function BookingPageContent() {
     rooms.push(primaryRoom);
 
     // 2. Assign Manual Selections (Selected Additional Rooms)
+    // Always include all manually selected rooms — even if no guests remain,
+    // the user explicitly chose this room so it must appear in the summary + total.
     selectedAdditionalRooms.forEach((addonRoom) => {
-      if (remainingAdults > 0 || remainingChildren > 0) {
-        let r = { adults: 0, children: 0, extraBedding: false, name: addonRoom.roomName, price: addonRoom.pricePerNight * 0.9 };
-        if (remainingAdults >= 3) {
-          r.adults = 3;
-          r.extraBedding = true;
-          r.price += beddingCharge;
-          remainingAdults -= 3;
-        } else {
-          r.adults = Math.min(2, remainingAdults);
-          remainingAdults -= r.adults;
-          // Fill children to capacity (2) - but let's wait until we see what's left
-          r.children = Math.min(2, remainingChildren);
-          remainingChildren -= r.children;
-        }
-        rooms.push(r);
+      let r = { adults: 0, children: 0, extraBedding: false, name: addonRoom.roomName, price: addonRoom.pricePerNight * 0.9 };
+      if (remainingAdults >= 3) {
+        r.adults = 3;
+        r.extraBedding = true;
+        r.price += beddingCharge;
+        remainingAdults -= 3;
+      } else if (remainingAdults > 0 || remainingChildren > 0) {
+        r.adults = Math.min(2, remainingAdults);
+        remainingAdults -= r.adults;
+        r.children = Math.min(2, remainingChildren);
+        remainingChildren -= r.children;
       }
+      // Always push — even 0-guest rooms are booked at the user's request
+      rooms.push(r);
     });
 
     // 2.5 Try to "overflow" children into existing rooms if they have space
@@ -310,6 +313,11 @@ function BookingPageContent() {
       rooms.push(...adjustedRemaining);
     }
 
+    // 4. Apply 10% multi-room discount to the Primary Room if total rooms > 1
+    if (rooms.length > 1) {
+      rooms[0].price = (basePrice * 0.9) + (rooms[0].extraBedding ? beddingCharge : 0);
+    }
+
     const totalAllocationPrice = rooms.reduce((sum, r) => sum + r.price, 0);
 
     return {
@@ -334,7 +342,14 @@ function BookingPageContent() {
   const currentRoomMaxCapacity = 4; // 2 Adult + 2 Child (Based on user rules)
   const isCapacityExceeded = (numAdults + numChildren) > currentRoomMaxCapacity || numAdults > 2;
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
   async function onSubmit(data) {
+    if (!executeRecaptcha) {
+      console.log("Execute recaptcha not yet available");
+      // Fallback or handle appropriately
+    }
+
     if (!user) {
       sessionStorage.setItem("tempBookingData", JSON.stringify({
         ...data,
@@ -377,7 +392,10 @@ function BookingPageContent() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(bookingData),
+        body: JSON.stringify({
+          ...bookingData,
+          recaptchaToken: executeRecaptcha ? await executeRecaptcha('booking') : null
+        }),
       });
 
       if (!response.ok) {
@@ -466,7 +484,7 @@ if (!room) return <BookingSkeleton />;
       <section className="pt-8">
         <div className="container mx-auto px-4">
           {/* Premium Creative Gallery Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-16 h-auto lg:h-[600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:mb-16 mb-4 h-auto lg:h-[600px]">
             {/* Main Large Carousel (Left - 8 columns) */}
             <div className="lg:col-span-8 relative h-[400px] lg:h-full group">
               <Carousel
@@ -547,9 +565,9 @@ if (!room) return <BookingSkeleton />;
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2">
-              <div className="mb-12">
+          <div className="flex flex-col lg:flex-row gap-12 items-start">
+            <div className="flex-1 min-w-0">
+              <div className="md:mb-12 mb-3">
                 <h1 className="font-headline text-5xl md:text-6xl font-bold mb-6 tracking-tight">
                {room?.roomName}
                 </h1>
@@ -565,11 +583,11 @@ if (!room) return <BookingSkeleton />;
                   </div>
                 </div>
 
-                <p className="text-foreground/70 text-xl leading-relaxed mb-12 font-light">
+                <p className="text-foreground/70 text-xl leading-relaxed md:mb-12 mb-6 font-light">
                   {room?.fullDescription}
                 </p>
 
-                <Separator className="mb-12" />
+                <Separator className="md:mb-12 mb-6" />
 
                 <div className="space-y-8">
                   <h3 className="font-headline text-3xl font-bold">
@@ -600,44 +618,86 @@ if (!room) return <BookingSkeleton />;
                   className="space-y-12 pt-12"
                 >
                   {/* 🔹 Interactive Guest Summary Bar (New) */}
-                  <div className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-wrap items-center justify-center gap-8 mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
-                    <div className="flex items-center gap-6">
-                      <div className="space-y-1.5">
+                  <div className="bg-white p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full md:w-auto">
+                      <div className="space-y-1.5 w-full sm:w-auto">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Adults (12+ Yrs)</p>
-                        <Select 
-                          value={adults} 
-                          onValueChange={(val) => form.setValue("adults", val)}
-                        >
-                          <SelectTrigger className="w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
-                            <SelectValue placeholder="Adults" />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
-                            {[...Array(10)].map((_, i) => (
-                              <SelectItem key={i+1} value={String(i+1)} className="font-medium">{i+1} {i === 0 ? 'Adult' : 'Adults'}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        {isCustomAdults ? (
+                          <div className="flex items-center gap-2">
+                             <Input 
+                                type="number" 
+                                min="1" 
+                                value={adults}
+                                onChange={(e) => form.setValue("adults", e.target.value)}
+                                className="h-12 w-24 rounded-2xl border-slate-100 bg-slate-50/50 font-bold"
+                             />
+                             <Button variant="ghost" size="sm" onClick={() => { setIsCustomAdults(false); form.setValue("adults", "2"); }} className="h-12 w-12 rounded-2xl">×</Button>
+                          </div>
+                        ) : (
+                          <Select 
+                            value={adults} 
+                            onValueChange={(val) => {
+                              if (val === "custom") {
+                                setIsCustomAdults(true);
+                                form.setValue("adults", "12");
+                              } else {
+                                form.setValue("adults", val);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="w-full sm:w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
+                              <SelectValue placeholder="Adults" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                              {[...Array(11)].map((_, i) => (
+                                <SelectItem key={i+1} value={String(i+1)} className="font-medium">{i+1} {i === 0 ? 'Adult' : 'Adults'}</SelectItem>
+                              ))}
+                              <SelectItem value="custom" className="font-bold text-primary">12+ (Custom)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
 
-                      <div className="space-y-1.5">
+                      <div className="space-y-1.5 w-full sm:w-auto">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Children (0-11 Yrs)</p>
-                        <Select 
-                          value={children} 
-                          onValueChange={(val) => form.setValue("children", val)}
-                        >
-                          <SelectTrigger className="w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
-                            <SelectValue placeholder="Children" />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
-                            {[...Array(11)].map((_, i) => (
-                              <SelectItem key={i} value={String(i)} className="font-medium">{i} {i === 1 ? 'Child' : 'Children'}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        {isCustomChildren ? (
+                           <div className="flex items-center gap-2">
+                              <Input 
+                                 type="number" 
+                                 min="0" 
+                                 value={children}
+                                 onChange={(e) => form.setValue("children", e.target.value)}
+                                 className="h-12 w-24 rounded-2xl border-slate-100 bg-slate-50/50 font-bold"
+                              />
+                              <Button variant="ghost" size="sm" onClick={() => { setIsCustomChildren(false); form.setValue("children", "0"); }} className="h-12 w-12 rounded-2xl">×</Button>
+                           </div>
+                        ) : (
+                          <Select 
+                            value={children} 
+                            onValueChange={(val) => {
+                              if (val === "custom") {
+                                setIsCustomChildren(true);
+                                form.setValue("children", "12");
+                              } else {
+                                form.setValue("children", val);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="w-full sm:w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
+                              <SelectValue placeholder="Children" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                              {[...Array(11)].map((_, i) => (
+                                <SelectItem key={i} value={String(i)} className="font-medium">{i} {i === 1 ? 'Child' : 'Children'}</SelectItem>
+                              ))}
+                              <SelectItem value="custom" className="font-bold text-primary">12+ (Custom)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                     </div>
 
-                    <div className="md:border-l md:border-dashed border-slate-200 md:pl-8 text-center md:text-left">
+                    <div className="md:border-l md:border-dashed border-slate-200 md:pl-8 text-center md:text-left w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-slate-100">
                        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Total Group Size</p>
                        <p className="font-headline text-3xl font-bold text-slate-900">{numAdults + numChildren} Guests</p>
                     </div>
@@ -646,16 +706,16 @@ if (!room) return <BookingSkeleton />;
                     ref={formRef}
                     className="border-none shadow-none bg-primary/20 rounded-[3rem]"
                   >
-                    <CardHeader className="pb-10">
-                      <CardTitle className="font-headline text-4xl font-bold mb-2">
+                    <CardHeader className="p-6 md:p-10">
+                      <CardTitle className="font-headline text-3xl md:text-4xl font-bold mb-2">
                         Booking Contact Details
                       </CardTitle>
-                      <CardDescription className="text-lg">
+                      <CardDescription className="text-base md:text-lg">
                         Please provide contact details for this reservation. Note: This will not change your main account profile.
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-8">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <CardContent className="p-6 md:p-10 space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                         <FormField
                           control={form.control}
                           name="checkIn"
@@ -673,7 +733,7 @@ if (!room) return <BookingSkeleton />;
                                     <Button
                                       variant={"outline"}
                                       className={cn(
-                                        "h-16 rounded-2xl justify-start text-left font-bold text-base bg-background border-none shadow-sm",
+                                        "h-16 rounded-2xl justify-start text-left font-bold text-base bg-background border-none shadow-sm w-full",
                                         !field.value && "text-muted-foreground",
                                       )}
                                     >
@@ -694,6 +754,11 @@ if (!room) return <BookingSkeleton />;
                                     onChange={(date) => {
                                       field.onChange(date);
                                       setCheckInOpen(false);
+                                      // Auto-set checkout to next day
+                                      const nextDay = addDays(date, 1);
+                                      form.setValue("checkOut", nextDay);
+                                      // Auto-open checkout calendar
+                                      setTimeout(() => setCheckOutOpen(true), 150);
                                     }}
                                     value={field.value}
                                     minDate={new Date()}
@@ -722,7 +787,7 @@ if (!room) return <BookingSkeleton />;
                                     <Button
                                       variant={"outline"}
                                       className={cn(
-                                        "h-16 rounded-2xl justify-start text-left font-bold text-base bg-background border-none shadow-sm",
+                                        "h-16 rounded-2xl justify-start text-left font-bold text-base bg-background border-none shadow-sm w-full",
                                         !field.value && "text-muted-foreground",
                                       )}
                                     >
@@ -759,7 +824,7 @@ if (!room) return <BookingSkeleton />;
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                         <FormField
                           control={form.control}
                           name="adults"
@@ -768,30 +833,51 @@ if (!room) return <BookingSkeleton />;
                               <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-1 mb-2">
                                 Number of Adults
                               </FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger className="h-16 rounded-2xl bg-background border-none shadow-sm text-gray">
-                                    <Users className="h-4 w-4 text-secondary mr-2" />
-                                    <SelectValue placeholder="Adults" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {[...Array(10)]
-                                    .map((_, i) => i + 1)
-                                    .map((g) => (
-                                      <SelectItem
-                                        key={g}
-                                        value={String(g)}
-                                        className=""
-                                      >
-                                        {g} {g > 1 ? "Adults" : "Adult"}
-                                      </SelectItem>
-                                    ))}
-                                </SelectContent>
-                              </Select>
+                              {isCustomAdults ? (
+                                <div className="flex items-center gap-2">
+                                  <FormControl>
+                                    <Input 
+                                      type="number" 
+                                      {...field} 
+                                      className="h-16 rounded-2xl bg-background border-none shadow-sm px-6 font-bold" 
+                                    />
+                                  </FormControl>
+                                  <Button variant="ghost" onClick={() => { setIsCustomAdults(false); form.setValue("adults", "2"); }} className="h-16 w-16 rounded-2xl">×</Button>
+                                </div>
+                              ) : (
+                                <Select
+                                  onValueChange={(val) => {
+                                    if (val === "custom") {
+                                      setIsCustomAdults(true);
+                                      form.setValue("adults", "12");
+                                    } else {
+                                      field.onChange(val);
+                                    }
+                                  }}
+                                  value={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger className="h-16 rounded-2xl bg-background border-none shadow-sm text-gray">
+                                      <Users className="h-4 w-4 text-secondary mr-2" />
+                                      <SelectValue placeholder="Adults" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {[...Array(11)]
+                                      .map((_, i) => i + 1)
+                                      .map((g) => (
+                                        <SelectItem
+                                          key={g}
+                                          value={String(g)}
+                                          className=""
+                                        >
+                                          {g} {g > 1 ? "Adults" : "Adult"}
+                                        </SelectItem>
+                                      ))}
+                                    <SelectItem value="custom" className="font-bold text-primary">12+ (Custom)</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
                               <FormMessage />
                             </FormItem>
                           )}
@@ -804,30 +890,51 @@ if (!room) return <BookingSkeleton />;
                               <FormLabel className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground ml-1 mb-2">
                                 Number of Children
                               </FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger className="h-16 rounded-2xl bg-background border-none shadow-sm ">
-                                    <Users className="h-4 w-4 text-secondary mr-2" />
-                                    <SelectValue placeholder="Children" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {[...Array(11)]
-                                    .map((_, i) => i)
-                                    .map((g) => (
-                                      <SelectItem
-                                        key={g}
-                                        value={String(g)}
-                                        className=""
-                                      >
-                                        {g} {g === 1 ? "Child" : "Children"}
-                                      </SelectItem>
-                                    ))}
-                                </SelectContent>
-                              </Select>
+                              {isCustomChildren ? (
+                                <div className="flex items-center gap-2">
+                                  <FormControl>
+                                    <Input 
+                                      type="number" 
+                                      {...field} 
+                                      className="h-16 rounded-2xl bg-background border-none shadow-sm px-6 font-bold" 
+                                    />
+                                  </FormControl>
+                                  <Button variant="ghost" onClick={() => { setIsCustomChildren(false); form.setValue("children", "0"); }} className="h-16 w-16 rounded-2xl">×</Button>
+                                </div>
+                              ) : (
+                                <Select
+                                  onValueChange={(val) => {
+                                    if (val === "custom") {
+                                      setIsCustomChildren(true);
+                                      form.setValue("children", "12");
+                                    } else {
+                                      field.onChange(val);
+                                    }
+                                  }}
+                                  value={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger className="h-16 rounded-2xl bg-background border-none shadow-sm ">
+                                      <Users className="h-4 w-4 text-secondary mr-2" />
+                                      <SelectValue placeholder="Children" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {[...Array(11)]
+                                      .map((_, i) => i)
+                                      .map((g) => (
+                                        <SelectItem
+                                          key={g}
+                                          value={String(g)}
+                                          className=""
+                                        >
+                                          {g} {g === 1 ? "Child" : "Children"}
+                                        </SelectItem>
+                                      ))}
+                                    <SelectItem value="custom" className="font-bold text-primary">12+ (Custom)</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
                               <FormMessage />
                             </FormItem>
                           )}
@@ -836,9 +943,9 @@ if (!room) return <BookingSkeleton />;
 
                       {/* 🔹 Room Capacity Suggestions (New) */}
                       {isCapacityExceeded && allRooms.length > 0 && (
-                        <div className="bg-primary/5 p-8 rounded-[2.5rem] border border-primary/10 space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                        <div className="bg-primary/5 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-primary/10 space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                               <ArrowRightCircle className="w-6 h-6 text-primary" />
                             </div>
                             <div>
@@ -849,14 +956,14 @@ if (!room) return <BookingSkeleton />;
 
                           <Carousel opts={{ align: "start" }} className="w-full">
                             <CarouselContent className="-ml-4">
-                              {allRooms.map((r, i) => (
-                                <CarouselItem key={i} className="pl-4 basis-full md:basis-1/2">
-                                  <div className="bg-white p-5 h-full rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-primary/30 transition-all">
-                                    <div className="flex items-center gap-4">
-                                      <div className="w-16 h-16 rounded-2xl relative overflow-hidden bg-slate-100 flex-shrink-0">
+                               {allRooms.map((r, i) => (
+                                <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2">
+                                  <div className="bg-white p-4 h-full flex rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm flex flex-row items-center justify-between gap-4 group hover:border-primary/30 transition-all">
+                                    <div className="flex items-center gap-4 w-full">
+                                      <div className="w-16 h-16 rounded-2xl relative overflow-hidden bg-slate-100 shrink-0">
                                         {r.images?.[0] && <Image src={r.images[0].url} fill className="object-cover" alt={r.roomName} />}
                                       </div>
-                                      <div>
+                                      <div className="min-w-0">
                                         <p className="font-bold text-sm line-clamp-1">{r.roomName}</p>
                                         <p className="text-primary font-black text-xs">₹{r.pricePerNight.toLocaleString()}/night</p>
                                       </div>
@@ -864,7 +971,7 @@ if (!room) return <BookingSkeleton />;
                                     <Button 
                                       type="button" 
                                       variant={selectedAdditionalRooms.some(sr => sr._id === r._id) ? "default" : "ghost"} 
-                                      className={`rounded-full w-10 h-10 p-0 flex-shrink-0 ${selectedAdditionalRooms.some(sr => sr._id === r._id) ? "bg-primary text-white" : "hover:bg-primary/10 text-primary"}`}
+                                      className={`rounded-full w-10 h-10 p-0 shrink-0 ${selectedAdditionalRooms.some(sr => sr._id === r._id) ? "bg-primary text-white" : "hover:bg-primary/10 text-primary"}`}
                                       onClick={() => {
                                         if (selectedAdditionalRooms.some(sr => sr._id === r._id)) {
                                           setSelectedAdditionalRooms(prev => prev.filter(sr => sr._id !== r._id));
@@ -914,7 +1021,7 @@ if (!room) return <BookingSkeleton />;
                           </FormItem>
                         )}
                       />
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                         <FormField
                           control={form.control}
                           name="email"
@@ -966,7 +1073,7 @@ if (!room) return <BookingSkeleton />;
 
                       {/* 🔹 Guest Profiles Section */}
                       <div className="pt-8 space-y-6">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <h3 className="font-headline text-2xl font-bold flex items-center gap-2">
                             <Users className="w-5 h-5 text-secondary" />
                             Guest Profiles
@@ -1003,7 +1110,7 @@ if (!room) return <BookingSkeleton />;
                         {!form.watch("provideDetailsLater") && (
                           <div className="space-y-4">
                             {guestDetailsWatch.map((guest, idx) => (
-                            <div key={idx} className="bg-white/40 p-6 rounded-[2rem] border border-white/30 space-y-4">
+                            <div key={idx} className="bg-white/40 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/30 space-y-4">
                               <div className="flex justify-between items-center">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-[#0b2c3d]">
                                   Guest {idx + 1} ({guest.type})
@@ -1017,50 +1124,90 @@ if (!room) return <BookingSkeleton />;
                                     <FormItem>
                                       <FormLabel className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">Full Name</FormLabel>
                                       <FormControl>
-                                        <Input {...field} placeholder="Guest name" className="bg-white border-none rounded-xl h-12" />
+                                        <Input 
+                                          {...field} 
+                                          placeholder="Guest name" 
+                                          className="h-16 rounded-2xl bg-white border-none shadow-sm px-6" 
+                                        />
                                       </FormControl>
                                       <FormMessage />
                                     </FormItem>
                                   )}
                                 />
-                                <FormField
-                                  control={form.control}
-                                  name={`guestDetails.${idx}.gender`}
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">Gender</FormLabel>
-                                      <Select onValueChange={field.onChange} value={field.value}>
+                                  <FormField
+                                    control={form.control}
+                                    name={`guestDetails.${idx}.gender`}
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">Gender</FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                          <FormControl>
+                                            <SelectTrigger className="h-16 rounded-2xl bg-white border-none shadow-sm px-6">
+                                              <SelectValue />
+                                            </SelectTrigger>
+                                          </FormControl>
+                                          <SelectContent>
+                                            <SelectItem value="Male">Male</SelectItem>
+                                            <SelectItem value="Female">Female</SelectItem>
+                                            <SelectItem value="Other">Other</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name={`guestDetails.${idx}.age`}
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">Age</FormLabel>
                                         <FormControl>
-                                          <SelectTrigger className="bg-white border-none rounded-xl h-12">
-                                            <SelectValue />
-                                          </SelectTrigger>
+                                          <Input 
+                                            type="number" 
+                                            {...field} 
+                                            onChange={(e) => {
+                                              const ageVal = e.target.value;
+                                              const age = parseInt(ageVal);
+                                              field.onChange(ageVal);
+                                              if (!isNaN(age)) {
+                                                const newType = age >= 6 ? "Adult" : "Child";
+                                                const oldType = guest.type;
+                                                if (newType !== oldType) {
+                                                  form.setValue(`guestDetails.${idx}.type`, newType);
+                                                  // Bidirectional Sync: Update Top Selectors
+                                                  if (newType === "Adult" && oldType === "Child") {
+                                                    form.setValue("adults", String(numAdults + 1));
+                                                    form.setValue("children", String(numChildren - 1));
+                                                  } else if (newType === "Child" && oldType === "Adult") {
+                                                    form.setValue("adults", String(numAdults - 1));
+                                                    form.setValue("children", String(numChildren + 1));
+                                                  }
+                                                }
+                                              }
+                                            }}
+                                            className="h-16 rounded-2xl bg-white border-none shadow-sm px-6" 
+                                          />
                                         </FormControl>
-                                        <SelectContent>
-                                          <SelectItem value="Male">Male</SelectItem>
-                                          <SelectItem value="Female">Female</SelectItem>
-                                          <SelectItem value="Other">Other</SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name={`guestDetails.${idx}.age`}
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">Age</FormLabel>
-                                      <FormControl>
-                                        <Input type="number" {...field} className="bg-white border-none rounded-xl h-12" />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  {/* Hidden Type field since it's now auto-calculated */}
+                                  <FormField
+                                    control={form.control}
+                                    name={`guestDetails.${idx}.type`}
+                                    render={({ field }) => (
+                                      <FormItem className="hidden">
+                                        <FormControl>
+                                          <Input {...field} type="hidden" />
+                                        </FormControl>
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
                         </div>
                         )}
                       </div>
@@ -1071,7 +1218,7 @@ if (!room) return <BookingSkeleton />;
                       type="submit"
                       size="lg"
                       className={cn(
-                        "w-full h-16 rounded-full text-lg font-black uppercase tracking-widest shadow-none group transition-all",
+                        "w-full h-16 rounded-full text-lg font-black uppercase tracking-widest shadow-none group transition-all text-sm",
                         !isSelectedRangeValid && "bg-destructive hover:bg-destructive/90"
                       )}
                       disabled={form.formState.isSubmitting || !isSelectedRangeValid || isCheckingAvailability}
@@ -1089,8 +1236,8 @@ if (!room) return <BookingSkeleton />;
               </Form>
             </div>
 
-            <aside className="lg:col-span-1">
-              <Card className="sticky top-24 border-none shadow-none overflow-hidden rounded-[3rem] bg-card">
+            <aside className="w-full lg:w-[380px] shrink-0 sticky top-24 self-start">
+              <Card className="border-none shadow-none overflow-hidden rounded-[3rem] bg-card">
                 <CardHeader className="bg-[#0b2c3d] text-white p-10">
                   <CardTitle className="font-headline text-3xl font-bold mb-1">
                     Booking Summary
@@ -1156,7 +1303,7 @@ if (!room) return <BookingSkeleton />;
                         {allocation.allocatedRooms.map((r, i) => (
                           <div key={i} className="flex justify-between text-[10px] text-muted-foreground">
                             <span>Room {i+1}: {r.name} ({r.adults}A, {r.children}C{r.extraBedding ? " + Bed" : ""})</span>
-                            <span>₹{r.price.toLocaleString()}</span>
+                            <span>₹{(r.price * numNights).toLocaleString()}</span>
                           </div>
                         ))}
                       </div>

@@ -5,6 +5,7 @@ import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
 import './globals.css';
 import './react-calendar.css';
 import { AuthContextProvider } from '@/context/AuthContext';
+import { ReCaptchaProvider } from '@/components/providers/ReCaptchaProvider';
 export const metadata = {
   title: 'The Forest Gate - Luxury Meets Nature in the Heart of Himachal',
   description:
@@ -47,13 +48,15 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
-          <AuthContextProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <WhatsAppButton />
-          <Toaster />
-          </AuthContextProvider>
+          <ReCaptchaProvider>
+            <AuthContextProvider>
+              <Header />
+              <main>{children}</main>
+              <Footer />
+              <WhatsAppButton />
+              <Toaster />
+            </AuthContextProvider>
+          </ReCaptchaProvider>
       </body>
     </html>
   );

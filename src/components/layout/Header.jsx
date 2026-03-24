@@ -195,7 +195,7 @@ export function Header() {
                     </SheetClose>
                   ))}
 
-                  <div className="mt-10 w-full max-w-[340px] bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm relative group/insta">
+                  <div className="mt-10 w-full max-w-[300px] bg-white border border-slate-100 rounded-[2.5rem] p-5 shadow-sm relative group/insta">
                       <div className="flex items-start gap-4">
                           <div className="w-14 h-14 rounded-full bg-[#0b2c3d] flex items-center justify-center shrink-0 shadow-lg">
                               <Instagram className="w-7 h-7 text-white" />

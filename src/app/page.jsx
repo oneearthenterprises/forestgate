@@ -269,8 +269,25 @@ useEffect(() => {
 
 </div>
 
-              {/* Mobile Carousel */}
-              <div className="lg:hidden">
+              {/* Mobile Carousel & Featured Card */}
+              <div className="lg:hidden space-y-4">
+                {rooms[0] && (
+                  <Link href={`/booking?roomId=${rooms[0]._id}`}
+                    className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full block"
+                  >
+                    <Image
+                      src={rooms[0].images?.[0]?.url}
+                      alt={rooms[0].roomName}
+                      fill
+                      className="object-cover transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                      <h3 className="text-3xl font-bold">{rooms[0].roomName}</h3>
+                      <p>₹{rooms[0].pricePerNight} / per night</p>
+                    </div>
+                  </Link>
+                )}
                 <MobileRoomsCarouselWrapper allRoomsForCarousel={allRoomsForCarousel} seeMoreImages={seeMoreImages} />
               </div>
             </>

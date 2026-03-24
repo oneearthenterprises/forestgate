@@ -33,7 +33,7 @@ export function RoomCarouselWrapper({ room }) {
       <CarouselContent>
         {room.images?.map((img, index) => (
           <CarouselItem key={img._id || index}>
-            <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-inner">
+            <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-inner">
               <Image
                 src={img.url}
                 alt={room.roomName}

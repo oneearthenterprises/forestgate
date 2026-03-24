@@ -162,10 +162,10 @@ export default function ContactPage() {
                                 </div>
                              </div>
                              <div className="flex flex-col gap-4">
-                                <Button asChild size="lg">
+                                <Button asChild size="lg" className="w-full">
                                     <Link href="https://wa.me/9304987505" target="_blank">Chat on WhatsApp</Link>
                                 </Button>
-                                <Button asChild variant="secondary" size="lg">
+                                <Button asChild variant="secondary" size="lg" className="w-full">
                                     <Link href="tel:+9304987505">Call Now</Link>
                                 </Button>
                              </div>

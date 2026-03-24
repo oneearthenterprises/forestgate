@@ -24,7 +24,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { MoreHorizontal, Eye, CheckCircle, XCircle, AlertCircle, ThumbsUp } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { MoreHorizontal, Eye, CheckCircle, XCircle, AlertCircle, ThumbsUp, DoorOpen } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +44,67 @@ export default function AdminOrdersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const { toast } = useToast();
 
+  // ── Assign Room state ──
+  const [assignRoomBooking, setAssignRoomBooking] = useState(null);
+  const [allRooms, setAllRooms] = useState([]);
+  const [selectedRoomId, setSelectedRoomId] = useState('');
+  const [customRoomName, setCustomRoomName] = useState('');
+  const [isSavingRoom, setIsSavingRoom] = useState(false);
+
+  // ── Admin Cancel with Reason state ──
+  const [cancelTargetBooking, setCancelTargetBooking] = useState(null);
+  const [cancelReasons, setCancelReasons] = useState([]);
+  const [cancelNote, setCancelNote] = useState('');
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const ADMIN_CANCEL_REASONS = [
+    'Room no longer available',
+    'Overbooking / scheduling conflict',
+    'Guest did not complete payment',
+    'Policy violation',
+    'Force majeure / property closure',
+    'Administrative decision',
+  ];
+
+  const toggleCancelReason = (reason) => {
+    setCancelReasons(prev =>
+      prev.includes(reason) ? prev.filter(r => r !== reason) : [...prev, reason]
+    );
+  };
+
+  const handleAdminCancel = async () => {
+    if (!cancelTargetBooking) return;
+    const id = cancelTargetBooking._id || cancelTargetBooking.id;
+    setIsCancelling(true);
+    try {
+      const res = await fetch(API.CancelBooking(id), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cancellationReasons: cancelReasons,
+          cancellationNote: cancelNote,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to cancel booking');
+      setBookingsList(prev =>
+        prev.map(b => (b._id || b.id) === id ? { ...b, status: 'Cancelled' } : b)
+      );
+      if (selectedBooking && (selectedBooking._id || selectedBooking.id) === id) {
+        setSelectedBooking(prev => ({ ...prev, status: 'cancelled', cancellationReasons: cancelReasons, cancellationNote: cancelNote, cancelledAt: new Date().toISOString() }));
+      }
+      toast({ title: '🚫 Booking Cancelled', description: 'Cancellation reason has been saved and sent to the guest.' });
+      setCancelTargetBooking(null);
+      setCancelReasons([]);
+      setCancelNote('');
+    } catch (err) {
+      console.error(err);
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not cancel booking. Please try again.' });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  // Fetch bookings
   const fetchBookings = async (page = 1) => {
     setIsLoading(true);
     try {
@@ -70,20 +132,28 @@ export default function AdminOrdersPage() {
     }
   };
 
+  // Fetch all rooms for assignment dialog
+  const fetchAllRooms = async () => {
+    try {
+      const res = await fetch(API.GetAllRooms);
+      const data = await res.json();
+      setAllRooms(data.rooms || data || []);
+    } catch (e) {
+      console.error('Error fetching rooms:', e);
+    }
+  };
+
   useEffect(() => {
     fetchBookings(currentPage);
+    fetchAllRooms();
   }, [currentPage]);
 
   const getBadgeVariant = (status) => {
     switch (status) {
-      case 'Completed':
-        return 'default';
-      case 'Upcoming':
-        return 'secondary';
-      case 'Cancelled':
-        return 'destructive';
-      default:
-        return 'outline';
+      case 'Completed': return 'default';
+      case 'Upcoming':  return 'secondary';
+      case 'Cancelled': return 'destructive';
+      default:          return 'outline';
     }
   };
 
@@ -95,22 +165,13 @@ export default function AdminOrdersPage() {
         body: JSON.stringify({ status: newStatus }),
       });
 
-      if (!response.ok) {
-         throw new Error("Failed to update status");
-      }
+      if (!response.ok) throw new Error("Failed to update status");
 
       setBookingsList(prev => prev.map(b => (b._id || b.id) === id ? { ...b, status: newStatus } : b));
-      toast({
-        title: "Status Updated",
-        description: `Booking status changed to ${newStatus}.`,
-      });
+      toast({ title: "Status Updated", description: `Booking status changed to ${newStatus}.` });
     } catch (error) {
-       console.error(error);
-       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Could not update booking status.",
-      });
+      console.error(error);
+      toast({ variant: "destructive", title: "Error", description: "Could not update booking status." });
     }
   };
 
@@ -122,33 +183,89 @@ export default function AdminOrdersPage() {
         body: JSON.stringify({ paymentStatus: newPaymentStatus }),
       });
 
-      if (!response.ok) {
-         throw new Error("Failed to update payment status");
-      }
+      if (!response.ok) throw new Error("Failed to update payment status");
 
       const data = await response.json();
       setBookingsList(prev => prev.map(b => (b._id || b.id) === id ? { ...b, paymentStatus: newPaymentStatus } : b));
       if (selectedBooking && (selectedBooking._id || selectedBooking.id) === id) {
           setSelectedBooking(data.booking);
       }
-      
-      toast({
-        title: "Payment Status Updated",
-        description: `Booking payment status changed to ${newPaymentStatus}.`,
-      });
+      toast({ title: "Payment Status Updated", description: `Booking payment status changed to ${newPaymentStatus}.` });
     } catch (error) {
-       console.error(error);
-       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Could not update payment status.",
+      console.error(error);
+      toast({ variant: "destructive", title: "Error", description: "Could not update payment status." });
+    }
+  };
+
+  // ── Open Assign Room Dialog ──
+  const openAssignRoom = (booking) => {
+    setAssignRoomBooking(booking);
+    // Pre-fill current assignment if any
+    const currentRoomId = booking.room?._id || booking.room || '';
+    setSelectedRoomId(currentRoomId);
+    setCustomRoomName('');
+  };
+
+  // ── Save Room Assignment ──
+  const handleSaveRoomAssignment = async () => {
+    if (!assignRoomBooking) return;
+    const bookingId = assignRoomBooking._id || assignRoomBooking.id;
+
+    let roomId = null;
+    let roomName = '';
+
+    if (selectedRoomId === 'custom') {
+      roomName = customRoomName.trim();
+      if (!roomName) {
+        toast({ variant: 'destructive', title: 'Please enter a room name.' });
+        return;
+      }
+    } else if (selectedRoomId) {
+      const found = allRooms.find(r => r._id === selectedRoomId);
+      roomId = selectedRoomId;
+      roomName = found ? found.roomName : '';
+    } else {
+      toast({ variant: 'destructive', title: 'Please select a room.' });
+      return;
+    }
+
+    setIsSavingRoom(true);
+    try {
+      const payload = { roomName };
+      if (roomId) payload.room = roomId;
+
+      const res = await fetch(API.UpdateBooking(bookingId), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
+
+      if (!res.ok) throw new Error('Failed to assign room');
+
+      const data = await res.json();
+      const updated = data.booking;
+
+      setBookingsList(prev =>
+        prev.map(b => (b._id || b.id) === bookingId ? { ...b, roomName: updated.roomName, room: updated.room } : b)
+      );
+
+      if (selectedBooking && (selectedBooking._id || selectedBooking.id) === bookingId) {
+        setSelectedBooking(updated);
+      }
+
+      toast({ title: '✅ Room Assigned', description: `Room "${roomName}" assigned successfully.` });
+      setAssignRoomBooking(null);
+    } catch (err) {
+      console.error(err);
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not assign room. Please try again.' });
+    } finally {
+      setIsSavingRoom(false);
     }
   };
 
   const statusColors = {
-    'Paid': 'bg-green-100 text-green-700 border-green-200',
-    'Unpaid': 'bg-red-100 text-red-700 border-red-200',
+    'Paid':           'bg-green-100 text-green-700 border-green-200',
+    'Unpaid':         'bg-red-100 text-red-700 border-red-200',
     'Partially Paid': 'bg-yellow-100 text-yellow-700 border-yellow-200',
   };
 
@@ -170,7 +287,7 @@ export default function AdminOrdersPage() {
                         <TableRow>
                             <TableHead>Booking ID</TableHead>
                             <TableHead>Guest</TableHead>
-                            <TableHead>Type</TableHead>
+                            <TableHead>Room / Type</TableHead>
                             <TableHead>Dates</TableHead>
                             <TableHead>Total Price</TableHead>
                             <TableHead>Status</TableHead>
@@ -181,13 +298,24 @@ export default function AdminOrdersPage() {
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="text-center py-4">Loading bookings...</TableCell>
+                                <TableCell colSpan={8} className="text-center py-4">Loading bookings...</TableCell>
                             </TableRow>
                         ) : bookingsList.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="text-center py-4">No bookings found.</TableCell>
+                                <TableCell colSpan={8} className="text-center py-4">No bookings found.</TableCell>
                             </TableRow>
-                        ) : bookingsList.map((booking) => (
+                        ) : bookingsList.map((booking) => {
+                            const nights = Math.max(1, Math.ceil((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)));
+                            let dynamicTotal = Number(booking.totalAmount) || 0;
+                            const hasAlloc = booking.allocation && booking.allocation.length > 0;
+                            
+                            if (hasAlloc) {
+                                const allocSum = booking.allocation.reduce((sum, r) => sum + (Number(r.price) || 0), 0);
+                                const addonsSum = (booking.addons || []).filter(a => a.status !== "cancelled").reduce((s, a) => s + (Number(a.price) || 0), 0);
+                                dynamicTotal = (allocSum * nights) + addonsSum;
+                            }
+
+                            return (
                             <TableRow key={booking._id || booking.id}>
                                 <TableCell className="font-medium">
                                     {booking.bookingId || (booking._id ? booking._id.substring(0, 8) : booking.id)}
@@ -196,12 +324,35 @@ export default function AdminOrdersPage() {
                                     <div className="font-medium">{booking.fullName || booking.userName}</div>
                                     <div className="text-sm text-muted-foreground">{booking.email || booking.userEmail}</div>
                                 </TableCell>
-                                <TableCell>{booking.bookingType}</TableCell>
+                                <TableCell>
+                                    {hasAlloc ? (
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="font-medium text-sm">
+                                                {booking.allocation[0].name}
+                                                {booking.allocation.length > 1 && (
+                                                    <span className="text-xs text-blue-600 ml-1">+{booking.allocation.length - 1} more</span>
+                                                )}
+                                            </span>
+                                            {booking.bookingType && (
+                                                <span className="text-xs text-muted-foreground">{booking.bookingType}</span>
+                                            )}
+                                        </div>
+                                    ) : booking.roomName ? (
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="font-medium text-sm">{booking.roomName}</span>
+                                            {booking.bookingType && (
+                                                <span className="text-xs text-muted-foreground">{booking.bookingType}</span>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <span className="text-muted-foreground text-sm">{booking.bookingType || '—'}</span>
+                                    )}
+                                </TableCell>
                                 <TableCell>
                                     <div className="text-xs text-muted-foreground">In: {booking.checkIn ? format(parseISO(booking.checkIn), 'MMM dd, yyyy') : 'N/A'}</div>
                                     <div className="text-xs text-muted-foreground">Out: {booking.checkOut ? format(parseISO(booking.checkOut), 'MMM dd, yyyy') : 'N/A'}</div>
                                 </TableCell>
-                                <TableCell>₹{booking.totalAmount?.toLocaleString()}</TableCell>
+                                <TableCell>₹{dynamicTotal.toLocaleString()}</TableCell>
                                 <TableCell>
                                     <Badge variant={getBadgeVariant(booking.status || 'Upcoming')}>
                                         {booking.status || 'Upcoming'}
@@ -225,6 +376,7 @@ export default function AdminOrdersPage() {
                                             <DropdownMenuItem onClick={() => setSelectedBooking(booking)}>
                                                 <Eye className="mr-2 h-4 w-4" /> View Details
                                             </DropdownMenuItem>
+
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={() => updateStatus(booking._id || booking.id, 'confirmed')}>
                                                 <ThumbsUp className="mr-2 h-4 w-4 text-green-600" /> Confirm Booking
@@ -232,8 +384,8 @@ export default function AdminOrdersPage() {
                                             <DropdownMenuItem onClick={() => updateStatus(booking._id || booking.id, 'completed')}>
                                                 <CheckCircle className="mr-2 h-4 w-4 text-primary" /> Mark Completed
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => updateStatus(booking._id || booking.id, 'cancelled')}>
-                                                <XCircle className="mr-2 h-4 w-4 text-destructive" /> Cancel Booking
+                                            <DropdownMenuItem onClick={() => { setCancelTargetBooking(booking); setCancelReasons([]); setCancelNote(''); }} className="text-destructive focus:text-destructive">
+                                                <XCircle className="mr-2 h-4 w-4" /> Cancel Booking
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground">Payment Status</DropdownMenuLabel>
@@ -247,7 +399,7 @@ export default function AdminOrdersPage() {
                                     </DropdownMenu>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )})}
                     </TableBody>
                 </Table>
               </div>
@@ -261,16 +413,62 @@ export default function AdminOrdersPage() {
       </Card>
 
       <Dialog open={!!selectedBooking} onOpenChange={(isOpen) => !isOpen && setSelectedBooking(null)}>
-            <DialogContent className="sm:max-w-[625px]">
-            {selectedBooking && (
+            <DialogContent className="sm:max-w-[680px] p-0 overflow-hidden max-h-[90vh] flex flex-col">
+            {selectedBooking && (() => {
+                const nights = Math.max(1, Math.ceil((new Date(selectedBooking.checkOut) - new Date(selectedBooking.checkIn)) / (1000 * 60 * 60 * 24)));
+                const hasAlloc = selectedBooking.allocation && selectedBooking.allocation.length > 0;
+                const addonsSum = (selectedBooking.addons || []).filter(a => a.status !== "cancelled").reduce((s, a) => s + (Number(a.price) || 0), 0);
+                const staySum = hasAlloc 
+                    ? selectedBooking.allocation.reduce((sum, r) => sum + (Number(r.price) || 0), 0) * nights
+                    : (Number(selectedBooking.totalAmount || 0) - addonsSum);
+                const finalTotal = staySum + addonsSum;
+                
+                const roomImages = selectedBooking.room?.images;
+                const imageUrl = roomImages?.[0]?.url;
+                const roomLabel = hasAlloc 
+                    ? selectedBooking.allocation.map(r => r.name).join(", ")
+                    : (selectedBooking.roomName || selectedBooking.bookingType || 'Forest Gate Resort');
+
+                return (
                 <>
-                <DialogHeader>
+                {/* ── Room Image Banner ── */}
+                <div className="relative w-full h-44 shrink-0 overflow-hidden">
+                    {imageUrl ? (
+                    <img
+                        src={imageUrl}
+                        alt={roomLabel}
+                        className="w-full h-full object-cover"
+                    />
+                    ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800" />
+                    )}
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    {/* Room label + guest name */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <div className="flex items-end justify-between">
+                        <div>
+                        <p className="text-xs uppercase tracking-widest text-white/70 font-semibold mb-0.5">Booked Room</p>
+                        <p className="text-xl font-bold leading-tight">{roomLabel}</p>
+                        </div>
+                        <div className="text-right">
+                        <p className="text-xs text-white/70">Guest</p>
+                        <p className="text-sm font-semibold">{selectedBooking.fullName || selectedBooking.userName}</p>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                {/* ── Scrollable body ── */}
+                <div className="overflow-y-auto flex-1 px-6 pb-6">
+                <DialogHeader className="pt-5 pb-0">
                     <DialogTitle>Booking Details</DialogTitle>
                     <DialogDescription>
                     Full information for booking ID: {selectedBooking.bookingId || selectedBooking._id || selectedBooking.id}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
+
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Guest Name</p>
                         <p className="font-medium">{selectedBooking.fullName || selectedBooking.userName}</p>
@@ -296,6 +494,29 @@ export default function AdminOrdersPage() {
                         <p className="text-sm text-muted-foreground">Accommodation</p>
                         <p className="font-medium">{selectedBooking.bookingType}</p>
                     </div>
+
+                    {/* ── Assigned Room Row ── */}
+                    <div className="grid grid-cols-2 items-center gap-4">
+                        <p className="text-sm text-muted-foreground">Assigned Room(s)</p>
+                        <div className="flex flex-wrap gap-1.5">
+                            {hasAlloc ? (
+                                selectedBooking.allocation.map((alloc, idx) => (
+                                    <span key={idx} className="inline-flex items-center gap-1.5 font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md text-xs">
+                                        <DoorOpen className="h-3 w-3" />
+                                        {alloc.name} (₹{Number(alloc.price).toLocaleString()})
+                                    </span>
+                                ))
+                            ) : selectedBooking.roomName ? (
+                                <span className="inline-flex items-center gap-1.5 font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md text-sm w-fit">
+                                    <DoorOpen className="h-3.5 w-3.5" />
+                                    {selectedBooking.roomName}
+                                </span>
+                            ) : (
+                                <p className="text-sm text-muted-foreground italic">Not yet assigned</p>
+                            )}
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Stay Dates</p>
                         <p className="font-medium">
@@ -324,8 +545,12 @@ export default function AdminOrdersPage() {
                     )}
                     <Separator />
                     <div className="grid grid-cols-2 items-center gap-4">
-                        <p className="text-sm text-muted-foreground">Total Paid</p>
-                        <p className="font-bold text-xl">₹{selectedBooking.totalAmount?.toLocaleString()}</p>
+                        <p className="text-sm text-muted-foreground">Stay Total ({nights} Nights)</p>
+                        <p className="font-semibold text-lg">₹{staySum.toLocaleString()}</p>
+                    </div>
+                    <div className="grid grid-cols-2 items-center gap-4">
+                        <p className="text-sm text-muted-foreground">Final Total Amount</p>
+                        <p className="font-bold text-xl text-primary">₹{finalTotal.toLocaleString()}</p>
                     </div>
                     <div className="grid grid-cols-2 items-center gap-4">
                         <p className="text-sm text-muted-foreground">Payment Status</p>
@@ -384,7 +609,7 @@ export default function AdminOrdersPage() {
                             params.append("checkIn", selectedBooking.checkIn);
                             params.append("checkOut", selectedBooking.checkOut);
                             params.append("guests", (selectedBooking.guests?.adults + (selectedBooking.guests?.children || 0)).toString());
-                            params.append("totalPrice", selectedBooking.totalAmount?.toString() || "0");
+                            params.append("totalPrice", finalTotal.toString());
                             params.append("roomName", selectedBooking.roomName || selectedBooking.bookingType);
                             params.append("numAdults", selectedBooking.guests?.adults?.toString() || "0");
                             params.append("numChildren", selectedBooking.guests?.children?.toString() || "0");
@@ -401,7 +626,6 @@ export default function AdminOrdersPage() {
                             if (selectedBooking.internalNotes) {
                                 params.append("internalNotes", selectedBooking.internalNotes);
                             }
-                            
                             window.open(`/booking/confirmation?${params.toString()}`, '_blank');
                         }}>
                             Generate Invoice
@@ -411,9 +635,224 @@ export default function AdminOrdersPage() {
                         Close
                     </Button>
                 </DialogFooter>
+                </div>{/* end scrollable body */}
                 </>
-            )}
+                );
+            })()}
             </DialogContent>
+      </Dialog>
+
+      {/* ── Admin Cancel with Reason Dialog ── */}
+      <Dialog open={!!cancelTargetBooking} onOpenChange={(open) => { if (!open) { setCancelTargetBooking(null); setCancelReasons([]); setCancelNote(''); } }}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <XCircle className="h-5 w-5" />
+              Cancel Booking
+            </DialogTitle>
+            <DialogDescription>
+              Cancelling booking for{' '}
+              <span className="font-semibold text-foreground">
+                {cancelTargetBooking?.fullName || cancelTargetBooking?.userName}
+              </span>
+              {cancelTargetBooking?.bookingId && (
+                <span className="text-xs text-muted-foreground ml-1">(#{cancelTargetBooking.bookingId})</span>
+              )}
+              . The reason will be shown to the guest in their booking history.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-3 space-y-4">
+            {/* Reason checkboxes */}
+            <div className="space-y-2">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Select Reason(s)</p>
+              <div className="space-y-2">
+                {ADMIN_CANCEL_REASONS.map((reason) => (
+                  <label
+                    key={reason}
+                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors select-none ${
+                      cancelReasons.includes(reason)
+                        ? 'bg-red-50 border-red-200 text-red-800'
+                        : 'bg-muted/30 border-transparent hover:border-gray-200 hover:bg-muted/50'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="accent-red-500 h-4 w-4 shrink-0"
+                      checked={cancelReasons.includes(reason)}
+                      onChange={() => toggleCancelReason(reason)}
+                    />
+                    <span className="text-sm font-medium">{reason}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Additional note */}
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Additional Note (Optional)</p>
+              <Textarea
+                placeholder="Add any additional details for the guest..."
+                className="resize-none min-h-[80px] text-sm"
+                value={cancelNote}
+                onChange={(e) => setCancelNote(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setCancelTargetBooking(null); setCancelReasons([]); setCancelNote(''); }} disabled={isCancelling}>
+              Back
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleAdminCancel}
+              disabled={isCancelling}
+            >
+              {isCancelling ? 'Cancelling…' : 'Confirm Cancellation'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Assign Room Dialog ── */}
+
+      <Dialog open={!!assignRoomBooking} onOpenChange={(isOpen) => !isOpen && setAssignRoomBooking(null)}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <DoorOpen className="h-5 w-5 text-blue-600" />
+              Assign Room
+            </DialogTitle>
+            <DialogDescription>
+              Assign a room to{' '}
+              <span className="font-semibold text-foreground">
+                {assignRoomBooking?.fullName || assignRoomBooking?.userName}
+              </span>
+              {assignRoomBooking?.bookingId && (
+                <span className="text-xs text-muted-foreground ml-1">
+                  (#{assignRoomBooking.bookingId})
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-3 space-y-4">
+
+            {/* ── Guest's Originally Booked Room ── */}
+            {(() => {
+              const bookedRoom = allRooms.find(
+                r => r._id === (assignRoomBooking?.room?._id || assignRoomBooking?.room)
+              ) || (assignRoomBooking?.roomName ? { roomName: assignRoomBooking.roomName, _id: null } : null);
+
+              if (!bookedRoom) return (
+                <p className="text-sm text-muted-foreground italic text-center py-2">
+                  No room was selected by the guest at booking time.
+                </p>
+              );
+
+              const isThisAlreadyAssigned = assignRoomBooking?.roomName === bookedRoom.roomName;
+              const bookedRoomImage = bookedRoom.images?.[0]?.url;
+
+              return (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                    🛎 Guest's Requested Room
+                  </p>
+                  <div className={`relative rounded-xl border-2 overflow-hidden transition-all ${
+                    selectedRoomId === (bookedRoom._id || 'booked')
+                      ? 'border-blue-500 shadow-md shadow-blue-100'
+                      : 'border-blue-200'
+                  }`}>
+                    {/* Room Image */}
+                    {bookedRoomImage ? (
+                      <img src={bookedRoomImage} alt={bookedRoom.roomName} className="w-full h-32 object-cover" />
+                    ) : (
+                      <div className="w-full h-24 bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 flex items-center justify-center">
+                        <DoorOpen className="h-8 w-8 text-white/70" />
+                      </div>
+                    )}
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                      <p className="font-bold text-base leading-tight">{bookedRoom.roomName}</p>
+                      {bookedRoom.pricePerNight && (
+                        <p className="text-xs text-white/80">₹{bookedRoom.pricePerNight.toLocaleString()} / night</p>
+                      )}
+                    </div>
+                    {isThisAlreadyAssigned && (
+                      <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        ✓ Assigned
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Quick Assign Button */}
+                  {!isThisAlreadyAssigned && (
+                    <Button
+                      className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white gap-2"
+                      onClick={() => {
+                        if (bookedRoom._id) setSelectedRoomId(bookedRoom._id);
+                        else {
+                          setSelectedRoomId('custom');
+                          setCustomRoomName(bookedRoom.roomName);
+                        }
+                      }}
+                    >
+                      Assign this Room
+                    </Button>
+                  )}
+                </div>
+              );
+            })()}
+
+            <Separator />
+
+            {/* Room Selection Dropdown */}
+            <div className="space-y-2">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Or Select Different Room</p>
+              <select
+                className="w-full p-2 border rounded-md"
+                value={selectedRoomId}
+                onChange={(e) => setSelectedRoomId(e.target.value)}
+              >
+                <option value="">Select a room...</option>
+                {allRooms.map((room) => (
+                  <option key={room._id} value={room._id}>
+                    {room.roomName} (₹{room.pricePerNight?.toLocaleString()} / night)
+                  </option>
+                ))}
+                <option value="custom">-- Custom Room Name --</option>
+              </select>
+            </div>
+
+            {selectedRoomId === 'custom' && (
+              <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1">
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Custom Room Name</p>
+                <input
+                  type="text"
+                  placeholder="e.g. Executive Wing 101"
+                  className="w-full p-2 border rounded-md"
+                  value={customRoomName}
+                  onChange={(e) => setCustomRoomName(e.target.value)}
+                />
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAssignRoomBooking(null)} disabled={isSavingRoom}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-primary text-white"
+              onClick={handleSaveRoomAssignment}
+              disabled={isSavingRoom || !selectedRoomId}
+            >
+              {isSavingRoom ? 'Saving...' : 'Assign Room'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );

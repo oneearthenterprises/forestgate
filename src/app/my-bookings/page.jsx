@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { PageHeader } from "@/components/shared/PageHeader";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "@/components/ui/button";
@@ -26,11 +26,11 @@ import { Label } from '@/components/ui/label';
 // Using User Context
 import { useAuthContext } from "@/context/AuthContext";
 import { API } from "@/lib/api/api";
-import { useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSearchParams } from 'next/navigation';
+import { DoorOpen } from 'lucide-react';
 
-export default function BookingHistoryPage() {
+function BookingHistoryPageContent() {
     const { user } = useAuthContext();
     const searchParams = useSearchParams();
     const queryEmail = searchParams.get('email');
@@ -209,7 +209,23 @@ export default function BookingHistoryPage() {
                                     <div className="space-y-8 mt-4">
                                         {bookingList.map((booking) => {
                                             const isUpcoming = ['pending', 'upcoming', 'confirmed'].includes(booking.status.toLowerCase());
-                                            const isCancellable = isUpcoming && differenceInDays(parseISO(booking.checkIn), now) > 10;
+                                            const isCancellable = isUpcoming && differenceInDays(parseISO(booking.checkIn), now) >= 2;
+
+                                            // Calculate Prices outside JSX to prevent syntax/parentheses mess
+                                            const checkInDate = new Date(booking.checkIn);
+                                            const checkOutDate = new Date(booking.checkOut);
+                                            const nightsCount = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) || 1;
+                                            
+                                            // 1. Base amount from allocation (for multi-room)
+                                            let basePriceFromAlloc = (booking.allocation || []).reduce((sum, r) => sum + (Number(r.price) || 0), 0) * nightsCount;
+                                            
+                                            // 2. Add-ons total
+                                            const addonsSum = (booking.addons || []).filter(a => a.status !== "cancelled").reduce((s, a) => s + (Number(a.price) || 0), 0);
+                                            
+                                            // 3. Final display price
+                                            const finalDisplayPrice = booking.allocation?.length > 0 
+                                                ? (basePriceFromAlloc + addonsSum) 
+                                                : Number(booking.totalPrice || booking.totalAmount || 0);
 
                                             return (
                                                 <Card key={booking._id}>
@@ -218,6 +234,31 @@ export default function BookingHistoryPage() {
                                                             <div>
                                                                 <CardTitle className="font-headline text-2xl">{booking.bookingType || booking.room?.roomName}</CardTitle>
                                                                 <CardDescription>Booking ID: {booking.bookingId || booking._id}</CardDescription>
+                                                                {/* ── Assigned Room by Admin ── */}
+                                                                {booking.roomName && (
+                                                                    <div className="mt-2 inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-full px-3 py-1 text-xs font-semibold">
+                                                                        <DoorOpen className="h-3.5 w-3.5" />
+                                                                        Assigned Room: {booking.roomName}
+                                                                    </div>
+                                                                )}
+
+                                                                {/* ── Rooms Booked (allocation) ── */}
+                                                                {booking.allocation?.length > 0 && (
+                                                                    <div className="mt-3 space-y-1.5">
+                                                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rooms Booked</p>
+                                                                        {booking.allocation.map((room, i) => (
+                                                                            <div key={i} className="flex items-center justify-between bg-muted/40 rounded-lg px-3 py-1.5 text-xs">
+                                                                                <span className="font-semibold text-gray-800">
+                                                                                    Room {i + 1}: {room.name || booking.bookingType}
+                                                                                    <span className="font-normal text-muted-foreground ml-1">
+                                                                                        ({room.adults}A{room.children > 0 ? `, ${room.children}C` : ''}{room.extraBedding ? ' + Bed' : ''})
+                                                                                    </span>
+                                                                                </span>
+                                                                                <span className="font-bold text-primary">₹{room.price?.toLocaleString()}</span>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <div className="flex flex-col gap-2 items-end">
                                                                 <Badge 
@@ -252,7 +293,9 @@ export default function BookingHistoryPage() {
                                                         </div>
                                                         <div className="space-y-1">
                                                             <p className="font-semibold text-muted-foreground">Total Price</p>
-                                                            <p className="font-bold text-lg">₹{(booking.totalAmount || 0).toLocaleString()}</p>
+                                                            <p className="font-bold text-lg text-primary">
+                                                                ₹{(finalDisplayPrice || 0).toLocaleString()}
+                                                            </p>
                                                         </div>
                                                     </CardContent>
 
@@ -303,7 +346,7 @@ export default function BookingHistoryPage() {
                                                                     <AlertDialogHeader>
                                                                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                                                         <AlertDialogDescription>
-                                                                            This action cannot be undone. This will permanently cancel your booking. Please provide a reason for cancellation.
+                                                                            Cancellations are allowed up to 48 hours before check-in. This action cannot be undone. Please provide a reason for cancellation.
                                                                         </AlertDialogDescription>
                                                                     </AlertDialogHeader>
                                                                     <div className="space-y-4 py-4">
@@ -401,5 +444,22 @@ export default function BookingHistoryPage() {
                 </div>
             </section>
         </div>
+    );
+}
+
+export default function BookingHistoryPage() {
+    return (
+        <Suspense fallback={
+            <div className="container mx-auto px-4 py-24 max-w-4xl animate-pulse">
+                <div className="h-12 w-64 bg-muted rounded-md mb-8"></div>
+                <div className="space-y-8">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="h-48 bg-muted/20 border rounded-lg"></div>
+                    ))}
+                </div>
+            </div>
+        }>
+            <BookingHistoryPageContent />
+        </Suspense>
     );
 }

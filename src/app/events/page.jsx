@@ -36,12 +36,12 @@ export default function EventsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        <h1 className="text-6xl md:text-[10rem] font-bold text-white leading-none tracking-tighter uppercase drop-shadow-2xl font-playfair">
+                        <h1 className="text-4xl sm:text-6xl md:text-[10rem] font-bold text-white leading-none tracking-tighter uppercase drop-shadow-2xl font-playfair">
                             Celebrations
                         </h1>
                         
                         <div className="flex flex-col items-end md:mr-20 -mt-2 md:-mt-6">
-                            <p className="font-kaushan text-3xl md:text-5xl text-white drop-shadow-lg">
+                            <p className="font-kaushan text-2xl md:text-5xl text-white drop-shadow-lg">
                                 & bespoke curation
                             </p>
                             <svg className="w-48 md:w-72 h-4 text-white mt-2" viewBox="0 0 300 20" fill="none" xmlns="http://www.w3.org/2000/svg">

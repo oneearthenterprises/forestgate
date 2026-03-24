@@ -39,7 +39,7 @@ export function InteractiveMapSection() {
       <div className="container relative z-10 mx-auto max-w-7xl h-full flex flex-col items-center">
         {/* Centered Creative Header */}
         <div className="text-center mb-24 max-w-4xl mx-auto">
-            <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight font-headline">
+            <h2 className="text-4xl md:text-7xl font-bold text-white tracking-tight leading-tight font-headline">
                 Explore Himalayan Destinations
             </h2>
         </div>
@@ -51,10 +51,10 @@ export function InteractiveMapSection() {
                 {destinations.map((dest, idx) => (
                     <div key={dest.id} className="relative group">
                         {/* Timeline Bullet */}
-                        <div className="absolute -left-[57px] top-2 w-4 h-4 rounded-full bg-white border-4 border-[#0b2c3d] shadow-[0_0_15px_rgba(255,255,255,0.5)] z-20 group-hover:scale-125 transition-transform duration-300" />
+                        <div className="absolute -left-[54px] md:-left-[57px] top-1.5 md:top-2 w-3 md:w-4 h-3 md:h-4 rounded-full bg-white border-2 md:border-4 border-[#0b2c3d] shadow-[0_0_15px_rgba(255,255,255,0.5)] z-20 group-hover:scale-125 transition-transform duration-300" />
                         
                         <div className="space-y-4">
-                            <h3 className="font-headline text-4xl font-bold text-white tracking-tight drop-shadow-md">
+                            <h3 className="font-headline text-2xl md:text-4xl font-bold text-white tracking-tight drop-shadow-md">
                                 {dest.title}
                             </h3>
                             <div className="space-y-2">

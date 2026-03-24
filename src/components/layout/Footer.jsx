@@ -115,25 +115,22 @@ const submitValue = async (e) => {
             </p>
             <div className="flex gap-4 mt-2">
               <Link
-                href="#"
+                href="https://www.facebook.com/profile.php?id=61588259480467#"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
               >
                 <Facebook className="h-5 w-5" />
               </Link>
               <Link
-                href="#"
+                href="https://www.instagram.com/forestgate.retreat/?hl=en"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
               >
                 <Instagram className="h-5 w-5" />
-              </Link>
-              <Link
-                href="#"
-                aria-label="Twitter"
-                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
-              >
-                <Twitter className="h-5 w-5" />
               </Link>
             </div>
           </div>

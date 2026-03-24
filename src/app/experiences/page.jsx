@@ -59,8 +59,8 @@ export default function ExperiencesPage() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#0b2c3d] via-[#0b2c3d]/40 to-transparent opacity-90 transition-opacity duration-500" />
                                     
                                     {/* Content Overlay */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-10">
-                                        <h3 className="font-headline text-4xl font-bold text-white mb-4 leading-tight tracking-tight drop-shadow-md">
+                                    <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+                                        <h3 className="font-headline text-2xl sm:text-4xl font-bold text-white mb-4 leading-tight tracking-tight drop-shadow-md">
                                             {exp.title}
                                         </h3>
                                         

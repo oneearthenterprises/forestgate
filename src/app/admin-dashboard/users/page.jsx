@@ -89,6 +89,14 @@ export default function UsersPage() {
   const [isCustomFormOpen, setIsCustomFormOpen] = useState(false);
   const [roomsLoading, setRoomsLoading] = useState(false);
 
+  // Add Extra Room to Allocation
+  const [addRoomConfirmOpen, setAddRoomConfirmOpen] = useState(false);
+  const [addRoomPickerOpen, setAddRoomPickerOpen] = useState(false);
+  const [addRoomSelection, setAddRoomSelection] = useState('');
+
+  // Guest Collapse State
+  const [showAllGuests, setShowAllGuests] = useState(false);
+
   // Edit State
   const [editData, setEditData] = useState({});
   const { toast } = useToast();
@@ -1016,7 +1024,7 @@ export default function UsersPage() {
           setIsBookingDetailOpen(open);
           if (!open) setIsEditingBooking(false);
       }}>
-        <DialogContent className="max-w-2xl bg-white p-0 overflow-hidden border-none shadow-2xl rounded-3xl">
+        <DialogContent className="max-w-5xl bg-white p-0 overflow-hidden border-none shadow-2xl rounded-3xl">
           <DialogHeader className={cn(
               "p-6 text-white transition-colors duration-300",
               isEditingBooking ? "bg-amber-600" : "bg-primary"
@@ -1045,22 +1053,85 @@ export default function UsersPage() {
 
           {tempBookingData && (
             <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+
+                {/* ── Rooms Booked by Guest ── */}
+                <div className="bg-primary/5 border border-primary/15 rounded-2xl p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                        <div className="h-6 w-6 rounded-md bg-primary/15 flex items-center justify-center text-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        </div>
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary">Rooms Booked by Guest</h4>
+                        <span className="ml-auto text-[10px] font-bold text-primary/60 bg-primary/10 px-2 py-0.5 rounded-full">
+                            {(tempBookingData.allocation?.length || 0)} Room{(tempBookingData.allocation?.length || 0) !== 1 ? 's' : ''}
+                        </span>
+                        {isEditingBooking && (
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                className="h-6 text-[10px] px-2 ml-1 border-dashed border-primary/40 text-primary hover:bg-primary/10"
+                                onClick={() => { setAddRoomSelection(''); setAddRoomConfirmOpen(true); }}
+                            >
+                                + Add Room
+                            </Button>
+                        )}
+                    </div>
+
+                    {tempBookingData.allocation?.length > 0 ? (
+                        <div className="space-y-2">
+                            {tempBookingData.allocation.map((room, i) => (
+                                <div key={i} className="flex items-center justify-between bg-white rounded-xl px-3 py-2.5 border border-primary/10">
+                                    <div className="flex items-center gap-2.5">
+                                        <span className="text-[9px] font-black text-primary/50 bg-primary/5 rounded-md w-5 h-5 flex items-center justify-center">{i + 1}</span>
+                                        <div>
+                                            <p className="text-xs font-bold text-gray-900 leading-tight">
+                                                {room.name || tempBookingData.bookingType || tempBookingData.roomName || `Room ${i + 1}`}
+                                            </p>
+                                            <p className="text-[10px] text-muted-foreground leading-none mt-0.5">
+                                                {room.adults > 0 && `${room.adults}A`}
+                                                {room.children > 0 && ` · ${room.children}C`}
+                                                {room.extraBedding && <span className="ml-1 text-amber-600">· Extra bed</span>}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-black text-primary">₹{room.price?.toLocaleString()}</span>
+                                        {isEditingBooking && (
+                                            <button
+                                                type="button"
+                                                className="h-5 w-5 rounded-full bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 text-[10px] flex items-center justify-center transition-colors"
+                                                onClick={() => {
+                                                    const updated = tempBookingData.allocation.filter((_, idx) => idx !== i);
+                                                    setTempBookingData({ ...tempBookingData, allocation: updated });
+                                                }}
+                                                title="Remove room"
+                                            >✕</button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-xs text-muted-foreground italic text-center py-1">No room allocation data.</p>
+                    )}
+                </div>
+
                 {/* Status & Quick Dates */}
                 <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
                     <div className="space-y-1.5">
                         <Label className="text-[10px] uppercase font-bold text-muted-foreground italic">Order Status</Label>
                         {isEditingBooking ? (
                             <Select
-                                value={tempBookingData.status}
+                                value={tempBookingData.status?.toLowerCase()}
                                 onValueChange={(val) => setTempBookingData({...tempBookingData, status: val})}
                             >
                                 <SelectTrigger className="h-9 bg-white">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Pending">Pending</SelectItem>
-                                    <SelectItem value="Confirmed">Confirmed</SelectItem>
-                                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                                    <SelectItem value="cancelled">Cancelled</SelectItem>
                                 </SelectContent>
                             </Select>
                         ) : (
@@ -1073,16 +1144,16 @@ export default function UsersPage() {
                         <Label className="text-[10px] uppercase font-bold text-muted-foreground italic">Payment Status</Label>
                         {isEditingBooking ? (
                             <Select
-                                value={tempBookingData.paymentStatus}
+                                value={tempBookingData.paymentStatus?.toLowerCase() || 'pending'}
                                 onValueChange={(val) => setTempBookingData({...tempBookingData, paymentStatus: val})}
                             >
                                 <SelectTrigger className="h-9 bg-white">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Paid">Paid</SelectItem>
-                                    <SelectItem value="Unpaid">Unpaid</SelectItem>
-                                    <SelectItem value="Partial">Partial</SelectItem>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="paid">Paid</SelectItem>
+                                    <SelectItem value="failed">Failed</SelectItem>
                                 </SelectContent>
                             </Select>
                         ) : (
@@ -1143,7 +1214,9 @@ export default function UsersPage() {
                     </div>
                 </div>
 
+
                 {tempBookingData.status?.toLowerCase() === 'cancelled' && (
+
                     <div className="p-4 bg-red-50 border border-red-100 rounded-xl space-y-3">
                         <div className="flex items-center gap-2 text-destructive">
                             <AlertCircle className="h-4 w-4" />
@@ -1216,11 +1289,13 @@ export default function UsersPage() {
                     </div>
 
                     <div className="space-y-3">
-                        {tempBookingData.guestDetails?.map((guest, idx) => (
+                        {(showAllGuests ? tempBookingData.guestDetails : tempBookingData.guestDetails?.slice(0, 4))?.map((guest, idx) => (
                             <div key={idx} className="relative p-4 bg-gray-50/50 rounded-2xl border border-gray-100 group transition-all hover:bg-white hover:shadow-sm">
                                 {isEditingBooking ? (
-                                    <div className="grid grid-cols-12 gap-3 pt-2">
-                                        <div className="col-span-5 space-y-1">
+                                    // ── EDIT MODE ──
+                                    <div className="grid grid-cols-12 gap-2 pt-2">
+                                        {/* Name - 4 cols */}
+                                        <div className="col-span-4 space-y-1">
                                             <Label className="text-[9px] uppercase font-bold text-muted-foreground">Name</Label>
                                             <Input
                                                 className="h-8 text-xs bg-white"
@@ -1232,7 +1307,8 @@ export default function UsersPage() {
                                                 }}
                                             />
                                         </div>
-                                        <div className="col-span-3 space-y-1">
+                                        {/* Gender - 2 cols */}
+                                        <div className="col-span-2 space-y-1">
                                             <Label className="text-[9px] uppercase font-bold text-muted-foreground">Gender</Label>
                                             <Select
                                                 value={guest.gender}
@@ -1252,22 +1328,30 @@ export default function UsersPage() {
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                        <div className="col-span-2 space-y-1">
+                                        {/* Age - 1 col */}
+                                        <div className="col-span-1 space-y-1">
                                             <Label className="text-[9px] uppercase font-bold text-muted-foreground">Age</Label>
                                             <Input
                                                 className="h-8 text-xs bg-white"
                                                 value={guest.age}
                                                 onChange={(e) => {
                                                     const details = [...tempBookingData.guestDetails];
-                                                    details[idx].age = e.target.value;
+                                                    const ageVal = e.target.value;
+                                                    details[idx].age = ageVal;
+                                                    const age = parseInt(ageVal);
+                                                    if (!isNaN(age)) {
+                                                        details[idx].type = age >= 6 ? "adult" : "child";
+                                                    }
                                                     setTempBookingData({...tempBookingData, guestDetails: details});
                                                 }}
                                             />
                                         </div>
+                                        {/* Type - 2 cols */}
                                         <div className="col-span-2 space-y-1">
                                             <Label className="text-[9px] uppercase font-bold text-muted-foreground">Type</Label>
                                             <Select
                                                 value={guest.type}
+                                                disabled={true}
                                                 onValueChange={(val) => {
                                                     const details = [...tempBookingData.guestDetails];
                                                     details[idx].type = val;
@@ -1283,6 +1367,37 @@ export default function UsersPage() {
                                                 </SelectContent>
                                             </Select>
                                         </div>
+                                        {/* Assign Room - 3 cols (dynamic from DB) */}
+                                        <div className="col-span-3 space-y-1">
+                                            <Label className="text-[9px] uppercase font-bold text-muted-foreground">Assign Room</Label>
+                                            <Select
+                                                value={guest.assignedRoom || tempBookingData.roomName || tempBookingData.bookingType || ''}
+                                                onValueChange={(val) => {
+                                                    const details = [...tempBookingData.guestDetails];
+                                                    details[idx].assignedRoom = val;
+                                                    setTempBookingData({...tempBookingData, guestDetails: details});
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-8 text-xs bg-white px-2">
+                                                    <SelectValue placeholder="Select Room" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {(tempBookingData.allocation?.length > 0
+                                                        ? tempBookingData.allocation
+                                                        : rooms.map(r => ({ name: r.roomName }))
+                                                    ).filter(room => !!(room.name || room.roomName))
+                                                     .map((room, rIdx) => {
+                                                        const roomName = room.name || room.roomName;
+                                                        return (
+                                                            <SelectItem key={rIdx} value={`room-${rIdx}-${roomName}`}>
+                                                                {roomName}
+                                                            </SelectItem>
+                                                        );
+                                                    })}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        {/* Remove Button */}
                                         <Button
                                             variant="ghost"
                                             size="icon"
@@ -1294,18 +1409,39 @@ export default function UsersPage() {
                                         >
                                             ✕
                                         </Button>
+                                     
                                     </div>
                                 ) : (
+                                    // ── VIEW MODE ──
                                     <div className="flex justify-between items-center">
                                         <div className="flex flex-col">
                                             <span className="text-sm font-bold text-gray-900">{guest.name || "Unnamed Guest"}</span>
-                                            <span className="text-[10px] text-muted-foreground font-medium uppercase">{guest.type} • {guest.gender} • {guest.age || 'N/A'} Years</span>
+                                            <span className="text-[10px] text-muted-foreground font-medium uppercase mt-0.5">
+                                                {guest.type} • {guest.gender} • {guest.age || 'N/A'} Years
+                                                {guest.assignedRoom && (
+                                                    <span className="ml-2 text-blue-600 normal-case">🛏 {guest.assignedRoom}</span>
+                                                )}
+                                            </span>
                                         </div>
-                                        <Badge variant="outline" className="text-[9px] h-5 bg-white">{guest.type}</Badge>
+                                        <div className="flex items-center gap-2">
+                                            {guest.assignedRoom && (
+                                                <Badge variant="outline" className="text-[9px] h-5 bg-blue-50 text-blue-700 border-blue-200">{guest.assignedRoom}</Badge>
+                                            )}
+                                            <Badge variant="outline" className="text-[9px] h-5 bg-white">{guest.type}</Badge>
+                                        </div>
                                     </div>
                                 )}
                             </div>
                         ))}
+                        {tempBookingData.guestDetails?.length > 4 && (
+                            <Button
+                                variant="outline"
+                                className="w-full mt-2 h-8 text-[10px] uppercase font-bold tracking-widest text-muted-foreground hover:bg-gray-100"
+                                onClick={() => setShowAllGuests(!showAllGuests)}
+                            >
+                                {showAllGuests ? "Collapse Guest List ↑" : `Show ${tempBookingData.guestDetails.length - 4} More Guests ↓`}
+                            </Button>
+                        )}
 
                         {(!tempBookingData.guestDetails || tempBookingData.guestDetails.length === 0) && (
                             <div className="flex items-center justify-between p-4 bg-blue-50/50 rounded-2xl border border-blue-100 border-dashed">
@@ -1480,10 +1616,16 @@ export default function UsersPage() {
                 {/* Financial Footer */}
                 {/* Financial Footer (Dynamic) */}
                 {(() => {
-                    const checkIn = new Date(tempBookingData.checkIn);
-                    const checkOut = new Date(tempBookingData.checkOut);
-                    const nights = Math.max(0, Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24)));
-                    const basePrice = (nights * (tempBookingData.pricePerNight || 0));
+                    const nights = Math.max(1, Math.ceil((new Date(tempBookingData.checkOut) - new Date(tempBookingData.checkIn)) / (1000 * 60 * 60 * 24)));
+                    
+                    let basePrice = Number(tempBookingData.pricePerNight) * nights;
+                    const hasAllocation = tempBookingData.allocation && tempBookingData.allocation.length > 0;
+                    
+                    if (hasAllocation) {
+                        const allocationSum = tempBookingData.allocation.reduce((sum, r) => sum + (Number(r.price) || 0), 0);
+                        basePrice = allocationSum * nights;
+                    }
+
                     const addonsTotal = (tempBookingData.addons || []).reduce((sum, a) => {
                         if (a.status === "cancelled") return sum;
                         return sum + (Number(a.price) || 0);
@@ -1499,10 +1641,26 @@ export default function UsersPage() {
                                         <Badge className="bg-primary/10 text-primary border-none text-[10px]">{nights} Nights</Badge>
                                     </div>
                                     <div className="space-y-1 text-xs font-medium">
-                                        <div className="flex justify-between opacity-70">
-                                            <span>Base Stay ({nights} x ₹{tempBookingData.pricePerNight})</span>
-                                            <span>₹{basePrice.toLocaleString()}</span>
-                                        </div>
+                                        {hasAllocation ? (
+                                            <div className="space-y-1 pb-1">
+                                                {tempBookingData.allocation.map((r, i) => (
+                                                    <div key={i} className="flex justify-between opacity-70">
+                                                        <span>Room {i+1}: {r.name}</span>
+                                                        <span>₹{(Number(r.price) || 0).toLocaleString()} / night</span>
+                                                    </div>
+                                                ))}
+                                                <div className="flex justify-between opacity-80 pt-1 border-t border-primary/10">
+                                                    <span>Base Stay ({nights} nights)</span>
+                                                    <span>₹{basePrice.toLocaleString()}</span>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex justify-between opacity-70">
+                                                <span>Base Stay ({nights} x ₹{tempBookingData.pricePerNight})</span>
+                                                <span>₹{basePrice.toLocaleString()}</span>
+                                            </div>
+                                        )}
+                                        
                                         {addonsTotal > 0 && (
                                             <>
                                                 <div className="space-y-1 mt-2 mb-1 border-t border-primary/10 pt-1">
@@ -1531,11 +1689,11 @@ export default function UsersPage() {
                                     <div className="flex justify-between items-center relative z-10">
                                         <div>
                                             <p className="text-[9px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Pricing</p>
-                                            <p className="text-2xl font-black text-white">₹{tempBookingData.totalAmount?.toLocaleString() || 0}</p>
+                                            <p className="text-2xl font-black text-white">₹{totalAmount.toLocaleString()}</p>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-[9px] uppercase font-bold text-gray-400 tracking-widest mb-1">Stay Duration</p>
-                                            <p className="text-sm font-bold text-primary-foreground">{tempBookingData.totalNights || 0} Nights</p>
+                                            <p className="text-sm font-bold text-primary-foreground">{nights} Nights</p>
                                         </div>
                                     </div>
                                 </>
@@ -1624,6 +1782,78 @@ export default function UsersPage() {
                 className="bg-destructive text-white hover:bg-destructive/90"
             >
               Confirm Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* ── Add Extra Room: Confirm ── */}
+      <AlertDialog open={addRoomConfirmOpen} onOpenChange={setAddRoomConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add an Extra Room?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure the guest needs an additional room? This will be added to their booking allocation and saved when you click <strong>Save Changes</strong>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-primary text-white hover:bg-primary/90"
+              onClick={() => { setAddRoomConfirmOpen(false); setAddRoomSelection(''); setAddRoomPickerOpen(true); }}
+            >
+              Yes, Pick a Room
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* ── Add Extra Room: Room Picker ── */}
+      <AlertDialog open={addRoomPickerOpen} onOpenChange={setAddRoomPickerOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Select Room to Add</AlertDialogTitle>
+            <AlertDialogDescription>
+              Choose the extra room to add to this booking's allocation.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-3 px-1">
+            <Select value={addRoomSelection} onValueChange={setAddRoomSelection}>
+              <SelectTrigger className="h-10 bg-background">
+                <SelectValue placeholder="— Choose a room —" />
+              </SelectTrigger>
+              <SelectContent>
+                {rooms.map(room => (
+                  <SelectItem key={room._id} value={room._id}>
+                    {room.roomName} — ₹{room.pricePerNight?.toLocaleString()}/night
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Back</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-primary text-white hover:bg-primary/90"
+              disabled={!addRoomSelection}
+              onClick={() => {
+                const picked = rooms.find(r => r._id === addRoomSelection);
+                if (!picked) return;
+                const newRoom = {
+                  name: picked.roomName,
+                  adults: 0,
+                  children: 0,
+                  extraBedding: false,
+                  price: picked.pricePerNight || 0,
+                };
+                const updated = [...(tempBookingData.allocation || []), newRoom];
+                setTempBookingData({ ...tempBookingData, allocation: updated });
+                setAddRoomPickerOpen(false);
+                setAddRoomSelection('');
+                toast({ title: '🛏 Room Added', description: `${picked.roomName} has been added to the allocation. Click Save Changes to confirm.` });
+              }}
+            >
+              Add Room
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

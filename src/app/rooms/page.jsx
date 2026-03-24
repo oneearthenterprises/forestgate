@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -26,7 +26,7 @@ import { ManagedBySection } from '@/components/shared/ManagedBySection';
 import { RoomCarouselWrapper } from '@/components/shared/RoomCarouselWrapper';
 import { API } from '@/lib/api/api';
 
-export default function RoomsPage() {
+function RoomsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const adults = searchParams.get('guests') || '2';
@@ -77,7 +77,7 @@ const getApiRooms = async () => {
   const RoomSkeleton = () => (
     <div className="bg-card border border-border/50 rounded-[2.5rem] p-4 md:p-6 flex flex-col md:flex-row items-center gap-8 animate-pulse">
       {/* Left: Image Skeleton */}
-      <div className="w-full md:w-[35%] aspect-[4/3] bg-slate-100 rounded-[2rem] shrink-0" />
+      <div className="w-full md:w-[35%] aspect-[4/5] bg-slate-100 rounded-[2rem] shrink-0" />
 
       {/* Middle: Content Skeleton */}
       <div className="flex-1 space-y-4 py-2 w-full">
@@ -158,9 +158,9 @@ const getApiRooms = async () => {
               </motion.div>
 
               {/* 🔹 Dynamic Guest Search Bar */}
-              <div className="max-w-4xl mx-auto mb-16 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-wrap items-center justify-center gap-8">
-                <div className="flex items-center gap-6">
-                  <div className="space-y-1.5">
+              <div className="max-w-4xl mx-auto mb-16 bg-white p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+                <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full md:w-auto">
+                  <div className="space-y-1.5 w-full sm:w-auto">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Adults (12+ Yrs)</p>
                     <Select 
                       value={adults} 
@@ -170,7 +170,7 @@ const getApiRooms = async () => {
                         router.push(`?${params.toString()}`, { scroll: false });
                       }}
                     >
-                      <SelectTrigger className="w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
+                      <SelectTrigger className="w-full sm:w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
                         <SelectValue placeholder="Adults" />
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
@@ -181,7 +181,7 @@ const getApiRooms = async () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 w-full sm:w-auto">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Children (0-11 Yrs)</p>
                     <Select 
                       value={childrenCount} 
@@ -191,7 +191,7 @@ const getApiRooms = async () => {
                         router.push(`?${params.toString()}`, { scroll: false });
                       }}
                     >
-                      <SelectTrigger className="w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
+                      <SelectTrigger className="w-full sm:w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
                         <SelectValue placeholder="Children" />
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
@@ -203,7 +203,7 @@ const getApiRooms = async () => {
                   </div>
                 </div>
 
-                <div className="md:border-l md:border-dashed border-slate-200 md:pl-8">
+                <div className="md:border-l md:border-dashed border-slate-200 md:pl-8 text-center md:text-left w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-slate-100">
                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Total Group Size</p>
                    <p className="font-headline text-3xl font-bold text-slate-900">{numAdults + numChildren} Guests</p>
                 </div>
@@ -236,7 +236,7 @@ const getApiRooms = async () => {
                           <Badge variant="outline" className="rounded-full px-5 py-1.5 text-[10px] font-black uppercase tracking-widest bg-white border-slate-200 text-slate-900 shadow-sm mb-2">
                             {room.tag || 'Premium Stay'}
                           </Badge>
-                          <h3 className="font-headline text-3xl md:text-5xl font-black text-slate-900 leading-[1.1]">
+                          <h3 className="font-headline text-2xl sm:text-3xl md:text-5xl font-black text-slate-900 leading-[1.1]">
                           {(() => {
                             const allocation = numAdults > 0 ? allocateRooms(numAdults, numChildren, room.pricePerNight) : null;
                             const totalRooms = allocation ? allocation.totalRooms : 1;
@@ -285,14 +285,14 @@ const getApiRooms = async () => {
                           {room.shortDescription}
                         </p>
 
-                        <div className="grid grid-cols-2 gap-x-12 gap-y-4 pt-8 border-t border-dashed border-slate-200">
+                        <div className="grid grid-cols-1 xs:grid-cols-2 gap-x-12 gap-y-6 pt-8 border-t border-dashed border-slate-200">
                           <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Price per night</p>
-                            <p className="font-headline text-3xl font-black text-[#5e774a]">₹{room.pricePerNight.toLocaleString()}</p>
+                            <p className="font-headline text-2xl sm:text-3xl font-black text-[#5e774a]">₹{room.pricePerNight.toLocaleString()}</p>
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Key Amenities</p>
-                            <p className="font-headline text-base font-bold text-slate-900 line-clamp-2 leading-tight">
+                            <p className="font-headline text-sm sm:text-base font-bold text-slate-900 line-clamp-2 leading-tight">
                               {room.amenities?.join(', ') || 'Mountain View'}
                             </p>
                           </div>
@@ -357,3 +357,24 @@ const getApiRooms = async () => {
     </div>
   );
 }
+
+export default function RoomsPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-[#fcfcfc] min-h-screen">
+        <div className="container mx-auto px-4 py-32 animate-pulse">
+          <div className="h-10 w-48 bg-slate-100 rounded-full mx-auto mb-8" />
+          <div className="h-4 w-96 bg-slate-100 rounded-full mx-auto mb-16" />
+          <div className="grid grid-cols-1 gap-8 max-w-6xl mx-auto">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-64 bg-slate-50 rounded-[2.5rem] border border-slate-100" />
+            ))}
+          </div>
+        </div>
+      </div>
+    }>
+      <RoomsPageContent />
+    </Suspense>
+  );
+}
+

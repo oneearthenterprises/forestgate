@@ -70,7 +70,6 @@
 
 @layer base {
   html, body {
-    overflow-x: hidden;
     position: relative;
     width: 100%;
     scroll-behavior: auto !important;
