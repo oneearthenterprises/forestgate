@@ -752,12 +752,12 @@ export default function UsersPage() {
                                          <SelectTrigger className="h-10 bg-white border-gray-200">
                                              <SelectValue placeholder="Chose a room..." />
                                          </SelectTrigger>
-                                         <SelectContent>
-                                            {rooms.map((room) => (
-                                                <SelectItem key={room._id} value={room.roomName}>{room.roomName}</SelectItem>
-                                            ))}
-                                            <SelectItem value="custom" className="text-primary font-bold">+ Other (Custom Name)</SelectItem>
-                                         </SelectContent>
+                                          <SelectContent>
+                                             {rooms.map((room, index) => (
+                                                 <SelectItem key={room._id} value={room.roomName}>{101 + index} - {room.roomName}</SelectItem>
+                                             ))}
+                                             <SelectItem value="custom" className="text-primary font-bold">+ Other (Custom Name)</SelectItem>
+                                          </SelectContent>
                                      </Select>
                                  </div>
 
@@ -1388,9 +1388,10 @@ export default function UsersPage() {
                                                     ).filter(room => !!(room.name || room.roomName))
                                                      .map((room, rIdx) => {
                                                         const roomName = room.name || room.roomName;
+                                                        const roomNumber = 101 + rIdx;
                                                         return (
                                                             <SelectItem key={rIdx} value={`room-${rIdx}-${roomName}`}>
-                                                                {roomName}
+                                                                {roomNumber} - {roomName}
                                                             </SelectItem>
                                                         );
                                                     })}

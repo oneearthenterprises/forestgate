@@ -103,10 +103,9 @@ const submitValue = async (e) => {
           <div className="flex flex-col gap-6">
             <Link
               href="/"
-              className="flex items-center gap-2 font-bold text-2xl font-headline text-primary"
+              className="flex items-center gap-2"
             >
-              <MountainSnow className="h-8 w-8" />
-              <span>The Forest Gate</span>
+              <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-9 w-auto" />
             </Link>
             <p className="text-foreground/70 font-light leading-relaxed">
               Luxury Meets Nature in the Heart of Himachal. Experience

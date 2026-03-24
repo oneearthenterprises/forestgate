@@ -172,6 +172,9 @@ function BookingHistoryPageContent() {
         if (booking.specialRequests) {
             params.append('specialRequests', booking.specialRequests);
         }
+        if (booking.guestDetails?.length > 0) {
+            params.append('guestDetails', JSON.stringify(booking.guestDetails));
+        }
         
         return `/booking/confirmation?${params.toString()}`;
     }

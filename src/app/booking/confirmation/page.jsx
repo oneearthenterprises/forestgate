@@ -30,7 +30,15 @@ function ConfirmationPageContent() {
     const allocationRaw = searchParams.get('allocation');
     const specialRequests = searchParams.get('specialRequests');
     const internalNotes = searchParams.get('internalNotes');
+    const guestDetailsRaw = searchParams.get('guestDetails');
     
+    let guestDetails = [];
+    try {
+        guestDetails = guestDetailsRaw ? JSON.parse(guestDetailsRaw) : [];
+    } catch (e) {
+        console.error("Failed to parse guestDetails", e);
+    }
+
     let addons = [];
     try {
         addons = addonsRaw ? JSON.parse(addonsRaw) : [];
@@ -86,9 +94,9 @@ const bookingId = useRef(
                         <CardHeader>
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex items-center gap-3">
-                                    <MountainSnow className="h-10 w-10 text-primary" />
+                                    <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-[34px] w-auto" />
                                     <div>
-                                        <CardTitle className="font-headline text-2xl">The Forest Gate</CardTitle>
+                                        <CardTitle className="font-headline text-2xl font-bold">The Forest Gate</CardTitle>
                                         <CardDescription>Invoice / Booking Confirmation</CardDescription>
                                     </div>
                                 </div>
@@ -115,9 +123,29 @@ const bookingId = useRef(
                                 <div>
                                     <h3 className="font-semibold mb-2">Reservation Details</h3>
                                     <p className="text-muted-foreground">{roomName}</p>
-                                    <p className="text-muted-foreground">Adults {numAdults} </p>
-                                    <p className="text-muted-foreground">Children {numChildren} </p>
-                                    <p className="font-medium">Total Number of Guests: {guests}</p>
+                                    <div className="mt-2 space-y-2">
+                                        <div className="flex flex-wrap gap-2 text-xs">
+                                            <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">Adults {numAdults}</span>
+                                            <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">Children {numChildren}</span>
+                                        </div>
+                                        
+                                        {guestDetails?.length > 0 && (
+                                            <div className="mt-3 space-y-1.5 border-l-2 border-primary/20 pl-3">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Guest Names</p>
+                                                {guestDetails.map((guest, i) => (
+                                                    <div key={i} className="text-sm">
+                                                        <span className="font-bold text-gray-800">{guest.name || `Guest ${i + 1}`}</span>
+                                                        {guest.age && (
+                                                            <span className="text-muted-foreground ml-1.5 text-xs">
+                                                                ({guest.age}y)
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className="font-medium mt-4 text-sm pt-2 border-t border-muted">Total Number of Guests: {guests}</p>
                                 </div>
                             </div>
                             
@@ -200,8 +228,12 @@ const bookingId = useRef(
                                 </div>
                             </div>
 
-                            <div className="pt-6 text-center text-sm text-muted-foreground">
-                                <p>We look forward to welcoming you to The Forest Gate.</p>
+                             <div className="pt-8 border-t border-gray-100 flex flex-col items-center justify-center space-y-3">
+                                <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-9 w-auto grayscale opacity-50" />
+                                <div className="text-center text-xs text-muted-foreground">
+                                    <p className="font-semibold text-primary/80 mb-1">Forest Gate Sanctuary</p>
+                                    <p>We look forward to welcoming you to the serenity of nature.</p>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>

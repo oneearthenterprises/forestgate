@@ -620,12 +620,16 @@ export default function AdminOrdersPage() {
                             if (selectedBooking.allocation) {
                                 params.append("allocation", JSON.stringify(selectedBooking.allocation));
                             }
+                            if (selectedBooking.guestDetails?.length > 0) {
+                                params.append("guestDetails", JSON.stringify(selectedBooking.guestDetails));
+                            }
                             if (selectedBooking.specialRequests) {
                                 params.append("specialRequests", selectedBooking.specialRequests);
                             }
                             if (selectedBooking.internalNotes) {
                                 params.append("internalNotes", selectedBooking.internalNotes);
                             }
+                            const baseUrl = window.location.origin;
                             window.open(`/booking/confirmation?${params.toString()}`, '_blank');
                         }}>
                             Generate Invoice
@@ -817,9 +821,9 @@ export default function AdminOrdersPage() {
                 onChange={(e) => setSelectedRoomId(e.target.value)}
               >
                 <option value="">Select a room...</option>
-                {allRooms.map((room) => (
+                {allRooms.map((room, index) => (
                   <option key={room._id} value={room._id}>
-                    {room.roomName} (₹{room.pricePerNight?.toLocaleString()} / night)
+                    {101 + index} - {room.roomName} (₹{room.pricePerNight?.toLocaleString()} / night)
                   </option>
                 ))}
                 <option value="custom">-- Custom Room Name --</option>

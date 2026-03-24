@@ -29,7 +29,17 @@ export function Header() {
   const { user, logout } = useAuthContext();
   const pathname = usePathname();
   const router = useRouter();
+  const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   if (
     pathname.startsWith('/admin-dashboard') || 
@@ -43,11 +53,12 @@ export function Header() {
   const headerNavLinks = navLinks.filter((link) => link.label !== 'Events');
 
   const headerClasses = cn(
-    'fixed top-0 left-0 right-0 z-50 h-16 bg-card border-b shadow-sm text-foreground'
+    'fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-card border-b shadow-sm text-foreground flex items-center ',
+    isScrolled ? 'h-[90px] ' : 'h-[90px]'
   );
   
   const linkClasses = (href) => cn(
-    'transition-colors font-medium hover:text-primary',
+    'transition-colors font-medium hover:text-primary whitespace-nowrap',
     pathname === href ? 'text-primary font-bold' : 'text-foreground'
   );
 
@@ -60,9 +71,12 @@ export function Header() {
     <header className={headerClasses}>
       <div className="container mx-auto flex h-full items-center px-4">
         <div className="flex-1 flex justify-start">
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl font-headline text-primary">
-              <MountainSnow className="h-6 w-6" />
-              <span>The Forest Gate</span>
+            <Link href="/" className="flex items-center gap-2">
+              <img 
+                src={isScrolled ? "/assets/images/forestgateflatelogo.svg" : "/assets/images/forestgatelogo.svg"} 
+                alt="The Forest Gate" 
+                className={cn("w-auto transition-all duration-300", isScrolled ? "h-[15rem]" : "h-[5rem]")} 
+              />
             </Link>
         </div>
 
@@ -174,9 +188,8 @@ export function Header() {
                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="p-6 border-b flex items-center h-16">
                    <SheetClose asChild>
-                    <Link href="/" className="flex items-center gap-2 font-bold text-xl font-headline text-primary">
-                        <MountainSnow className="h-6 w-6" />
-                        <span>The Forest Gate</span>
+                    <Link href="/" className="flex items-center gap-2">
+                        <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-[34px] w-auto" />
                         </Link>
                     </SheetClose>
                 </div>
