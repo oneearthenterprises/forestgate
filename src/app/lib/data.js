@@ -352,28 +352,166 @@ export const faqs = [
 
 export const wildlifeViewpoints = [
   {
+    title: "Leopard",
+    description: "The elusive ghost of the mountains, leopards are occasional visitors to the higher ridges, embodying the raw wilderness of Himachal.",
+    image: "gallery-nature-1",
+    imageHint: "leopard mountain"
+  },
+  {
+    title: "Himalayan Goral",
+    description: "These agile goat-antelopes are masters of the rocky slopes, often seen grazing on the crags during quiet dawn hours.",
+    image: "wildlife-deer",
+    imageHint: "goral mountain"
+  },
+  {
+    title: "Sambar Deer",
+    description: "The largest of the Indian deer, the Sambar is a magnificent sight as it moves through the dense forest undergrowth.",
+    image: "wildlife-deer",
+    imageHint: "sambar deer"
+  },
+  {
+    title: "Barking Deer",
+    description: "Also known as the Indian Muntjac, these small deer are famous for their unique bark-like call that echoes through the valley.",
+    image: "wildlife-deer",
+    imageHint: "muntjac deer"
+  },
+  {
+    title: "Wild Boar",
+    description: "Sturdy and resilient, the wild boar is a common forest dweller, often seen rooting for food in the forest floor's rich soil.",
+    image: "gallery-nature-1",
+    imageHint: "wild boar"
+  },
+  {
+    title: "Golden Jackal",
+    description: "Usually heard before they are seen, the jackal's evening howls are a quintessential part of the mountain's night symphony.",
+    image: "gallery-nature-1",
+    imageHint: "jackal mountain"
+  },
+  {
+    title: "Indian Grey Mongoose",
+    description: "A swift and fearless predator, the mongoose is a helpful presence in our ecosystem, keeping the balance of nature in check.",
+    image: "gallery-nature-2",
+    imageHint: "mongoose nature"
+  },
+  {
+    title: "Rhesus Macaque",
+    description: "Our clever primate neighbors, these macaques are highly social and a delight to observe from a respectful distance.",
+    image: "hero-1",
+    imageHint: "macaque monkey"
+  },
+  {
+    title: "Hanuman Langur",
+    description: "With their silver fur and black faces, these gentle leaf-loving monkeys are often seen leaping gracefully through the high canopy.",
+    image: "hero-1",
+    imageHint: "langur monkey"
+  },
+  {
+    title: "Crested Porcupine",
+    description: "The nocturnal architect of the forest floor, recognizable by its long quills that it uses for defense against predators.",
+    image: "gallery-nature-1",
+    imageHint: "porcupine forest"
+  },
+  {
+    title: "Indian Hare",
+    description: "Quick and alert, the Indian hare can be spotted darting across the open glades during the twilight hours.",
+    image: "gallery-nature-2",
+    imageHint: "hare nature"
+  },
+  {
+    title: "Small Indian Civet",
+    description: "A shy, nocturnal visitor, the civet plays a crucial role in seed dispersal across the Himalayan forest floor.",
+    image: "gallery-nature-1",
+    imageHint: "civet nature"
+  },
+  {
+    title: "Common & Forest Birds",
+    description: "Explore the incredible variety of avian life that calls our sanctuary home. From vibrant songbirds to powerful raptors.",
+    image: "wildlife-peacock",
+    imageHint: "birds mountain"
+  },
+  {
     title: "The Majestic Peacock",
     description: "Our resort is a natural habitat for these stunning birds. You can often see them displaying their vibrant plumage in our expansive lawns during the early mornings.",
     image: "wildlife-peacock",
     imageHint: "peacock nature"
   },
   {
-    title: "Himalayan Monal",
-    description: "The state bird of Himachal Pradesh, known for its multi-colored feathers. Our guided nature trails often lead to sightings of these shy yet beautiful creatures.",
+    title: "Red Junglefowl",
+    description: "The ancestor of the domestic chicken, these birds bring a splash of color and a loud morning call to the forest edge.",
+    image: "wildlife-peacock",
+    imageHint: "junglefowl bird"
+  },
+  {
+    title: "Kalij Pheasant",
+    description: "With its glossy blue-black feathers, the Kalij is a ground-dwelling bird often found in the thick undergrowth.",
     image: "wildlife-monal",
-    imageHint: "monal bird"
+    imageHint: "pheasant bird"
   },
   {
-    title: "Musk Deer",
-    description: "Hidden deep within the surrounding pine forests, these gentle animals are part of the local ecosystem that we strive to protect and respect.",
-    image: "wildlife-deer",
-    imageHint: "deer forest"
+    title: "Crested Serpent Eagle",
+    description: "A powerful raptor often seen soaring high above the valley currents, searching for its next meal.",
+    image: "hero-1",
+    imageHint: "eagle mountain"
   },
   {
-    title: "Exotic Butterflies",
-    description: "During the spring and summer months, our wildflower gardens become a playground for hundreds of species of rare and colorful butterflies.",
+    title: "Black Kite",
+    description: "These skillful flyers are a constant presence in the Himalayan skies, performing acrobatic displays in the wind.",
+    image: "hero-1",
+    imageHint: "kite bird"
+  },
+  {
+    title: "Indian Grey Hornbill",
+    description: "Recognizable by their large bills and unique nesting habits, these birds are essential seed-dispersers for our forests.",
+    image: "wildlife-peacock",
+    imageHint: "hornbill bird"
+  },
+  {
+    title: "White-throated Kingfisher",
+    description: "A brilliant flash of blue, this kingfisher is often seen perched near the river, waiting for a chance to dive.",
     image: "gallery-nature-2",
-    imageHint: "butterfly flower"
+    imageHint: "kingfisher bird"
+  },
+  {
+    title: "Himalayan Bulbul",
+    description: "Cheerful and vocal, the Himalayan Bulbul is one of the most common and delightful birds to spot in our gardens.",
+    image: "gallery-nature-2",
+    imageHint: "bulbul bird"
+  },
+  {
+    title: "Red-vented Bulbul",
+    description: "Recognizable by its red vent and perky crest, this bird is a lively and animated companion to our garden walks.",
+    image: "gallery-nature-2",
+    imageHint: "bulbul bird"
+  },
+  {
+    title: "Jungle Babbler",
+    description: "Always in groups, these 'Seven Sisters' are known for their noisy and social behavior among the shrubs.",
+    image: "gallery-nature-1",
+    imageHint: "babbler bird"
+  },
+  {
+    title: "Oriental Magpie Robin",
+    description: "A beautiful songbird that welcomes the dawn with its melodic and flute-like whistles.",
+    image: "gallery-nature-2",
+    imageHint: "robin bird"
+  },
+  {
+    title: "Rose-ringed Parakeet",
+    description: "Vibrant green and highly social, these parakeets add a tropical touch to our Himalayan sanctuary.",
+    image: "gallery-nature-2",
+    imageHint: "parakeet bird"
+  },
+  {
+    title: "Spotted Dove",
+    description: "The gentle cooing of the spotted dove is a soothing background sound to the peaceful atmosphere of Forest Gate.",
+    image: "gallery-nature-1",
+    imageHint: "dove bird"
+  },
+  {
+    title: "Grey Francolin",
+    description: "A ground-dwelling bird known for its distinctive loud calling, usually heard during the early morning hours.",
+    image: "gallery-nature-1",
+    imageHint: "francolin bird"
   }
 ];
 

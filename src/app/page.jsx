@@ -236,10 +236,10 @@ useEffect(() => {
 
       <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
         <h3 className="text-3xl font-bold">{rooms[0].roomName}</h3>
-        <p>₹{rooms[0].pricePerNight} / per night</p>
-        <Button onClick={() => router.push(`/booking?roomId=${rooms[0]._id}`)}/>
-        
-        
+        <p className="mb-4">₹{rooms[0].pricePerNight} / per night</p>
+        <Button className="rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold h-12 px-10 border-none shadow-lg transition-transform hover:scale-105 active:scale-95">
+            Book Now
+        </Button>
       </div>
     </Link>
   )}
@@ -261,7 +261,10 @@ useEffect(() => {
 
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
           <h4 className="text-xl font-bold">{room.roomName}</h4>
-          <p>₹{room.pricePerNight} / per night</p>
+          <p className="mb-3">₹{room.pricePerNight} / per night</p>
+          <Button size="sm" className="rounded-full font-bold h-9 px-6 bg-white/20 hover:bg-white text-white hover:text-primary backdrop-blur-md border border-white/30 transition-all">
+              Book Now
+          </Button>
         </div>
       </Link>
     ))}
@@ -269,26 +272,9 @@ useEffect(() => {
 
 </div>
 
-              {/* Mobile Carousel & Featured Card */}
+              {/* Mobile Carousel */}
               <div className="lg:hidden space-y-4">
-                {rooms[0] && (
-                  <Link href={`/booking?roomId=${rooms[0]._id}`}
-                    className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full block"
-                  >
-                    <Image
-                      src={rooms[0].images?.[0]?.url}
-                      alt={rooms[0].roomName}
-                      fill
-                      className="object-cover transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h3 className="text-3xl font-bold">{rooms[0].roomName}</h3>
-                      <p>₹{rooms[0].pricePerNight} / per night</p>
-                    </div>
-                  </Link>
-                )}
-                <MobileRoomsCarouselWrapper allRoomsForCarousel={allRoomsForCarousel} seeMoreImages={seeMoreImages} />
+                <MobileRoomsCarouselWrapper allRoomsForCarousel={rooms} seeMoreImages={seeMoreImages} />
               </div>
             </>
           )}

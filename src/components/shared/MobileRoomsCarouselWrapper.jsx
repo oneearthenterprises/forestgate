@@ -13,6 +13,7 @@ import {
 import { Flame, Heart, Star } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Autoplay from 'embla-carousel-autoplay';
+import { Button } from '@/components/ui/button';
 
 export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages }) {
   const autoplay = React.useMemo(
@@ -39,23 +40,27 @@ export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages 
     >
       <CarouselContent className="-ml-4">
         {allRoomsForCarousel.map((room) => {
-            const roomImage = PlaceHolderImages.find((img) => img.id === room.images[0]);
+            const roomImageUrl = typeof room.images?.[0] === 'string' 
+              ? PlaceHolderImages.find((img) => img.id === room.images[0])?.imageUrl 
+              : room.images?.[0]?.url;
+            
+            const roomId = room._id || room.id;
+            const roomName = room.roomName || room.name;
+            const roomPrice = room.pricePerNight || room.price;
+
             return (
-                <CarouselItem key={room.id} className="basis-full sm:basis-1/2 pl-4">
+                <CarouselItem key={roomId} className="basis-full sm:basis-1/2 pl-4">
                     <div className="p-1">
                         <Link
-                            href={`/rooms/${room.id}`}
+                            href={`/booking?roomId=${roomId}`}
                             className="relative block group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full"
                         >
-                            {roomImage && (
+                            {roomImageUrl && (
                                 <Image
-                                    src={roomImage.imageUrl}
-                                    alt={room.name}
+                                    src={roomImageUrl}
+                                    alt={roomName}
                                     fill
                                     className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                    data-ai-hint={roomImage.imageHint}
-                                    placeholder="blur"
-                                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                                 />
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
@@ -70,8 +75,8 @@ export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages 
                                 </div>
                             )}
                             <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                                <h3 className="font-headline text-3xl font-bold">{room.name}</h3>
-                                <p className="text-lg">₹{room.price.toLocaleString()} / per night</p>
+                                <h3 className="font-headline text-3xl font-bold">{roomName}</h3>
+                                <p className="text-lg">₹{roomPrice?.toLocaleString()} / per night</p>
                                 {room.rating && (
                                     <div className="flex items-center gap-2 mt-2">
                                         <div className="flex">
@@ -92,42 +97,17 @@ export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages 
                                         </span>
                                     </div>
                                 )}
+                                <div className="mt-8">
+                                    <Button className="rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold h-10 px-8 transition-all border-none">
+                                        Book Now
+                                    </Button>
+                                </div>
                             </div>
                         </Link>
                     </div>
                 </CarouselItem>
             );
         })}
-        <CarouselItem className="basis-full sm:basis-1/2 pl-4">
-            <div className="p-1 h-full">
-                <Link
-                    href="/rooms"
-                    className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full block h-full"
-                >
-                    <div className="grid grid-cols-2 grid-rows-2 h-full w-full">
-                        {seeMoreImages.slice(0,4).map((image, index) => (
-                            image && (
-                                <div key={index} className="relative h-full w-full overflow-hidden">
-                                    <Image
-                                        src={image.imageUrl}
-                                        alt={image.description}
-                                        fill
-                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                        data-ai-hint={image.imageHint}
-                                        placeholder="blur"
-                                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                                    />
-                                </div>
-                            )
-                        ))}
-                    </div>
-                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white">
-                        <h4 className="font-headline text-2xl font-bold">See more</h4>
-                        <p>+10 more</p>
-                    </div>
-                </Link>
-            </div>
-        </CarouselItem>
       </CarouselContent>
       <div className="flex justify-center mt-8 gap-2">
           <CarouselPrevious className="static translate-y-0"/>

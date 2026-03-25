@@ -301,7 +301,7 @@ const getApiRooms = async () => {
 
                       {/* Right: Actions */}
                       <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed items-center md:items-start">
-                        <Button asChild className="rounded-full font-bold w-full max-w-[160px] shadow-none">
+                        <Button asChild className="rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold w-full max-w-[160px] border-none shadow-lg transition-transform hover:scale-105 active:scale-95">
                           <Link href={`/booking?roomId=${room._id}&guests=${adults}&children=${childrenCount}`}>Book Now</Link>
                         </Button>
                         <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn w-full">

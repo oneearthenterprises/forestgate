@@ -108,15 +108,7 @@ export function HeroScroll() {
           />
         </div>
      
-        <div className="split-image-container relative w-[90vw] md:w-[70vw] max-w-[980px] aspect-video mx-auto mt-12 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
-          <Image 
-            src="https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?auto=format&fit=crop&q=80&w=1200"
-            alt="Sanctuary Landscape"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+       
       </div>
     </div>
   );
@@ -156,12 +148,13 @@ export function HeroScroll() {
         {/* Top Split Layer */}
         <div className="split-layer-top absolute inset-0 z-20 bg-[#fffef8] overflow-hidden [clip-path:inset(0_0_50%_0)] pointer-events-none">
           <div className="absolute inset-0 opacity-20">
-            <Image 
-              src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000"
-              alt="Mountain Intro Background"
-              fill
-              className="object-cover"
-              priority
+            <video 
+            src="https://res.cloudinary.com/djglckvn7/video/upload/v1774429543/DJI_0109_1_1_zuf45y.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
             />
           </div>
           <SplitContent side="top" />
@@ -170,12 +163,13 @@ export function HeroScroll() {
         {/* Bottom Split Layer */}
         <div className="split-layer-bottom absolute inset-0 z-10 bg-[#fffef8] overflow-hidden [clip-path:inset(50%_0_0_0)] pointer-events-none">
           <div className="absolute inset-0 opacity-20">
-            <Image 
-              src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000"
-              alt="Mountain Intro Background"
-              fill
-              className="object-cover"
-              priority
+          <video 
+            src="https://res.cloudinary.com/djglckvn7/video/upload/v1774429543/DJI_0109_1_1_zuf45y.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
             />
           </div>
           <SplitContent side="bottom" />
