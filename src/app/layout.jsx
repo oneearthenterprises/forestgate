@@ -7,11 +7,42 @@ import './react-calendar.css';
 import { AuthContextProvider } from '@/context/AuthContext';
 import { ReCaptchaProvider } from '@/components/providers/ReCaptchaProvider';
 export const metadata = {
-  title: 'The Forest Gate - Luxury Meets Nature in the Heart of Himachal',
+  metadataBase: new URL('https://theforestgate.com'),
+  title: {
+    default: 'The Forest Gate - Luxury Meets Nature in the Heart of Himachal',
+    template: '%s | The Forest Gate',
+  },
   description:
-    'Discover The Forest Gate, a luxury resort offering a unique blend of nature, adventure, and tranquility. Perfect for families, couples, and corporate retreats.',
+    'Discover The Forest Gate, a luxury resort offering a unique blend of nature, adventure, and tranquility in Naggar, Manali. Perfect for families, couples, and corporate retreats.',
+  keywords: [
+    'The Forest Gate',
+    'Luxury Resort Himachal',
+    'Naggar Manali Resort',
+    'Sustainable Luxury Manali',
+    'Best Resort for Families Manali',
+    'Adventure Resort Himachal',
+    'Luxury Cottage Manali',
+    'Himachal Tourism',
+    'Himalayan Sanctuary',
+    'Naggar View Resort',
+    'Luxury Stay Himachal'
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'The Forest Gate - Luxury Himalayan Resort2212',
+    title: 'The Forest Gate - Luxury Himalayan Resort',
     description: 'Experience tranquility and sustainable luxury at The Forest Gate, Naggar, Manali.',
     url: 'https://theforestgate.com',
     siteName: 'The Forest Gate',

@@ -4,6 +4,23 @@ import { PlaceHolderImages } from "../../lib/placeholder-images";
 import { CheckCircle } from "lucide-react";
 import { AmenityCard } from "@/components/shared/AmenityCard";
 
+export const metadata = {
+  title: 'Premium Resort Amenities & Guest Facilities',
+  description: 'Explore the world-class amenities at The Forest Gate, Naggar. From our swimming pool and private cinema to cozy bonfire pits and luxury dining, we offer everything for a perfect Himalayan stay.',
+  keywords: [
+    'Naggar Swimming Pool Resort',
+    'Private Cinema Manali',
+    'Bonfire Resort Himachal',
+    'Luxury Dining Naggar',
+    'Naggar Resort Facilities',
+    'Best Amenities Manali Resort',
+    'Forest Gate Facilities'
+  ],
+  alternates: {
+    canonical: '/amenities'
+  }
+};
+
 export default function AmenitiesPage() {
   const headerImage = PlaceHolderImages.find((img) => img.id === "amenity-pool");
   const otherAmenities = [
