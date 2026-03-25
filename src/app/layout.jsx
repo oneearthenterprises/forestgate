@@ -11,7 +11,7 @@ export const metadata = {
   description:
     'Discover The Forest Gate, a luxury resort offering a unique blend of nature, adventure, and tranquility. Perfect for families, couples, and corporate retreats.',
   openGraph: {
-    title: 'The Forest Gate - Luxury Himalayan Resort',
+    title: 'The Forest Gate - Luxury Himalayan Resort2212',
     description: 'Experience tranquility and sustainable luxury at The Forest Gate, Naggar, Manali.',
     url: 'https://theforestgate.com',
     siteName: 'The Forest Gate',
