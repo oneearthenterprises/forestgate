@@ -17,7 +17,7 @@ export const metadata = {
     siteName: 'The Forest Gate',
     images: [
       {
-        url: 'https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?auto=format&fit=crop&q=80&w=1200&h=630',
+        url: '/assets/images/banner.jpeg',
         width: 1200,
         height: 630,
         alt: 'The Forest Gate Resort',
@@ -30,7 +30,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'The Forest Gate - Luxury Himalayan Resort',
     description: 'Experience tranquility and sustainable luxury at The Forest Gate, Naggar, Manali.',
-    images: ['https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?auto=format&fit=crop&q=80&w=1200&h=630'],
+    images: ['/assets/images/banner.jpeg'],
   },
 };
 
