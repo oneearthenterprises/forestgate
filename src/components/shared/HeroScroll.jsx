@@ -121,7 +121,7 @@ export function HeroScroll() {
         {/* REVEAL UNDERLAY (The target hero content revealed by split) */}
         <div className="absolute inset-0 z-0 flex flex-col items-center justify-center text-center px-4 pt-16">
           <div className="absolute inset-0">
-            <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40">
+            <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-10">
               <source src="https://assets.mixkit.co/videos/preview/kit-drone-view-of-a-dense-forest-in-the-mountains-34531-large.mp4" type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-b from-[#0b2c3d] via-transparent to-[#0b2c3d]" />
