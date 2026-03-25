@@ -70,11 +70,11 @@ export function ManagedBySection({
         right-0
         bottom-0
         top-0
-        z-20
+        z-0
         pointer-events-none
         flex items-center
-        w-[220px]
-        sm:w-[280px]
+        w-[380px]
+        sm:w-[380px] 
         md:w-[340px]
         lg:w-[365px]
         xl:w-[365px]

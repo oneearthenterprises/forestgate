@@ -58,14 +58,16 @@ export function WildlifeCarousel() {
           >
             <CarouselContent className="-ml-4">
               {wildlifeViewpoints.map((point, index) => {
-                const imageData = PlaceHolderImages.find(img => img.id === point.image);
+                const placeholderData = PlaceHolderImages.find(img => img.id === point.image);
+                const imageSrc = point.image.startsWith('/') ? point.image : placeholderData?.imageUrl;
+                
                 return (
                   <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/3">
                     <div className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[500px] shadow-lg transition-all duration-500 hover:shadow-2xl border border-border/50">
                       {/* Background Image */}
-                      {imageData && (
+                      {imageSrc && (
                         <Image
-                          src={imageData.imageUrl}
+                          src={imageSrc}
                           alt={point.title}
                           fill
                           className="object-cover transition-transform duration-[2000ms] group-hover:scale-110"
