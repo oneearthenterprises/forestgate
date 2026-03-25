@@ -75,7 +75,7 @@ export function Header() {
               <img 
                 src={isScrolled ? "/assets/images/forestgateflatelogo.svg" : "/assets/images/forestgatelogo.svg"} 
                 alt="The Forest Gate" 
-                className={cn("w-auto transition-all duration-300", isScrolled ? "h-[15rem]" : "h-[5rem]")} 
+                className={cn("w-auto transition-all duration-300", isScrolled ? "h-[12rem]" : "h-[5rem]")} 
               />
             </Link>
         </div>
@@ -189,7 +189,7 @@ export function Header() {
                 <div className="p-6 border-b flex items-center h-16">
                    <SheetClose asChild>
                     <Link href="/" className="flex items-center gap-2">
-                        <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-[34px] w-auto" />
+                        <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-[60px] w-auto" />
                         </Link>
                     </SheetClose>
                 </div>
@@ -208,7 +208,12 @@ export function Header() {
                     </SheetClose>
                   ))}
 
-                  <div className="mt-10 w-full max-w-[300px] bg-white border border-slate-100 rounded-[2.5rem] p-5 shadow-sm relative group/insta">
+                  <Link 
+                    href="https://www.instagram.com/forestgate.retreat/?hl=en" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-10 w-full max-w-[300px] bg-white border border-slate-100 rounded-[2.5rem] p-5 shadow-sm relative group/insta block transition-transform hover:scale-[1.02]"
+                  >
                       <div className="flex items-start gap-4">
                           <div className="w-14 h-14 rounded-full bg-[#0b2c3d] flex items-center justify-center shrink-0 shadow-lg">
                               <Instagram className="w-7 h-7 text-white" />
@@ -235,15 +240,15 @@ export function Header() {
                                   </div>
                               </div>
                           </div>
-                          <button className="absolute -right-3 top-8 w-10 h-10 rounded-full border border-slate-100 bg-white flex items-center justify-center text-blue-500 hover:bg-slate-50 transition-all shadow-md shrink-0 z-10">
+                          <div className="absolute -right-3 top-8 w-10 h-10 rounded-full border border-slate-100 bg-white flex items-center justify-center text-blue-500 hover:bg-slate-50 transition-all shadow-md shrink-0 z-10">
                               <Check className="w-5 h-5 stroke-[3px]" />
-                          </button>
+                          </div>
                       </div>
                       <p className="mt-5 text-[11px] text-slate-400 font-medium leading-relaxed pr-4">
                           Experience the magic of Himachal through our lens. <br/>
                           Daily updates, guest stories, and exclusive offers.
                       </p>
-                  </div>
+                  </Link>
                 </nav>
                 <div className="p-8 mt-auto border-t bg-muted/10 flex flex-col items-center">
                     {user ? (

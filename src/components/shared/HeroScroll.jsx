@@ -98,16 +98,16 @@ export function HeroScroll() {
   const SplitContent = ({ side }) => (
     <div className={`absolute inset-0 flex flex-col items-center justify-center text-center pt-16`}>
       <div className="split-inner-content w-full max-w-5xl px-4">
-        <h1 className="text-4xl sm:text-6xl md:text-[10rem] font-bold font-headline uppercase leading-none text-slate-900 mb-8 drop-shadow-sm">
-          WE CREATE
-        </h1>
-        <div className={`${side === 'top' ? 'text-container-top' : 'text-container-bottom'} relative h-20 md:h-32 w-full`}>
-          {highlights.map((h, i) => (
-            <p key={i} className="service-name absolute inset-0 opacity-0 text-xl sm:text-3xl md:text-6xl font-black uppercase tracking-widest text-[#fcb101] flex items-center justify-center drop-shadow-md">
-              {h.title}
-            </p>
-          ))}
+        <div className="flex flex-col items-center justify-center mb-12">
+          <Image
+            src="/assets/images/forestgateflatelogo.svg" 
+            alt="The Forest Gate" 
+            width={100}
+            height={100}
+            className="h-[6rem] sm:h-[10rem] md:h-[40rem] w-auto drop-shadow-md" 
+          />
         </div>
+     
         <div className="split-image-container relative w-[90vw] md:w-[70vw] max-w-[980px] aspect-video mx-auto mt-12 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
           <Image 
             src="https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?auto=format&fit=crop&q=80&w=1200"

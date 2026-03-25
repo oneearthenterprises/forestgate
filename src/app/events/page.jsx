@@ -6,9 +6,59 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { BoutiqueTypography } from '@/components/shared/BoutiqueTypography';
 import { AtmosphereCarousel } from '@/components/shared/AtmosphereCarousel';
+import { API } from '@/lib/api/api';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function EventsPage() {
+    const { toast } = useToast();
+    const router = useRouter();
+    const [email, setEmail] = React.useState("");
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
     const bannerImage = "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&q=80&w=2000";
+
+    const handleSubscribe = async (e) => {
+        e.preventDefault();
+        if (!email) return;
+        setIsSubmitting(true);
+
+        try {
+            const res = await fetch(API.newsletteremail, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
+            const data = await res.json();
+
+            if (res.ok || res.status === 201) {
+                toast({
+                    title: "Success",
+                    description: "You have been subscribed to our newsletter!",
+                });
+                setEmail("");
+                router.push("/thanks");
+            } else if (res.status === 409) {
+                toast({
+                    title: "Note",
+                    description: "This email is already subscribed.",
+                });
+            } else {
+                toast({
+                    title: "Error",
+                    description: data.message || "Failed to subscribe. Please try again.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Connection error. Please try again later.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="bg-[#fcfcfc] overflow-x-hidden">
@@ -85,18 +135,17 @@ export default function EventsPage() {
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl mx-auto text-center space-y-8 md:space-y-12">
                         <div className="space-y-4">
-                            <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white/80">
-                                10% OFF CONGRATS PROMO <br className="md:hidden" /> CODES FOR NOVEMBER 2025
-                            </p>
                             <h2 className="text-3xl md:text-5xl lg:text-6xl font-playfair font-bold text-white leading-tight tracking-tight">
-                                15% Off Your Next <br className="hidden md:block" /> Visit By Subscribing
+                                10% Off Your Next <br className="hidden md:block" /> Visit By Subscribing
                             </h2>
                         </div>
 
                         <div className="max-w-2xl mx-auto">
-                            <form className="relative group flex items-center border border-white/30 h-16 md:h-20 bg-white/5 backdrop-blur-sm transition-all focus-within:border-white/60">
+                            <form onSubmit={handleSubscribe} className="relative group flex items-center border border-white/30 h-16 md:h-20 bg-white/5 backdrop-blur-sm transition-all focus-within:border-white/60">
                                 <input 
                                     type="email" 
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Your email" 
                                     className="flex-1 bg-transparent border-none outline-none px-6 md:px-10 text-white placeholder:text-white/40 text-sm md:text-lg font-medium"
                                     required
@@ -104,10 +153,11 @@ export default function EventsPage() {
                                 <div className="h-10 w-px bg-white/20 mx-2" />
                                 <button 
                                     type="submit" 
-                                    className="w-20 md:w-28 h-full flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                                    disabled={isSubmitting}
+                                    className="w-20 md:w-28 h-full flex items-center justify-center text-white hover:bg-white/10 transition-colors disabled:opacity-50"
                                 >
                                     <div className="relative">
-                                        <ArrowRight className="w-6 h-6 md:w-8 md:h-8" />
+                                        <ArrowRight className={`w-6 h-6 md:w-8 md:h-8 ${isSubmitting ? 'animate-pulse' : ''}`} />
                                         <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full" />
                                     </div>
                                 </button>

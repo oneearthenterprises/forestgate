@@ -15,11 +15,13 @@ import {
 import { useState } from "react";
 import { API } from "@/lib/api/api";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export function Footer() {
   const { toast } = useToast();
   const pathname = usePathname();
   const [email, setEmail] = useState("");
+  const router = useRouter();
 
   // Hide footer on admin pages, login, or register pages
   if (
@@ -63,6 +65,7 @@ const submitValue = async (e) => {
           description: data.message,
         });
         setEmail("");
+        router.push("/thanks")
         break;
 
       case 409:
@@ -105,7 +108,7 @@ const submitValue = async (e) => {
               href="/"
               className="flex items-center gap-2"
             >
-              <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-9 w-auto" />
+              <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-[7rem] w-auto" />
             </Link>
             <p className="text-foreground/70 font-light leading-relaxed">
               Luxury Meets Nature in the Heart of Himachal. Experience

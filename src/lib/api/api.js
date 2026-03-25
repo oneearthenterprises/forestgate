@@ -70,6 +70,13 @@ export const API = {
   // welcome popup api
   GetWelcomePopup: `${API_BASE_URL}/api/welcome-popup`,
   UpdateWelcomePopup: `${API_BASE_URL}/api/welcome-popup`,
+
+  // blogs api
+  getBlogs: `${API_BASE_URL}/api/blogs`,
+  createBlog: `${API_BASE_URL}/api/blogs`,
+  getBlogBySlug: (slug) => `${API_BASE_URL}/api/blogs/${slug}`,
+  updateBlog: (id) => `${API_BASE_URL}/api/blogs/${id}`,
+  deleteBlog: (id) => `${API_BASE_URL}/api/blogs/${id}`,
 };
 
 if (typeof window !== "undefined") {

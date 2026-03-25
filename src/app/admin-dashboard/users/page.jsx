@@ -1222,26 +1222,79 @@ export default function UsersPage() {
                             <AlertCircle className="h-4 w-4" />
                             <h4 className="text-[10px] font-bold uppercase tracking-widest">Cancellation Details</h4>
                         </div>
-                        <div className="space-y-2">
-                            {tempBookingData.cancellationReasons?.length > 0 && (
-                                <div className="space-y-1">
+                        {isEditingBooking ? (
+                            <div className="space-y-4">
+                                <div className="space-y-2">
                                     <p className="text-[9px] uppercase font-bold text-muted-foreground italic">Reasons</p>
-                                    <div className="flex flex-wrap gap-1">
-                                        {tempBookingData.cancellationReasons.map((reason, i) => (
-                                            <Badge key={i} variant="outline" className="text-[10px] bg-white text-destructive border-destructive/20 h-5">
-                                                {reason}
-                                            </Badge>
-                                        ))}
+                                    <div className="flex flex-col gap-2">
+                                        {[
+                                            'Room no longer available',
+                                            'Overbooking / scheduling conflict',
+                                            'Guest did not complete payment',
+                                            'Policy violation',
+                                            'Force majeure / property closure',
+                                            'Administrative decision'
+                                        ].map((reason) => {
+                                            const isChecked = (tempBookingData.cancellationReasons || []).includes(reason);
+                                            return (
+                                                <label
+                                                    key={reason}
+                                                    className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors select-none ${
+                                                        isChecked
+                                                            ? 'bg-red-100 border-red-200 text-red-800'
+                                                            : 'bg-white border-transparent hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="accent-red-500 h-4 w-4 shrink-0"
+                                                        checked={isChecked}
+                                                        onChange={() => {
+                                                            const prev = tempBookingData.cancellationReasons || [];
+                                                            const newReasons = isChecked ? prev.filter(r => r !== reason) : [...prev, reason];
+                                                            setTempBookingData({...tempBookingData, cancellationReasons: newReasons});
+                                                        }}
+                                                    />
+                                                    <span className="text-xs font-medium">{reason}</span>
+                                                </label>
+                                            );
+                                        })}
                                     </div>
                                 </div>
-                            )}
-                            {tempBookingData.cancellationNote && (
-                                <div className="space-y-1">
+                                <div className="space-y-2">
                                     <p className="text-[9px] uppercase font-bold text-muted-foreground italic">Additional Note</p>
-                                    <p className="text-xs font-semibold italic text-destructive leading-relaxed">"{tempBookingData.cancellationNote}"</p>
+                                    <Textarea
+                                        className="text-xs resize-none bg-white border-red-100 focus:border-red-300 transition-colors"
+                                        value={tempBookingData.cancellationNote || ''}
+                                        onChange={(e) => setTempBookingData({...tempBookingData, cancellationNote: e.target.value})}
+                                        placeholder="Add any additional details for the guest..."
+                                    />
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {tempBookingData.cancellationReasons?.length > 0 ? (
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] uppercase font-bold text-muted-foreground italic">Reasons</p>
+                                        <div className="flex flex-wrap gap-1">
+                                            {tempBookingData.cancellationReasons.map((reason, i) => (
+                                                <Badge key={i} variant="outline" className="text-[10px] bg-white text-destructive border-destructive/20 h-5">
+                                                    {reason}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="text-[10px] text-destructive/60 italic">No reasons provided.</p>
+                                )}
+                                {tempBookingData.cancellationNote && (
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] uppercase font-bold text-muted-foreground italic">Additional Note</p>
+                                        <p className="text-xs font-semibold italic text-destructive leading-relaxed">"{tempBookingData.cancellationNote}"</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -1390,7 +1443,7 @@ export default function UsersPage() {
                                                         const roomName = room.name || room.roomName;
                                                         const roomNumber = 101 + rIdx;
                                                         return (
-                                                            <SelectItem key={rIdx} value={`room-${rIdx}-${roomName}`}>
+                                                            <SelectItem key={rIdx} value={`${roomNumber} - ${roomName}`}>
                                                                 {roomNumber} - {roomName}
                                                             </SelectItem>
                                                         );
