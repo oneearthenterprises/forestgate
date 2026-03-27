@@ -10,6 +10,12 @@ export function WhatsAppButton() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Check if already dismissed in this session or globally
+    const isDismissed = localStorage.getItem('whatsapp_dismissed') === 'true';
+    if (isDismissed) {
+      setHasAutoClicked(true);
+    }
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
       
@@ -20,8 +26,8 @@ export function WhatsAppButton() {
         setIsVisible(false);
       }
 
-      // Auto-click at 200px
-      if (scrollY > 200 && !hasAutoClicked) {
+      // Auto-click at 200px ONLY if not already dismissed
+      if (scrollY > 200 && !hasAutoClicked && !isDismissed) {
         const whatsappButton = document.querySelector('.floating-whatsapp-button');
         if (whatsappButton) {
           whatsappButton.click();
@@ -41,6 +47,11 @@ export function WhatsAppButton() {
     return null;
   }
 
+  const handleClose = () => {
+    localStorage.setItem('whatsapp_dismissed', 'true');
+    setHasAutoClicked(true);
+  };
+
   const handleSubmit = (event, message) => {
     console.log('WhatsApp message sent:', message);
   };
@@ -59,6 +70,7 @@ export function WhatsAppButton() {
         darkMode={false}
         allowClickAway={false}
         allowEsc={true}
+        onClose={handleClose}
         onSubmit={handleSubmit}
         buttonStyle={{ backgroundColor: '#22c55e' }}
         chatboxStyle={{ borderRadius: '20px' }}

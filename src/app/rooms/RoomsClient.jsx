@@ -17,7 +17,8 @@ import {
 
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
-import {  galleryImages } from '../lib/data';
+import { highlights, amenities, experiences, wildlifeViewpoints } from '../lib/data';
+import galleryImages from '../../lib/gallery-images.json';
 import { PlaceHolderImages } from '../../lib/placeholder-images';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';

@@ -14,7 +14,7 @@ const icons = {
 };
 
 export function AmenityCard({ amenity }) {
-    const amenityImage = PlaceHolderImages.find(
+    const amenityImage = amenity.imageUrl ? { imageUrl: amenity.imageUrl, imageHint: amenity.title } : PlaceHolderImages.find(
         (img) => img.id === amenity.image
     );
     

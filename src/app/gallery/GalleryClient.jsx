@@ -2,14 +2,13 @@
 
 import Image from 'next/image';
 import { PageHeader } from '@/components/shared/PageHeader';
-import { galleryImages } from '../lib/data';
-import { PlaceHolderImages } from '../../lib/placeholder-images';
+import galleryImages from '../../lib/gallery-images.json';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const categories = ['Nature', 'Rooms', 'Activities', 'Pool & Cinema', 'Events & Night Views'];
 
 export default function GalleryClient() {
-    const headerImage = PlaceHolderImages.find((img) => img.id === 'gallery-nature-1');
+    const headerImage = galleryImages.find((img) => img.id === 'gallery-nature-1');
 
     return (
         <div>
@@ -46,11 +45,9 @@ export default function GalleryClient() {
                     <TabsContent value="all" className="mt-8">
                         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
                             {galleryImages.map(image => {
-                                const imageData = PlaceHolderImages.find(p => p.id === image.id);
-                                if (!imageData) return null;
                                 return (
                                     <div key={image.id} className="break-inside-avoid">
-                                        <Image src={imageData.imageUrl} alt={imageData.description} width={500} height={500} className="w-full h-auto rounded-[2rem] shadow-md" data-ai-hint={imageData.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg==" />
+                                        <Image src={image.imageUrl} alt={image.description} width={500} height={500} className="w-full h-auto rounded-[2rem] shadow-md" data-ai-hint={image.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg==" />
                                     </div>
                                 )
                             })}
@@ -63,11 +60,9 @@ export default function GalleryClient() {
                         <TabsContent key={category} value={category} className="mt-8">
                              <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
                                 {filteredImages.map(image => {
-                                    const imageData = PlaceHolderImages.find(p => p.id === image.id);
-                                    if (!imageData) return null;
                                     return (
                                         <div key={image.id} className="break-inside-avoid">
-                                            <Image src={imageData.imageUrl} alt={imageData.description} width={500} height={500} className="w-full h-auto rounded-[2rem] shadow-md" data-ai-hint={imageData.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="/>
+                                            <Image src={image.imageUrl} alt={image.description} width={500} height={500} className="w-full h-auto rounded-[2rem] shadow-md" data-ai-hint={image.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="/>
                                         </div>
                                     )
                                 })}

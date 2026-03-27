@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-  faqs,
-  galleryImages,
   highlights,
   amenities,
+  experiences,
+  wildlifeViewpoints,
+  faqs,
 } from '@/app/lib/data';
+import galleryImages from '@/lib/gallery-images.json';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -42,8 +44,7 @@ export default function HomeClient() {
   
   const seeMoreImages = galleryImages
     .slice(0, 4)
-    .map((img) => PlaceHolderImages.find((p) => p.id === img.id))
-    .filter(Boolean);
+    .filter(img => !!img.imageUrl);
 
   const highlightsWithImages = highlights.map(highlight => {
     let imageId = '';

@@ -3,7 +3,7 @@
     {
       "id": "hero-pool",
       "description": "A luxury resort swimming pool with lounge chairs and a view of the resort building.",
-      "imageUrl": "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXNvcnQlMjBwb29sfGVufDB8fHx8MTc3MDMyNjY5N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXNvcnQlMjBwb29sfGVufDB8fHx8MTc3MDMyNjY2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "resort pool"
     },
     {
@@ -12,6 +12,7 @@
       "imageUrl": "/assets/images/forestgate-image/RIVER VIEW.jpeg",
       "imageHint": "mountain river"
     },
+  
     {
       "id": "room-cottage-1",
       "description": "Interior of a luxury cottage with a king-sized bed and wooden decor.",
@@ -63,14 +64,14 @@
     {
       "id": "exp-trekking",
       "description": "A group of people trekking on a mountain trail.",
-      "imageUrl": "https://images.unsplash.com/photo-1660231226843-a24144d4a933?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMHRyZWtraW5nfGVufDB8fHx8MTc3MDIxNjM3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/mountain trekking.jpg",
       "imageHint": "mountain trekking"
     },
     {
-      "id": "exp-river-relax",
-      "description": "A person meditating by the river.",
-      "imageUrl": "https://images.unsplash.com/photo-1755173095906-22500ce60b5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaXZlciUyMG1lZGl0YXRpb258ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "river meditation"
+      "id": "exp-stargazing",
+      "description": "A clear night sky full of stars over the mountains.",
+      "imageUrl": "/assets/images/forestgate-image/Bonfire.jpg",
+      "imageHint": "night sky"
     },
     {
       "id": "exp-sports",
@@ -78,6 +79,19 @@
       "imageUrl": "/assets/images/forestgate-image/ADVENTURE ACTIVITIES.jpg",
       "imageHint": "ziplining adventure"
     },
+    {
+      "id": "exp-pet-friendly",
+      "description": "A person playing with a dog in a large open field.",
+      "imageUrl": "/assets/images/forestgate-image/Family & Pet Friendly.jpg",
+      "imageHint": "dog park"
+    },
+    {
+      "id": "exp-river-relax",
+      "description": "A person meditating by the river.",
+      "imageUrl": "https://images.unsplash.com/photo-1755173095906-22500ce60b5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaXZlciUyMG1lZGl0YXRpb258ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "river meditation"
+    },
+  
     {
       "id": "exp-outdoor-games",
       "description": "People playing badminton on a green lawn.",
@@ -90,24 +104,14 @@
       "imageUrl": "https://images.unsplash.com/photo-1621003464605-d12c07691367?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxraWRzJTIwcGxheWdyb3VuZHxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "kids playground"
     },
-    {
-      "id": "exp-pet-friendly",
-      "description": "A person playing with a dog in a large open field.",
-      "imageUrl": "/assets/images/forestgate-image/Family & Pet Friendly.jpg",
-      "imageHint": "dog park"
-    },
+   
     {
       "id": "exp-bird-watching",
       "description": "A colorful bird sitting on a tree branch.",
       "imageUrl": "https://images.unsplash.com/photo-1682788819202-c8c1ff49b6ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxleG90aWMlMjBiaXJkfGVufDB8fHx8MTc3MDI4MTYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "exotic bird"
     },
-    {
-      "id": "exp-stargazing",
-      "description": "A clear night sky full of stars over the mountains.",
-      "imageUrl": "/assets/images/forestgate-image/Bonfire.jpg",
-      "imageHint": "night sky"
-    },
+  
     {
       "id": "amenity-pool",
       "description": "An infinity pool with a stunning mountain view.",
@@ -159,7 +163,7 @@
     {
       "id": "gallery-rooms-1",
       "description": "A beautifully made bed in a hotel room.",
-      "imageUrl": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGJlZHxlbnwwfHx8fDE3NzAyNTcyMjl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/ROOM 1.jpeg",
       "imageHint": "hotel bed"
     },
     {
@@ -177,14 +181,8 @@
     {
       "id": "gallery-events-1",
       "description": "A wedding ceremony setup with a mountain backdrop.",
-      "imageUrl": "https://images.unsplash.com/photo-1726508684402-ee6029833696?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtb3VudGFpbiUyMHdlZGRpbmd8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/ROOMS.jpeg",
       "imageHint": "mountain wedding"
-    },
-    {
-      "id": "gallery-night-1",
-      "description": "The resort lit up at night under a starry sky.",
-      "imageUrl": "https://images.unsplash.com/photo-1558387508-e83890617dc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyZXNvcnQlMjBuaWdodHxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "resort night"
     },
     {
       "id": "about-resort",
@@ -192,6 +190,13 @@
       "imageUrl": "/assets/images/forestgate-image/MOUNTAIN.png",
       "imageHint": "mountain resort"
     },
+    {
+      "id": "gallery-night-1",
+      "description": "The resort lit up at night under a starry sky.",
+      "imageUrl": "https://images.unsplash.com/photo-1558387508-e83890617dc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyZXNvcnQlMjBuaWdodHxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "resort night"
+    },
+
     {
       "id": "map-placeholder",
       "description": "A stylized map showing the location of The Forest Gate.",

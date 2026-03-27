@@ -178,48 +178,60 @@ export const experiences = [
     description:
       "Explore guided treks through lush forests and discover hidden waterfalls.",
     image: "exp-trekking",
+    imageUrl: "/assets/images/forestgate-image/mountain trekking.jpg",
   },
   {
     title: "River Relaxation",
     description:
       "Unwind at serene spots along the river, perfect for meditation or a picnic.",
     image: "exp-river-relax",
+    imageUrl:
+      "https://images.unsplash.com/photo-1755173095906-22500ce60b5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaXZlciUyMG1lZGl0YXRpb258ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
   },
   {
     title: "Sports & Adventure",
     description:
       "Get your adrenaline pumping with activities like ziplining and rock climbing.",
     image: "exp-sports",
+    imageUrl: "/assets/images/forestgate-image/ADVENTURE ACTIVITIES.jpg",
   },
   {
     title: "Outdoor Games",
     description:
       "Enjoy fun-filled afternoons with badminton, cricket, and more on our lawns.",
     image: "exp-outdoor-games",
+    imageUrl:
+      "https://images.unsplash.com/photo-1611153390516-995f4a8c0f2e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxvdXRkb29yJTIwZ2FtZXN8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
   },
   {
     title: "Kids Play Zone",
     description:
       "A safe and exciting area for children to play and make new friends.",
     image: "exp-kids-zone",
+    imageUrl:
+      "https://images.unsplash.com/photo-1621003464605-d12c07691367?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxraWRzJTIwcGxheWdyb3VuZHxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
   },
   {
     title: "Pet-Friendly Areas",
     description:
       "Spacious open areas where your furry friends can run and play freely.",
     image: "exp-pet-friendly",
+    imageUrl: "/assets/images/forestgate-image/Family & Pet Friendly.jpg",
   },
   {
     title: "Bird Watching",
     description:
       "Discover the diverse avian life with our expert-led bird watching tours.",
     image: "exp-bird-watching",
+    imageUrl:
+      "https://images.unsplash.com/photo-1682788819202-c8c1ff49b6ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxleG90aWMlMjBiaXJkfGVufDB8fHx8MTc3MDI4MTYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
   },
   {
     title: "Stargazing",
     description:
       "Witness the magic of the cosmos with our open sky views, far from city lights.",
     image: "exp-stargazing",
+    imageUrl: "/assets/images/forestgate-image/Bonfire.jpg",
   },
 ];
 
@@ -291,6 +303,7 @@ export const amenities = [
     longDescription:
       "Our stunning infinity pool is the centerpiece of relaxation at The Forest Gate. Heated to the perfect temperature year-round, it offers an unparalleled swimming experience with panoramic views of the snow-capped Himalayan peaks. Lounge on the comfortable sunbeds, sip a refreshing drink from the poolside bar, and let the majestic scenery wash over you. It's the perfect spot to unwind after a day of exploring.",
     image: "amenity-pool",
+    imageUrl: "/assets/images/forestgate-image/POOLSIDE SUNSET PARTY.jpg",
     iconName: "waves",
   },
   {
@@ -301,6 +314,8 @@ export const amenities = [
     longDescription:
       "Experience movie magic in our exclusive mini cinema. Featuring plush, reclining seats, a state-of-the-art surround sound system, and a large, high-definition screen, it's the perfect venue for a private movie night. Choose from our extensive library of films or connect your own device to enjoy your favorite content. Popcorn and snacks are, of course, part of the experience.",
     image: "amenity-cinema",
+    imageUrl:
+      "https://images.unsplash.com/flagged/photo-1572609239482-d3a83f976aa0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxob21lJTIwdGhlYXRlcnxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
     iconName: "sparkles",
   },
   {
@@ -311,6 +326,7 @@ export const amenities = [
     longDescription:
       "There's nothing quite like dining under a blanket of stars. Our open-sky dining area offers an unforgettable culinary journey amidst the beauty of nature. Whether it's a romantic dinner for two or a special celebration with family, our chefs will prepare a delectable meal using fresh, local ingredients, all while you enjoy the crisp mountain air and the celestial display above.",
     image: "amenity-dining",
+    imageUrl: "/assets/images/forestgate-image/open sky dining.png",
     iconName: "sun",
   },
   {
@@ -321,6 +337,8 @@ export const amenities = [
     longDescription:
       "Fun and recreation are always on the agenda at The Forest Gate. Our indoor game room is equipped with a pool table, table tennis, carrom, and various board games. Step outside onto our lush lawns for a friendly match of badminton or cricket. We provide all the necessary equipment, so all you need to bring is your competitive spirit.",
     image: "amenity-games",
+    imageUrl:
+      "https://images.unsplash.com/photo-1636488363495-a06805603784?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxnYW1lJTIwcm9vbXxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
     iconName: "bike",
   },
   {
@@ -331,6 +349,8 @@ export const amenities = [
     longDescription:
       "With its stunning backdrop and versatile venues, The Forest Gate is the ideal location for your next event. We offer both indoor and outdoor spaces that can be customized for destination weddings, corporate retreats, or private parties. Our dedicated event planning team will work with you to ensure every detail is perfect, from decor and catering to entertainment and accommodations.",
     image: "amenity-events",
+    imageUrl:
+      "https://images.unsplash.com/photo-1515168833906-d2a3b82b302a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxldmVudCUyMHNwYWNlfGVufDB8fHx8MTc3MDI4MTYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
     iconName: "heart-handshake",
   },
   {
@@ -341,23 +361,9 @@ export const amenities = [
     longDescription:
       "As the sun sets and the mountain air turns crisp, gather around our roaring bonfire. It's a time-honored tradition at The Forest Gate, perfect for sharing stories, singing songs, or simply enjoying the warmth and a hot beverage. We often arrange live acoustic music and serve delicious snacks, creating a magical and memorable evening for all our guests.",
     image: "amenity-bonfire",
+    imageUrl: "/assets/images/forestgate-image/Bonfire.jpg",
     iconName: "sparkles",
   },
-];
-
-export const galleryImages = [
-  { id: "gallery-nature-1", category: "Nature" },
-  { id: "gallery-rooms-1", category: "Rooms" },
-  { id: "gallery-activities-1", category: "Activities" },
-  { id: "gallery-pool-1", category: "Pool & Cinema" },
-  { id: "gallery-events-1", category: "Events & Night Views" },
-  { id: "gallery-nature-2", category: "Nature" },
-  { id: "room-cottage-2", category: "Rooms" },
-  { id: "exp-sports", category: "Activities" },
-  { id: "amenity-cinema", category: "Pool & Cinema" },
-  { id: "gallery-night-1", category: "Events & Night Views" },
-  { id: "hero-1", category: "Nature" },
-  { id: "room-river-1", category: "Rooms" },
 ];
 
 export const faqs = [
@@ -421,13 +427,16 @@ export const wildlifeViewpoints = [
       "Also known as the Indian Muntjac, these small deer are famous for their unique bark-like call that echoes through the valley.",
     image:
       "/assets/images/forestgate animal photos/Barking Deer (Indian Muntjac).jpg",
+    imageUrl:
+      "/assets/images/forestgate animal photos/Barking Deer (Indian Muntjac).jpg",
     imageHint: "muntjac deer",
   },
   {
     title: "Wild Boar",
     description:
       "Sturdy and resilient, the wild boar is a common forest dweller, often seen rooting for food in the forest floor's rich soil.",
-    image: "/assets/images/forestgate animal photos/real image in forest.webp",
+    image: "/assets/images/forestgate animal photos/Wild Boar.jpg",
+    imageUrl: "/assets/images/forestgate animal photos/Wild Boar.jpg",
     imageHint: "wild boar",
   },
   {

@@ -58,8 +58,7 @@ export function WildlifeCarousel() {
           >
             <CarouselContent className="-ml-4">
               {wildlifeViewpoints.map((point, index) => {
-                const placeholderData = PlaceHolderImages.find(img => img.id === point.image);
-                const imageSrc = point.image.startsWith('/') ? point.image : placeholderData?.imageUrl;
+                const imageSrc = point.imageUrl || (point.image.startsWith('/') ? point.image : PlaceHolderImages.find(img => img.id === point.image)?.imageUrl);
                 
                 return (
                   <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/3">

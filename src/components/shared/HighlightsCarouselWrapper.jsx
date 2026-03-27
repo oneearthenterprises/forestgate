@@ -11,61 +11,78 @@ import {
 } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 
-export function HighlightsCarouselWrapper({ highlightsWithImages }) {
-  const autoplay = React.useMemo(
-    () => (typeof Autoplay === 'function' ? Autoplay({ 
-      delay: 3000, 
-      stopOnInteraction: false,
-      stopOnMouseEnter: true
-    }) : null),
-    []
-  );
+const Data = [
+  {
+    id: 'hero-1',
+    title: 'River View',
+    imageUrl: '/assets/images/forestgate-image/RIVER VIEW.jpeg',
+  },
+  {
+    id: 'exp-sports',
+    title: 'Adventure Activities',
+    imageUrl: '/assets/images/forestgate-image/ADVENTURE ACTIVITIES.jpg',
+  },
+  {
+    id: 'exp-pet-friendly',
+    title: 'Family & Pet Friendly',
+    imageUrl: '/assets/images/forestgate-image/Family & Pet Friendly.jpg',
+  },
+  {
+    id: 'exp-stargazing',
+    title: 'Bonfire',
+    imageUrl: '/assets/images/forestgate-image/Bonfire.jpg',
+  },
+  {
+    id: 'about-resort',
+    title: 'Mountain View',
+    imageUrl: '/assets/images/forestgate-image/MOUNTAIN.png',
+  },
+  {
+    id: 'exp-pet-friendly',
+    title: 'Family & Pet Friendly',
+    imageUrl: '/assets/images/forestgate-image/Family & Pet Friendly.jpg',
+  },
+];
 
-  const plugins = React.useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
-  
-  const carouselOpts = React.useMemo(() => ({
-    align: "start",
-    loop: true,
-  }), []);
-
-  if (!highlightsWithImages || highlightsWithImages.length === 0) {
-    return null;
-  }
+export function HighlightsCarouselWrapper() {
+  const autoplay = Autoplay({
+    delay: 2000,
+    stopOnInteraction: false,
+    stopOnMouseEnter: true,
+  });
 
   return (
-    <Carousel 
-      opts={carouselOpts} 
-      plugins={plugins}
+    <Carousel
+      opts={{ align: 'start', loop: true }}
+      plugins={[autoplay]}
       className="w-full"
     >
       <CarouselContent className="-ml-4 gap-3 p-3">
-        {highlightsWithImages.map((highlight) => (
-          <CarouselItem key={highlight.title} className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 shadow-none">
+        {Data.map((item) => (
+          <CarouselItem
+            key={item.id}
+            className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+          >
             <div className="flex flex-col items-center gap-4 group md:py-12 py-5">
-              <div className="relative w-[10rem] h-[17rem] sm:w-32 sm:h-32 md:w-[280px] md:h-[410px] overflow-hidden rounded-full shadow-none transition-all duration-500 group-hover:scale-105 border-4 border-white/10">
-                {highlight.image && (
-                  <Image
-                    src={highlight.image.imageUrl}
-                    alt={highlight.title}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={highlight.image.imageHint}
-                    placeholder="blur"
-                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-                  />
-                )}
+              <div className="relative w-[10rem] h-[17rem] md:w-[280px] md:h-[410px] overflow-hidden rounded-full border-4 border-white/10">
+                <Image
+                  src={item.imageUrl}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <div className="text-center">
-                <h3 className="text-base md:text-xl font-bold tracking-tight text-foreground transition-colors duration-300">
-                  {highlight.title}
-                </h3>
-              </div>
+
+              <h3 className="text-base md:text-xl font-bold text-center">
+                {item.title}
+              </h3>
             </div>
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="hidden md:flex -left-12 h-10 w-10 border-none bg-white/30 text-white hover:bg-white/50" />
-      <CarouselNext className="hidden md:flex -right-12 h-10 w-10 border-none bg-white/30 text-white hover:bg-white/50" />
+
+      <CarouselPrevious className="hidden md:flex -left-12 h-10 w-10" />
+      <CarouselNext className="hidden md:flex -right-12 h-10 w-10" />
     </Carousel>
   );
 }

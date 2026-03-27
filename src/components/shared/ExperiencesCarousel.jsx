@@ -57,7 +57,7 @@ export function ExperiencesCarousel() {
     >
       <CarouselContent className="-ml-4">
         {experiences.map((exp, index) => {
-          const expImage = PlaceHolderImages.find((img) => img.id === exp.image);
+          const expImage = exp.imageUrl ? { imageUrl: exp.imageUrl, imageHint: exp.title } : PlaceHolderImages.find((img) => img.id === exp.image);
           return (
             <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
               <div className="p-1">

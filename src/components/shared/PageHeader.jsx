@@ -16,7 +16,7 @@ import { motion } from "framer-motion";
  */
 export function PageHeader({ title, subtitle, imageUrl, breadcrumbLabel }) {
   // Use a high-impact default background if none is provided
-  const background = imageUrl || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200";
+  const background = imageUrl || "";
 
   return (
     <section
