@@ -38,11 +38,11 @@ export function HighlightsCarouselWrapper({ highlightsWithImages }) {
       plugins={plugins}
       className="w-full"
     >
-      <CarouselContent className="-ml-4">
+      <CarouselContent className="-ml-4 gap-3 p-3">
         {highlightsWithImages.map((highlight) => (
-          <CarouselItem key={highlight.title} className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
-            <div className="flex flex-col items-center gap-4 group py-12">
-              <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-[150px] md:h-[150px] overflow-hidden rounded-full shadow-2xl transition-all duration-500 group-hover:scale-105 border-4 border-white/10">
+          <CarouselItem key={highlight.title} className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 shadow-none">
+            <div className="flex flex-col items-center gap-4 group md:py-12 py-5">
+              <div className="relative w-[10rem] h-[17rem] sm:w-32 sm:h-32 md:w-[280px] md:h-[410px] overflow-hidden rounded-full shadow-none transition-all duration-500 group-hover:scale-105 border-4 border-white/10">
                 {highlight.image && (
                   <Image
                     src={highlight.image.imageUrl}

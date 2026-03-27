@@ -9,7 +9,7 @@
     {
       "id": "hero-1",
       "description": "Panoramic view of mountains and a river at sunrise.",
-      "imageUrl": "https://images.unsplash.com/photo-1604484574634-a54f529ff2c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtb3VudGFpbiUyMHJpdmVyfGVufDB8fHx8MTc3MjI2NTAwMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/RIVER VIEW.jpeg",
       "imageHint": "mountain river"
     },
     {
@@ -27,7 +27,7 @@
     {
       "id": "room-river-1",
       "description": "River view room with large windows showing the flowing river.",
-      "imageUrl": "https://images.unsplash.com/photo-1689006741104-19668f5682b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxyaXZlciUyMHZpZXd8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/RIVER VIEW.jpg",
       "imageHint": "river view"
     },
     {
@@ -75,7 +75,7 @@
     {
       "id": "exp-sports",
       "description": "Someone ziplining through the trees.",
-      "imageUrl": "https://images.unsplash.com/photo-1661636634759-ca84b67798c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx6aXBsaW5pbmclMjBhZHZlbnR1cmV8ZW58MHx8fHwxNzcwMjgxNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/ADVENTURE ACTIVITIES.jpg",
       "imageHint": "ziplining adventure"
     },
     {
@@ -93,7 +93,7 @@
     {
       "id": "exp-pet-friendly",
       "description": "A person playing with a dog in a large open field.",
-      "imageUrl": "https://images.unsplash.com/photo-1668757183096-bc55a8992558?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZG9nJTIwcGFya3xlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/Family & Pet Friendly.jpg",
       "imageHint": "dog park"
     },
     {
@@ -105,7 +105,7 @@
     {
       "id": "exp-stargazing",
       "description": "A clear night sky full of stars over the mountains.",
-      "imageUrl": "https://images.unsplash.com/photo-1528353518104-dbd48bee7bc4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuaWdodCUyMHNreXxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/Bonfire.jpg",
       "imageHint": "night sky"
     },
     {
@@ -189,7 +189,7 @@
     {
       "id": "about-resort",
       "description": "A beautiful view of the resort nestled in the mountains",
-      "imageUrl": "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMHJlc29ydHxlbnwwfHx8fDE3NzAxOTY2NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/assets/images/forestgate-image/MOUNTAIN.png",
       "imageHint": "mountain resort"
     },
     {

@@ -95,16 +95,16 @@ export function HeroScroll() {
       style={{ top: side === 'top' ? '0' : '-49.5vh' }}
     >
       <div className="absolute inset-0  bg-primary/20 pointer-events-none">
-        <video 
+        {/* <video 
           src="https://res.cloudinary.com/djglckvn7/video/upload/v1774429543/DJI_0109_1_1_zuf45y.mp4"
           autoPlay
           loop
           muted
           playsInline
           className="w-full h-full object-cover"
-        />
+        /> */}
         {/* Shutter Linear Gradient (Opens with the split) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-transparent to-primary/40 opacity-70"></div>
+        <div className="absolute inset-0 bg-white"></div>
       </div>
       <div className="split-inner-content relative z-10 w-full max-w-5xl px-4 flex flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center">
@@ -113,7 +113,7 @@ export function HeroScroll() {
             alt="The Forest Gate" 
             width={100}
             height={100}
-            className="h-[20rem] sm:h-[15rem] md:h-[40rem] w-auto drop-shadow-md" 
+            className="h-[20rem] sm:h-[15rem] md:h-[70rem] w-auto drop-shadow-md" 
           />
         </div>
       </div>

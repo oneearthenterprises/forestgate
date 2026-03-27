@@ -1,4 +1,5 @@
 import { Toaster } from '@/components/ui/toaster';
+import Script from 'next/script';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton';
@@ -6,6 +7,7 @@ import './globals.css';
 import './react-calendar.css';
 import { AuthContextProvider } from '@/context/AuthContext';
 import { ReCaptchaProvider } from '@/components/providers/ReCaptchaProvider';
+
 export const metadata = {
   metadataBase: new URL('https://theforestgate.com'),
   title: {
@@ -77,17 +79,40 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Playfair+Display:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <Script id="facebook-pixel" strategy="afterInteractive">
+          {`
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '25910053185333480');
+            fbq('track', 'PageView');
+          `}
+        </Script>
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
-          <ReCaptchaProvider>
-            <AuthContextProvider>
-              <Header />
-              <main>{children}</main>
-              <Footer />
-              <WhatsAppButton />
-              <Toaster />
-            </AuthContextProvider>
-          </ReCaptchaProvider>
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            src="https://www.facebook.com/tr?id=25910053185333480&ev=PageView&noscript=1"
+            alt="facebook-pixel-noscript"
+          />
+        </noscript>
+        <ReCaptchaProvider>
+          <AuthContextProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <WhatsAppButton />
+            <Toaster />
+          </AuthContextProvider>
+        </ReCaptchaProvider>
       </body>
     </html>
   );

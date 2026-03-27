@@ -145,7 +145,7 @@ export default function HomeClient() {
       </motion.section>
 
       <motion.section {...fadeInUp} id="about-preview">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 eeeeee">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <p className="mb-2" style={sectionLabelStyle}>About Us</p>
@@ -165,11 +165,11 @@ export default function HomeClient() {
             </div>
             <div className="relative overflow-hidden rounded-2xl group">
               <Image
-                src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=1200"
+                src="/assets/images/forestgate-image/RIVER VIEW.jpeg"
                 alt="Deep forest sanctuary path"
                 width={600}
-                height={400}
-                className="rounded-lg shadow-lg transition-transform duration-700 group-hover:scale-105 object-cover aspect-video"
+                height={600}
+                className="rounded-lg h-[500px] shadow-lg transition-transform duration-700 group-hover:scale-105 object-cover aspect-video"
                 data-ai-hint="deep forest"
                 placeholder="blur"
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
