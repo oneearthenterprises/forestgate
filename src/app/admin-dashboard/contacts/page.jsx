@@ -33,6 +33,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination-nav';
+import { Download } from 'lucide-react';
 
 export default function ContactsPage() {
   const [selectedMessage, setSelectedMessage] = useState(null);
@@ -121,10 +122,68 @@ export default function ContactsPage() {
     }
   };
 
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch(`${API.ContactUsGet}?page=1&limit=1000`);
+      const data = await response.json();
+      const allMessages = data.contact || [];
+
+      if (allMessages.length === 0) {
+        toast({ title: "No data to export", description: "There are no messages to download." });
+        return;
+      }
+
+      const headers = ["Full Name", "Email", "Message", "Received At"];
+      const rows = allMessages.map(m => [
+        `"${m.fullName || 'N/A'}"`,
+        m.email || 'N/A',
+        `"${(m.message || '').replace(/"/g, '""')}"`, // Handle quotes in messages
+        m.createdAt ? format(parseISO(m.createdAt), 'yyyy-MM-dd HH:mm') : 'N/A'
+      ]);
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `forest_gate_contacts_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({ title: "Export Successful", description: `Exported ${allMessages.length} messages to CSV.` });
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast({ variant: "destructive", title: "Export Failed", description: "An error occurred while generating the CSV." });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold font-headline">Contact Messages</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold font-headline">Contact Messages</h1>
+        <Button 
+          variant="outline" 
+          onClick={handleExportCSV} 
+          disabled={isExporting || (messages && messages.length === 0)}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          {isExporting ? "Exporting..." : "Export CSV"}
+        </Button>
+      </div>
 
       <Card>
         <CardHeader>

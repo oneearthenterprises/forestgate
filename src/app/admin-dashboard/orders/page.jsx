@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import { MoreHorizontal, Eye, CheckCircle, XCircle, AlertCircle, ThumbsUp, DoorOpen } from 'lucide-react';
+import { MoreHorizontal, Eye, CheckCircle, XCircle, AlertCircle, ThumbsUp, DoorOpen, Download } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -103,6 +103,85 @@ export default function AdminOrdersPage() {
       setIsCancelling(false);
     }
   };
+
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    try {
+      // Fetch a larger set for export (e.g., 1000)
+      const response = await fetch(`${API.GetBooking}?page=1&limit=1000`);
+      const data = await response.json();
+      const allBookings = data.bookings || [];
+
+      if (allBookings.length === 0) {
+        toast({ title: "No data to export", description: "There are no bookings to download." });
+        return;
+      }
+
+      // Define CSV headers
+      const headers = [
+        "Booking ID",
+        "Guest Name",
+        "Guest Email",
+        "Room/Type",
+        "Check-In",
+        "Check-Out",
+        "Total Price",
+        "Status",
+        "Payment Status",
+        "Created At"
+      ];
+
+      // Map data to rows
+      const rows = allBookings.map(b => {
+        const checkIn = b.checkIn ? format(parseISO(b.checkIn), 'yyyy-MM-dd') : 'N/A';
+        const checkOut = b.checkOut ? format(parseISO(b.checkOut), 'yyyy-MM-dd') : 'N/A';
+        const createdAt = b.createdAt ? format(parseISO(b.createdAt), 'yyyy-MM-dd HH:mm') : 'N/A';
+        const roomName = b.allocation && b.allocation.length > 0 
+          ? b.allocation.map(a => a.name).join("; ") 
+          : (b.roomName || b.bookingType || 'N/A');
+
+        return [
+          b.bookingId || b._id,
+          b.fullName || b.userName || 'N/A',
+          b.email || b.userEmail || 'N/A',
+          `"${roomName}"`, // Quote to handle semicolons/commas
+          checkIn,
+          checkOut,
+          b.totalAmount || 0,
+          b.status || 'Upcoming',
+          b.paymentStatus || 'Unpaid',
+          createdAt
+        ];
+      });
+
+      // Combine into CSV string
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+
+      // Create download link
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `forest_gate_bookings_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({ title: "Export Successful", description: `Exported ${allBookings.length} bookings to CSV.` });
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast({ variant: "destructive", title: "Export Failed", description: "An error occurred while generating the CSV." });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
 
   // Fetch bookings
   const fetchBookings = async (page = 1) => {
@@ -273,6 +352,15 @@ export default function AdminOrdersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold font-headline">Manage Orders</h1>
+        <Button 
+          variant="outline" 
+          onClick={handleExportCSV} 
+          disabled={isExporting || bookingsList.length === 0}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          {isExporting ? "Exporting..." : "Export CSV"}
+        </Button>
       </div>
       
       <Card>

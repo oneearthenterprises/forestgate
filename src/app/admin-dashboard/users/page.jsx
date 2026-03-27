@@ -22,7 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { API } from '@/lib/api/api';
 import { Badge } from '@/components/ui/badge';
 import { cn } from "@/lib/utils";
-import { ArrowRight, Search, AlertCircle, Users } from "lucide-react";
+import { ArrowRight, Search, AlertCircle, Users, Download } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -409,6 +409,55 @@ export default function UsersPage() {
     }
   };
 
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch(`${API.getAllUsers}?page=1&limit=1000`);
+      const data = await response.json();
+      const allUsers = data.users || [];
+
+      if (allUsers.length === 0) {
+        toast({ title: "No data to export", description: "There are no users to download." });
+        return;
+      }
+
+      const headers = ["User Name", "Email", "Phone", "Booking Count", "Joined Date"];
+      const rows = allUsers.map(u => [
+        `"${u.name || 'N/A'}"`,
+        u.email || 'N/A',
+        u.phone || 'N/A',
+        u.bookingCount || 0,
+        u.createdAt ? format(parseISO(u.createdAt), 'yyyy-MM-dd') : 'N/A'
+      ]);
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `forest_gate_users_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({ title: "Export Successful", description: `Exported ${allUsers.length} users to CSV.` });
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast({ variant: "destructive", title: "Export Failed", description: "An error occurred while generating the CSV." });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+
+
   if (loading) {
     return (
       <div className="space-y-6 text-[#1a1a1a]">
@@ -455,6 +504,15 @@ export default function UsersPage() {
     <div className="space-y-6 text-[#1a1a1a]">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-headline tracking-tight">Registered Users</h1>
+        <Button 
+          variant="outline" 
+          onClick={handleExportCSV} 
+          disabled={isExporting || users.length === 0}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          {isExporting ? "Exporting..." : "Export CSV"}
+        </Button>
       </div>
 
       <Card className="border-none shadow-sm overflow-hidden">

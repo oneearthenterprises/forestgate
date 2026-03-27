@@ -36,6 +36,7 @@ import { API } from '@/lib/api/api';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Pagination } from '@/components/ui/pagination-nav';
+import { Download } from 'lucide-react';
 
 export default function SubscribersPage() {
   const [loading, setLoading] = useState(false);
@@ -129,6 +130,51 @@ export default function SubscribersPage() {
     }
   };
 
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch(`${API.getnewsletter}?page=1&limit=1000`);
+      const data = await response.json();
+      const allSubscribers = data.users || [];
+
+      if (allSubscribers.length === 0) {
+        toast({ title: "No data to export", description: "There are no subscribers to download." });
+        return;
+      }
+
+      const headers = ["Email", "Subscription Date"];
+      const rows = allSubscribers.map(s => [
+        s.email,
+        s.createdAt ? format(parseISO(s.createdAt), 'yyyy-MM-dd') : 'N/A'
+      ]);
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `forest_gate_subscribers_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({ title: "Export Successful", description: `Exported ${allSubscribers.length} subscribers to CSV.` });
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast({ variant: "destructive", title: "Export Failed", description: "An error occurred while generating the CSV." });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -165,59 +211,70 @@ export default function SubscribersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold font-headline">Subscribers</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button>Send Newsletter</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle>Send Newsletter</DialogTitle>
-              <DialogDescription>
-                Compose and send an email to all your active subscribers.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSendNewsletter} className="space-y-4 py-4">
-              <div className="space-y-2">
-                <label htmlFor="subject" className="text-sm font-medium">Subject</label>
-                <Input
-                  id="subject"
-                  placeholder="Newsletter Subject"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium">Message</label>
-                <Textarea
-                  id="message"
-                  placeholder="Type your newsletter message here..."
-                  className="min-h-[150px]"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="image" className="text-sm font-medium">Header Image (Optional)</label>
-                <Input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setImage(e.target.files[0])}
-                />
-              </div>
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isSending || news.length === 0}>
-                  {isSending ? "Sending..." : "Send to All"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleExportCSV} 
+            disabled={isExporting || news.length === 0}
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            {isExporting ? "Exporting..." : "Export CSV"}
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button>Send Newsletter</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Send Newsletter</DialogTitle>
+                <DialogDescription>
+                  Compose and send an email to all your active subscribers.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleSendNewsletter} className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <label htmlFor="subject" className="text-sm font-medium">Subject</label>
+                  <Input
+                    id="subject"
+                    placeholder="Newsletter Subject"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="message" className="text-sm font-medium">Message</label>
+                  <Textarea
+                    id="message"
+                    placeholder="Type your newsletter message here..."
+                    className="min-h-[150px]"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="image" className="text-sm font-medium">Header Image (Optional)</label>
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setImage(e.target.files[0])}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isSending || news.length === 0}>
+                    {isSending ? "Sending..." : "Send to All"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <Card>
