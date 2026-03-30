@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format, parseISO, differenceInDays, addDays, isWithinInterval, areIntervalsOverlapping, startOfDay, endOfDay } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { allocateRooms } from "@/lib/utils/allocation";
+import { allocateRooms, costManager, minRooms } from "@/lib/utils/allocation";
 import {
   CalendarIcon,
   Users,
@@ -242,92 +242,62 @@ function BookingPageContent() {
   }, [user, form]);
 
 
-  // 🔹 New Dynamic Allocation Logic (Hybrid: Manual + Auto)
+  // 🔹 Use the new user-provided allocation and pricing logic
   const allocation = useMemo(() => {
     if (!room || numAdults < 1) return { allocatedRooms: [], totalRooms: 0, totalPrice: 0 };
     
-    // Start with the primary room
-    let rooms = [];
-    let remainingAdults = numAdults;
-    let remainingChildren = numChildren;
+    // 1. Get the base allocation requirements (how many rooms/beddings needed)
+    const { rooms: neededRooms, beddings: neededBeddings, allocatedRooms } = minRooms(numAdults, numChildren);
     
-    const basePrice = room.pricePerNight || 0;
-    const beddingCharge = 1500;
-
-    // 1. Assign Primary Room
-    let primaryRoom = { adults: 0, children: 0, extraBedding: false, name: room.roomName, price: basePrice };
-    if (remainingAdults >= 3 && selectedAdditionalRooms.length === 0 && remainingAdults === numAdults) {
-       // Only if no manual rooms and we have 3 adults, use the primary as the 3-adult room
-       primaryRoom.adults = 3;
-       primaryRoom.extraBedding = true;
-       remainingAdults -= 3;
-    } else {
-       primaryRoom.adults = Math.min(2, remainingAdults);
-       remainingAdults -= primaryRoom.adults;
-       primaryRoom.children = Math.min(2, remainingChildren);
-       remainingChildren -= primaryRoom.children;
-    }
-    rooms.push(primaryRoom);
-
-    // 2. Assign Manual Selections (Selected Additional Rooms)
-    // Always include all manually selected rooms — even if no guests remain,
-    // the user explicitly chose this room so it must appear in the summary + total.
-    selectedAdditionalRooms.forEach((addonRoom) => {
-      let r = { adults: 0, children: 0, extraBedding: false, name: addonRoom.roomName, price: addonRoom.pricePerNight * 0.9 };
-      if (remainingAdults >= 3) {
-        r.adults = 3;
-        r.extraBedding = true;
-        r.price += beddingCharge;
-        remainingAdults -= 3;
-      } else if (remainingAdults > 0 || remainingChildren > 0) {
-        r.adults = Math.min(2, remainingAdults);
-        remainingAdults -= r.adults;
-        r.children = Math.min(2, remainingChildren);
-        remainingChildren -= r.children;
-      }
-      // Always push — even 0-guest rooms are booked at the user's request
-      rooms.push(r);
+    // 2. Map requirements to actual room instances (Primary + Selected Suggestions)
+    // Priority: selectedAdditionalRooms, then fallback to primary room
+    let baseTotal = 0;
+    const finalAllocatedRooms = (allocatedRooms || []).map((r, index) => {
+      // Pick room type: Suggestion if available for this slot, else Primary
+      // IMPORTANT: To treat suggestions as changes/substitutions, we pick from selectedAdditionalRooms if available
+      const currentRoomType = (selectedAdditionalRooms && selectedAdditionalRooms[index]) || room;
+      
+      const rPrice = currentRoomType.pricePerNight;
+      const bPrice = currentRoomType.extraBeddingPrice;
+      const roomTotal = rPrice + (r.extraBedding ? bPrice : 0);
+      
+      baseTotal += roomTotal;
+      
+      return { 
+        ...r, 
+        name: currentRoomType.roomName, 
+        price: roomTotal,
+        roomId: currentRoomType._id || currentRoomType.id 
+      };
     });
-
-    // 2.5 Try to "overflow" children into existing rooms if they have space
-    // Primary room and manual rooms can fit up to 2 children. 
-    // If they have space, put remaining children there first.
-    rooms.forEach(r => {
-        if (remainingChildren > 0 && r.children < 2 && !r.extraBedding) {
-            const space = 2 - r.children;
-            const toAdd = Math.min(space, remainingChildren);
-            r.children += toAdd;
-            remainingChildren -= toAdd;
-        }
-    });
-
-    // 3. Auto-allocate remaining guests using primary room type
-    if (remainingAdults > 0 || remainingChildren > 0) {
-      const remainingResult = allocateRooms(remainingAdults, remainingChildren, basePrice, beddingCharge);
-      // Apply discount since these are additional rooms
-      const adjustedRemaining = remainingResult.allocatedRooms.map(r => ({
-        ...r,
-        name: room.roomName,
-        price: (r.price - (r.extraBedding ? beddingCharge : 0)) * 0.9 + (r.extraBedding ? beddingCharge : 0)
-      }));
-      rooms.push(...adjustedRemaining);
-    }
-
-    // 4. Apply 10% multi-room discount to the Primary Room if total rooms > 1
-    if (rooms.length > 1) {
-      rooms[0].price = (basePrice * 0.9) + (rooms[0].extraBedding ? beddingCharge : 0);
-    }
-
-    const totalAllocationPrice = rooms.reduce((sum, r) => sum + r.price, 0);
 
     return {
-      allocatedRooms: rooms,
-      totalRooms: rooms.length,
-      totalPrice: totalAllocationPrice,
+      allocatedRooms: finalAllocatedRooms,
+      totalRooms: neededRooms,
+      totalBeddings: neededBeddings,
+      totalPrice: baseTotal,
     };
   }, [numAdults, numChildren, room, selectedAdditionalRooms]);
 
-  const totalPrice = allocation.totalPrice * numNights;
+  const couponCode = ""; // Placeholder for coupon logic if needed
+  
+  // Total price logic that respects the new mixed allocation
+  const finalTotalPrice = useMemo(() => {
+    if (!room) return 0;
+    
+    const baseWithNights = allocation.totalPrice * numNights;
+    const discount = baseWithNights * 0.10; // 10% multi-room/primary discount
+    const withTax = (baseWithNights - discount) * 1.18; // 18% GST
+    
+    return withTax;
+  }, [allocation, numNights, room]);
+
+  // Price breakdown for display
+  const basePrice = allocation.totalPrice * numNights;
+  const discountAmount = basePrice * 0.10;
+  const priceAfterDiscount = basePrice - discountAmount;
+  const gstAmount = priceAfterDiscount * 0.18;
+  
   const totalRoomsNeeded = allocation.totalRooms;
 
   const autoAddons = useMemo(() => {
@@ -339,8 +309,7 @@ function BookingPageContent() {
   }, [allocation]);
 
   // 🔹 Capacity Check for manual recommendations
-  const currentRoomMaxCapacity = 4; // 2 Adult + 2 Child (Based on user rules)
-  const isCapacityExceeded = (numAdults + numChildren) > currentRoomMaxCapacity || numAdults > 2;
+  const isCapacityExceeded = (numAdults > 2 && numChildren > 1) || numAdults > 3 || numChildren > 2;
 
   const { executeRecaptcha } = useGoogleReCaptcha();
 
@@ -371,7 +340,7 @@ function BookingPageContent() {
       bookingType: room.roomName || room.fullName,
       roomName: room.roomName,
       ...data,
-      totalPrice,
+      totalPrice: finalTotalPrice,
       guests: numAdults + numChildren,
       numAdults,
       numChildren,
@@ -411,7 +380,7 @@ function BookingPageContent() {
       params.append("checkIn", bookingData.checkIn);
       params.append("checkOut", bookingData.checkOut);
       params.append("guests", bookingData.guests.toString());
-      params.append("totalPrice", bookingData.totalPrice.toString());
+      params.append("totalPrice", finalTotalPrice.toString());
       params.append("roomName", bookingData.roomName);
       params.append("numAdults", bookingData.numAdults);
       params.append("numChildren", bookingData.numChildren);
@@ -1287,19 +1256,18 @@ if (!room) return <BookingSkeleton />;
                         </span>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-4 pt-4">
+                  <div className="space-y-3 pt-4">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-muted-foreground font-medium">
                         Room Allocation Price
                       </span>
                       <span className="font-black text-foreground">
-                        ₹{totalPrice.toLocaleString()}
+                        ₹{basePrice.toLocaleString()}
                       </span>
                     </div>
                     {totalRoomsNeeded > 1 && (
-                      <div className="flex flex-col gap-1 pt-2">
+                      <div className="flex flex-col gap-1 pt-1">
                         {allocation.allocatedRooms.map((r, i) => (
                           <div key={i} className="flex justify-between text-[10px] text-muted-foreground">
                             <span>Room {i+1}: {r.name} ({r.adults}A, {r.children}C{r.extraBedding ? " + Bed" : ""})</span>
@@ -1308,6 +1276,22 @@ if (!room) return <BookingSkeleton />;
                         ))}
                       </div>
                     )}
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground font-medium">
+                        Discount (10%)
+                      </span>
+                      <span className="font-bold text-green-600">
+                        −₹{discountAmount.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground font-medium">
+                        GST (18%)
+                      </span>
+                      <span className="font-bold text-foreground">
+                        +₹{Math.round(gstAmount).toLocaleString()}
+                      </span>
+                    </div>
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-muted-foreground font-medium">
                         Service Fee
@@ -1328,6 +1312,7 @@ if (!room) return <BookingSkeleton />;
                       </div>
                     )}
                   </div>
+                  </div>
 
                   <Separator className="bg-muted" />
 
@@ -1337,7 +1322,7 @@ if (!room) return <BookingSkeleton />;
                         Total (INR)
                       </span>
                       <span className="text-4xl font-black text-primary leading-none">
-                        ₹{totalPrice.toLocaleString()}
+                        ₹{Math.round(finalTotalPrice).toLocaleString()}
                       </span>
                     </div>
                     <div className="bg-secondary/10 p-4 rounded-2xl text-center">

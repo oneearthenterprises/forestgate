@@ -238,7 +238,9 @@ const getApiRooms = async () => {
                           </Badge>
                           <h3 className="font-headline text-2xl sm:text-3xl md:text-5xl font-black text-slate-900 leading-[1.1]">
                           {(() => {
-                            const allocation = numAdults > 0 ? allocateRooms(numAdults, numChildren, room.pricePerNight) : null;
+                            const currentPrice = room.pricePerNight;
+                            const currentBeddingPrice = room.extraBeddingPrice;
+                            const allocation = numAdults > 0 ? allocateRooms(numAdults, numChildren, currentPrice, currentBeddingPrice) : null;
                             const totalRooms = allocation ? allocation.totalRooms : 1;
                             return totalRooms > 1 ? `${totalRooms} x ${room.roomName}` : room.roomName;
                           })()}
@@ -268,12 +270,12 @@ const getApiRooms = async () => {
                           <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Room Allocation Breakdown</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
-                              {allocateRooms(numAdults, numChildren, room.pricePerNight).allocatedRooms.map((r, i) => (
+                              {allocateRooms(numAdults, numChildren, room.pricePerNight, room.extraBeddingPrice).allocatedRooms.map((r, i) => (
                                 <div key={i} className="flex items-center gap-2">
                                   <span className="text-xs font-bold text-slate-900 whitespace-nowrap">Room {i + 1}:</span>
                                   <span className="text-xs font-medium text-slate-600">
                                     {r.adults} Adults {r.children > 0 ? `+ ${r.children} ${r.children === 1 ? 'Child' : 'Children'}` : ''}
-                                    {r.extraBedding ? ' (+ Extra Bed)' : ''}
+                                    {r.extraBedding ? ' (+ Extra Bedding)' : ''}
                                   </span>
                                 </div>
                               ))}
@@ -288,7 +290,7 @@ const getApiRooms = async () => {
                         <div className="grid grid-cols-1 xs:grid-cols-2 gap-x-12 gap-y-6 pt-8 border-t border-dashed border-slate-200">
                           <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Price per night</p>
-                            <p className="font-headline text-2xl sm:text-3xl font-black text-[#5e774a]">₹{room.pricePerNight.toLocaleString()}</p>
+                            <p className="font-headline text-2xl sm:text-3xl font-black text-[#5e774a]">₹{(room.pricePerNight).toLocaleString()}</p>
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Key Amenities</p>

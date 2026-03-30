@@ -34,6 +34,7 @@ const RoomFormSchema = z.object({
   description: z.string().min(10, 'Short description is required.'),
   longDescription: z.string().min(20, 'Long description is required.'),
   price: z.coerce.number().min(1000, 'Price must be at least 1000.'),
+  extraBeddingPrice: z.coerce.number().min(0, 'Extra bedding price must be a positive number.'),
   amenities: z.array(z.string()).min(1, 'Please list at least one amenity.'),
   images: z.array(z.object({ url: z.string().url({ message: "Please enter a valid URL." }) })).min(1, 'Please provide at least one image URL.'),
   videos: z.array(z.object({ url: z.string().url({ message: "Please enter a valid URL." }) })).optional(),
@@ -44,6 +45,7 @@ const defaultFormValues = {
     description: '',
     longDescription: '',
     price: 10000,
+    extraBeddingPrice: 5000,
     amenities: ['Wi-Fi', 'Room Service','Bird view'],
     images: [],
     videos: [],
@@ -79,6 +81,7 @@ export default function AdminRoomsPage() {
         description: editingRoom.description,
         longDescription: editingRoom.longDescription,
         price: editingRoom.price,
+        extraBeddingPrice: editingRoom.extraBeddingPrice || 5000,
         amenities: editingRoom.amenities.map(a => a.name),
         images: editingRoom.images.map(idOrUrl => ({ url: getImageUrl(idOrUrl) })).filter(img => img.url),
         videos: editingRoom.videos?.map(url => ({ url })) || [],
@@ -114,6 +117,7 @@ export default function AdminRoomsPage() {
           description: data.description,
           longDescription: data.longDescription,
           price: data.price,
+          extraBeddingPrice: data.extraBeddingPrice,
           amenities: data.amenities.map(amenity => ({ name: amenity })),
           images: data.images.map(img => img.url),
           videos: data.videos?.map(vid => vid.url) || [],
@@ -132,6 +136,7 @@ export default function AdminRoomsPage() {
           description: data.description,
           longDescription: data.longDescription,
           price: data.price,
+          extraBeddingPrice: data.extraBeddingPrice,
           amenities: data.amenities.map(amenity => ({ name: amenity })),
           images: data.images.map(img => img.url),
           videos: data.videos?.map(vid => vid.url) || [],
@@ -226,6 +231,19 @@ export default function AdminRoomsPage() {
                         render={({ field }) => (
                         <FormItem>
                             <FormLabel>Price per night (₹)</FormLabel>
+                            <FormControl>
+                            <Input type="number" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="extraBeddingPrice"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Extra Bedding Price (₹)</FormLabel>
                             <FormControl>
                             <Input type="number" {...field} />
                             </FormControl>

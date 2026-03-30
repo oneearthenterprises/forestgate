@@ -39,6 +39,7 @@ const RoomFormSchema = z.object({
   description: z.string().min(10, 'Short description is required.'),
   longDescription: z.string().min(20, 'Long description is required.'),
   price: z.coerce.number().min(1000, 'Price must be at least 1000.'),
+  extraBeddingPrice: z.coerce.number().min(0, 'Extra bedding price must be at least 0.'),
   tag: z.string().min(1, 'Room tag is required.'),
   amenities: z.array(z.string()).min(1, 'Please list at least one amenity.'),
   images: z.array(z.object({ 
@@ -58,6 +59,7 @@ const defaultFormValues = {
   description: '',
   longDescription: '',
   price: 10000,
+  extraBeddingPrice: 5000,
   tag: 'Premium Stay',
   amenities: ['Wi-Fi', 'Room Service'],
   images: [],
@@ -130,6 +132,7 @@ useEffect(() => {
       description: editingRoom.shortDescription || '',
       longDescription: editingRoom.fullDescription || '',
       price: editingRoom.pricePerNight || 10000,
+      extraBeddingPrice: editingRoom.extraBeddingPrice || 5000,
       tag: editingRoom.tag || 'Premium Stay',
       amenities: editingRoom.amenities || [],
       images: (editingRoom.images || []).map((img) => ({
@@ -187,6 +190,7 @@ async function onSubmit(data) {
     formData.append("shortDescription", data.description);
     formData.append("fullDescription", data.longDescription);
     formData.append("pricePerNight", data.price);
+    formData.append("extraBeddingPrice", data.extraBeddingPrice);
     formData.append("tag", data.tag === 'Custom' ? customTagValue : data.tag);
 
     data.amenities.forEach((item) => {
@@ -433,10 +437,45 @@ const handleDeleteVideo = async (index, video) => {
                       </FormItem>
                     )}
                   />
-                  
-
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                          Price per night (₹)
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            className="rounded-xl border-slate-100 bg-slate-50/50" 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
+                    control={form.control}
+                    name="extraBeddingPrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                          Extra Bedding Price (₹)
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            className="rounded-xl border-slate-100 bg-slate-50/50" 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />                  <FormField
                     control={form.control}
                     name="tag"
                     render={({ field }) => (
@@ -783,6 +822,10 @@ const handleDeleteVideo = async (index, video) => {
                       <p className="text-secondary font-black text-2xl mt-4 flex items-baseline gap-2">
                         <span className="text-sm font-black uppercase tracking-tighter text-slate-400">Price per night</span>
                         ₹{roomPrice.toLocaleString()}
+                      </p>
+                      <p className="text-slate-400 font-bold text-xs mt-1 flex items-baseline gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-tighter text-slate-300">Extra Bedding</span>
+                        ₹{(room.extraBeddingPrice || 0).toLocaleString()}
                       </p>
                     </div>
                     

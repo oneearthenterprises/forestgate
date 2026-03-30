@@ -1,65 +1,106 @@
 /**
- * Allocates guests (adults and children) into rooms based on capacity rules:
- * Rule A: Max 2 adults + 2 children per room.
- * Rule B: Max 3 adults per room (requires extra bedding).
+ * Calculates the number of rooms and extra beddings required.
+ * Rule: Bed max 2 adults + 1 child. Extra bedding (max 1) can take 1 additional adult OR child.
  * 
- * @param {number} adults - Total number of adults.
- * @param {number} children - Total number of children.
- * @param {number} basePrice - Base rate for the room.
- * @param {number} beddingCharge - Additional charge for rooms with 3 adults.
- * @returns {Object} - Allocation details including room breakdown, total rooms, and total price.
+ * @param {number} numAdults - Total number of adults.
+ * @param {number} numChildren - Total number of children.
+ * @returns {Object} - Allocation details: { rooms, beddings, allocatedRooms }
  */
-export function allocateRooms(adults, children, basePrice, beddingCharge = 1500) {
-  let remainingAdults = adults || 0;
-  let remainingChildren = children || 0;
-  
-  if (remainingAdults < 1 && remainingChildren < 1) {
-    return { allocatedRooms: [], totalRooms: 0, totalPrice: 0 };
-  }
-  let rooms = [];
+export function minRooms(numAdults = 0, numChildren = 0) {
+  let rooms = 0;
+  let totalBeddings = 0;
+  let allocatedRooms = [];
 
-  while (remainingAdults > 0 || remainingChildren > 0) {
-    let currentRoom = { adults: 0, children: 0, extraBedding: false, price: basePrice };
+  let adultsRemaining = numAdults;
+  let childrenRemaining = numChildren;
 
-    // Rule B: Can we fit 3 adults? 
-    // Usually, we prioritize 2+2 (Rule A) for families, but if we have many adults, we use Rule B.
-    // If only 1 adult left, he gets a room.
-    // If 3 adults left and no children, we can use Rule B.
-    
-    if (remainingAdults >= 3 && (remainingChildren === 0 || remainingAdults > remainingChildren)) {
-      currentRoom.adults = 3;
-      currentRoom.extraBedding = true;
-      currentRoom.price += beddingCharge;
-      remainingAdults -= 3;
-    } else {
-      // Rule A: Max 2 Adults
-      currentRoom.adults = Math.min(2, remainingAdults);
-      remainingAdults -= currentRoom.adults;
+  while (adultsRemaining > 0 || childrenRemaining > 0) {
+    let adultsInRoom = 0;
+    let childrenInRoom = 0;
+    let beddingUsed = 0;
 
-      // Max 2 Children
-      currentRoom.children = Math.min(2, remainingChildren);
-      remainingChildren -= currentRoom.children;
+    // Step 1: Fill main bed (max 2 adults, 1 child)
+    let bedAdults = Math.min(2, adultsRemaining);
+    adultsInRoom += bedAdults;
+    adultsRemaining -= bedAdults;
+
+    let bedChildren = Math.min(1, childrenRemaining);
+    childrenInRoom += bedChildren;
+    childrenRemaining -= bedChildren;
+
+    // Step 2: Fill extra bedding (1 adult OR 1 child)
+    if (adultsRemaining > 0) {
+      adultsInRoom += 1;
+      adultsRemaining -= 1;
+      beddingUsed = 1;
+    } else if (childrenRemaining > 0) {
+      childrenInRoom += 1;
+      childrenRemaining -= 1;
+      beddingUsed = 1;
     }
 
-    rooms.push(currentRoom);
-  }
+    totalBeddings += beddingUsed;
+    rooms++;
 
-  // Calculate Total Price with 10% discount for subsequent rooms
-  let totalPrice = 0;
-  const allocatedRooms = rooms.map((room, index) => {
-    let roomPrice = room.price;
-    if (index > 0) {
-      // 10% discount on the base part of the room price for additional rooms
-      const basePart = room.extraBedding ? roomPrice - beddingCharge : roomPrice;
-      roomPrice = (basePart * 0.9) + (room.extraBedding ? beddingCharge : 0);
-    }
-    totalPrice += roomPrice;
-    return { ...room, price: roomPrice };
-  });
+    allocatedRooms.push({
+      adults: adultsInRoom,
+      children: childrenInRoom,
+      extraBedding: beddingUsed > 0,
+      beddingUsed: beddingUsed
+    });
+  }
 
   return {
-    allocatedRooms,
-    totalRooms: allocatedRooms.length,
-    totalPrice,
+    rooms: rooms,
+    beddings: totalBeddings,
+    allocatedRooms: allocatedRooms
+  };
+}
+
+/**
+ * Calculates the base cost for the rooms and beddings.
+ */
+export function countCost(rooms, beddings, roomCost, beddingCost) {
+  return (rooms * roomCost) + (beddings * beddingCost);
+}
+
+/**
+ * Returns the coupon discount percentage.
+ */
+export function getCouponDiscount(couponCode) {
+  // Logic for checking couponCode can be added here
+  return 10;
+}
+
+/**
+ * Main cost manager function.
+ */
+export function costManager(numAdults, numChildren, couponCode, includeGst = false, roomCost, beddingCost) {
+  const gstRate = 0.18;
+  const { rooms, beddings } = minRooms(numAdults, numChildren);
+  const totalRawCost = countCost(rooms, beddings, roomCost, beddingCost);
+  
+  const discount = getCouponDiscount(couponCode);
+  const totalCostAfterDiscount = totalRawCost * (1 - discount / 100);
+
+  if (!includeGst) return totalCostAfterDiscount;
+  return totalCostAfterDiscount * (1 + gstRate);
+}
+
+/**
+ * Wrapper for backward compatibility with the existing UI.
+ */
+export function allocateRooms(adults, children, basePrice, beddingCharge) {
+  const result = minRooms(adults, children);
+  
+  // Calculate totalPrice using the costManager logic (raw cost before discount and GST for compatibility if needed)
+  // Most UI components expect the raw total before taxes/discounts for breakdown.
+  const totalPrice = countCost(result.rooms, result.beddings, basePrice, beddingCharge);
+
+  return {
+    allocatedRooms: result.allocatedRooms.map(r => ({ ...r, price: basePrice + (r.extraBedding ? beddingCharge : 0) })),
+    totalRooms: result.rooms,
+    totalBeddings: result.beddings,
+    totalPrice: totalPrice,
   };
 }
