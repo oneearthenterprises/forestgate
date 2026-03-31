@@ -278,6 +278,7 @@ function BookingPageContent() {
       return { 
         ...r, 
         name: currentRoomType.roomName, 
+        price: roomTotal,
         totalPriceWithBedding: roomTotal,
         roomOnlyPrice: rPrice,
         roomId: currentRoomType._id || currentRoomType.id 

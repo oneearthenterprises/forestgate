@@ -394,15 +394,18 @@ export default function AdminOrdersPage() {
                             </TableRow>
                         ) : bookingsList.map((booking) => {
                             const nights = Math.max(1, Math.ceil((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)));
-                            let dynamicTotal = Number(booking.totalAmount) || 0;
                             const hasAlloc = booking.allocation && booking.allocation.length > 0;
-                            
-                            if (hasAlloc) {
-                                const allocSum = booking.allocation.reduce((sum, r) => sum + (Number(r.price) || 0), 0);
-                                const addonsSum = (booking.addons || []).filter(a => a.status !== "cancelled").reduce((s, a) => s + (Number(a.price) || 0), 0);
-                                dynamicTotal = (allocSum * nights) + addonsSum;
-                            }
 
+                            // Always recalculate with discount+GST when allocation is present
+                            const allocBase = hasAlloc
+                                ? booking.allocation.reduce((sum, r) => sum + (Number(r.price) || 0), 0) * nights
+                                : Number(booking.pricePerNight || 0) * nights;
+                            const addonsTotal = (booking.addons || []).filter(a => a.status !== 'cancelled').reduce((s, a) => s + (Number(a.price) || 0), 0);
+                            const afterDisc = Math.round(allocBase * 0.90);
+                            const withGst = Math.round(afterDisc * 1.18);
+                            const dynamicTotal = hasAlloc
+                                ? (withGst + addonsTotal)                            // allocation present → fresh calculation
+                                : (Number(booking.totalAmount) || withGst + addonsTotal); // no allocation → stored value
                             return (
                             <TableRow key={booking._id || booking.id}>
                                 <TableCell className="font-medium">
@@ -506,10 +509,17 @@ export default function AdminOrdersPage() {
                 const nights = Math.max(1, Math.ceil((new Date(selectedBooking.checkOut) - new Date(selectedBooking.checkIn)) / (1000 * 60 * 60 * 24)));
                 const hasAlloc = selectedBooking.allocation && selectedBooking.allocation.length > 0;
                 const addonsSum = (selectedBooking.addons || []).filter(a => a.status !== "cancelled").reduce((s, a) => s + (Number(a.price) || 0), 0);
-                const staySum = hasAlloc 
+
+                // Always recalculate with discount+GST when allocation is present
+                const allocBase = hasAlloc
                     ? selectedBooking.allocation.reduce((sum, r) => sum + (Number(r.price) || 0), 0) * nights
-                    : (Number(selectedBooking.totalAmount || 0) - addonsSum);
-                const finalTotal = staySum + addonsSum;
+                    : Number(selectedBooking.pricePerNight || 0) * nights;
+                const afterDisc = Math.round(allocBase * 0.90);
+                const withGst = Math.round(afterDisc * 1.18);
+                const finalTotal = hasAlloc
+                    ? (withGst + addonsSum)
+                    : (Number(selectedBooking.totalAmount) || withGst + addonsSum);
+                const staySum = finalTotal - addonsSum;
                 
                 const roomImages = selectedBooking.room?.images;
                 const imageUrl = roomImages?.[0]?.url;

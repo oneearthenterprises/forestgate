@@ -214,21 +214,30 @@ function BookingHistoryPageContent() {
                                             const isUpcoming = ['pending', 'upcoming', 'confirmed'].includes(booking.status.toLowerCase());
                                             const isCancellable = isUpcoming && differenceInDays(parseISO(booking.checkIn), now) >= 2;
 
-                                            // Calculate Prices outside JSX to prevent syntax/parentheses mess
+                                            // ── Price Breakdown ──
                                             const checkInDate = new Date(booking.checkIn);
                                             const checkOutDate = new Date(booking.checkOut);
                                             const nightsCount = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) || 1;
-                                            
-                                            // 1. Base amount from allocation (for multi-room)
-                                            let basePriceFromAlloc = (booking.allocation || []).reduce((sum, r) => sum + (Number(r.price) || 0), 0) * nightsCount;
-                                            
-                                            // 2. Add-ons total
-                                            const addonsSum = (booking.addons || []).filter(a => a.status !== "cancelled").reduce((s, a) => s + (Number(a.price) || 0), 0);
-                                            
-                                            // 3. Final display price
-                                            const finalDisplayPrice = booking.allocation?.length > 0 
-                                                ? (basePriceFromAlloc + addonsSum) 
-                                                : Number(booking.totalPrice || booking.totalAmount || 0);
+
+                                            // Base price from allocation (per-night × nights)
+                                            const allocBase = (booking.allocation?.length > 0)
+                                                ? (booking.allocation || []).reduce((sum, r) => sum + (Number(r.price) || 0), 0) * nightsCount
+                                                : Number(booking.pricePerNight || 0) * nightsCount;
+
+                                            // Addons
+                                            const addonsSum = (booking.addons || []).filter(a => a.status !== 'cancelled').reduce((s, a) => s + (Number(a.price) || 0), 0);
+
+                                            // Apply 10% discount + 18% GST (same as booking page)
+                                            const discountAmt = Math.round(allocBase * 0.10);
+                                            const afterDiscount = allocBase - discountAmt;
+                                            const gstAmt = Math.round(afterDiscount * 0.18);
+
+                                            // Always recalculate when allocation is present (stored totalAmount may be stale/wrong)
+                                            // Only fall back to stored total for very old bookings with no allocation data
+                                            const calculatedTotal = afterDiscount + gstAmt + addonsSum;
+                                            const finalDisplayPrice = (booking.allocation?.length > 0)
+                                                ? calculatedTotal                                        // allocation present → always use fresh calculation
+                                                : (Number(booking.totalAmount) || calculatedTotal);     // no allocation → use stored value as fallback
 
                                             return (
                                                 <Card key={booking._id}>

@@ -1742,7 +1742,18 @@ export default function UsersPage() {
                         if (a.status === "cancelled") return sum;
                         return sum + (Number(a.price) || 0);
                     }, 0);
-                    const totalAmount = basePrice + addonsTotal;
+
+                    // Apply 10% discount + 18% GST (same formula as booking page)
+                    const discountedBase = basePrice * 0.90;
+                    const baseWithGst = discountedBase * 1.18;
+                    const calculatedTotal = Math.round(baseWithGst + addonsTotal);
+
+                    // Always recalculate when allocation is present (stored totalAmount may be stale/wrong)
+                    // Only fall back to stored total for very old bookings with no allocation data
+                    const displayTotal = (tempBookingData.allocation?.length > 0)
+                        ? calculatedTotal                                         // allocation present → fresh calculation
+                        : (Number(tempBookingData.totalAmount) || calculatedTotal);      // no allocation → stored value as fallback
+                    const totalAmount = displayTotal;
 
                     return (
                         <div className={`p-5 rounded-3xl shadow-lg relative overflow-hidden group transition-all duration-300 ${isEditingBooking ? 'bg-primary/5 border border-primary/20' : 'bg-gray-900 text-white'}`}>
@@ -1789,8 +1800,16 @@ export default function UsersPage() {
                                                 </div>
                                             </>
                                         )}
+                                        <div className="flex justify-between opacity-70 border-t border-primary/10 pt-1">
+                                            <span>Discount (10%)</span>
+                                            <span className="text-red-500">-₹{Math.round(basePrice * 0.10).toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between opacity-70">
+                                            <span>GST (18%)</span>
+                                            <span>+₹{Math.round(discountedBase * 0.18).toLocaleString()}</span>
+                                        </div>
                                         <div className="flex justify-between pt-2 border-t border-primary/20 font-black text-sm text-primary">
-                                            <span>Dynamic Total</span>
+                                            <span>Final Total (incl. GST)</span>
                                             <span>₹{totalAmount.toLocaleString()}</span>
                                         </div>
                                     </div>
