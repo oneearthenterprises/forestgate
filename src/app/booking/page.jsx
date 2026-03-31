@@ -54,6 +54,13 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -107,6 +114,7 @@ function BookingPageContent() {
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const [isCustomAdults, setIsCustomAdults] = useState(false);
   const [isCustomChildren, setIsCustomChildren] = useState(false);
+  const [viewRoom, setViewRoom] = useState(null);
   const formRef = useRef(null);
 
   useEffect(() => {
@@ -252,21 +260,26 @@ function BookingPageContent() {
     // 2. Map requirements to actual room instances (Primary + Selected Suggestions)
     // Priority: selectedAdditionalRooms, then fallback to primary room
     let baseTotal = 0;
+    let beddingTotal = 0;
+    let baseRoomOnlyTotal = 0;
     const finalAllocatedRooms = (allocatedRooms || []).map((r, index) => {
       // Pick room type: Suggestion if available for this slot, else Primary
       // IMPORTANT: To treat suggestions as changes/substitutions, we pick from selectedAdditionalRooms if available
       const currentRoomType = (selectedAdditionalRooms && selectedAdditionalRooms[index]) || room;
       
       const rPrice = currentRoomType.pricePerNight;
-      const bPrice = currentRoomType.extraBeddingPrice;
+      const bPrice = currentRoomType.extraBeddingPrice || 0;
       const roomTotal = rPrice + (r.extraBedding ? bPrice : 0);
       
       baseTotal += roomTotal;
+      baseRoomOnlyTotal += rPrice;
+      if (r.extraBedding) beddingTotal += bPrice;
       
       return { 
         ...r, 
         name: currentRoomType.roomName, 
-        price: roomTotal,
+        totalPriceWithBedding: roomTotal,
+        roomOnlyPrice: rPrice,
         roomId: currentRoomType._id || currentRoomType.id 
       };
     });
@@ -276,8 +289,13 @@ function BookingPageContent() {
       totalRooms: neededRooms,
       totalBeddings: neededBeddings,
       totalPrice: baseTotal,
+      totalBeddingPrice: beddingTotal,
+      totalRoomOnlyPrice: baseRoomOnlyTotal,
     };
   }, [numAdults, numChildren, room, selectedAdditionalRooms]);
+
+  const extraBeddingCount = allocation.totalBeddings;
+  const extraBeddingPrice = allocation.totalBeddingPrice * numNights;
 
   const couponCode = ""; // Placeholder for coupon logic if needed
   
@@ -293,9 +311,9 @@ function BookingPageContent() {
   }, [allocation, numNights, room]);
 
   // Price breakdown for display
-  const basePrice = allocation.totalPrice * numNights;
-  const discountAmount = basePrice * 0.10;
-  const priceAfterDiscount = basePrice - discountAmount;
+  const basePrice = allocation.totalRoomOnlyPrice * numNights;
+  const discountAmount = (basePrice + extraBeddingPrice) * 0.10;
+  const priceAfterDiscount = (basePrice + extraBeddingPrice) - discountAmount;
   const gstAmount = priceAfterDiscount * 0.18;
   
   const totalRoomsNeeded = allocation.totalRooms;
@@ -534,7 +552,7 @@ if (!room) return <BookingSkeleton />;
             </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-12 items-start">
             <div className="flex-1 min-w-0">
               <div className="md:mb-12 mb-3">
                 <h1 className="font-headline text-5xl md:text-6xl font-bold mb-6 tracking-tight">
@@ -927,7 +945,10 @@ if (!room) return <BookingSkeleton />;
                             <CarouselContent className="-ml-4">
                                {allRooms.map((r, i) => (
                                 <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2">
-                                  <div className="bg-white p-4 h-full flex rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm flex flex-row items-center justify-between gap-4 group hover:border-primary/30 transition-all">
+                                  <div 
+                                    className="bg-white p-4 h-full flex rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm flex flex-row items-center justify-between gap-4 group hover:border-primary/30 transition-all cursor-pointer"
+                                    onClick={() => setViewRoom(r)}
+                                  >
                                     <div className="flex items-center gap-4 w-full">
                                       <div className="w-16 h-16 rounded-2xl relative overflow-hidden bg-slate-100 shrink-0">
                                         {r.images?.[0] && <Image src={r.images[0].url} fill className="object-cover" alt={r.roomName} />}
@@ -941,7 +962,8 @@ if (!room) return <BookingSkeleton />;
                                       type="button" 
                                       variant={selectedAdditionalRooms.some(sr => sr._id === r._id) ? "default" : "ghost"} 
                                       className={`rounded-full w-10 h-10 p-0 shrink-0 ${selectedAdditionalRooms.some(sr => sr._id === r._id) ? "bg-primary text-white" : "hover:bg-primary/10 text-primary"}`}
-                                      onClick={() => {
+                                      onClick={(e) => {
+                                        e.stopPropagation();
                                         if (selectedAdditionalRooms.some(sr => sr._id === r._id)) {
                                           setSelectedAdditionalRooms(prev => prev.filter(sr => sr._id !== r._id));
                                         } else {
@@ -1271,9 +1293,19 @@ if (!room) return <BookingSkeleton />;
                         {allocation.allocatedRooms.map((r, i) => (
                           <div key={i} className="flex justify-between text-[10px] text-muted-foreground">
                             <span>Room {i+1}: {r.name} ({r.adults}A, {r.children}C{r.extraBedding ? " + Bed" : ""})</span>
-                            <span>₹{(r.price * numNights).toLocaleString()}</span>
+                            <span>₹{(r.roomOnlyPrice * numNights).toLocaleString()}</span>
                           </div>
                         ))}
+                      </div>
+                    )}
+                    {extraBeddingCount > 0 && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground font-medium">
+                          Extra Bedding
+                        </span>
+                        <span className="font-bold text-foreground">
+                          +₹{extraBeddingPrice.toLocaleString()}
+                        </span>
                       </div>
                     )}
                     <div className="flex justify-between items-center text-sm">
@@ -1300,6 +1332,7 @@ if (!room) return <BookingSkeleton />;
                         COMPLIMENTARY
                       </span>
                     </div>
+                 
                     {autoAddons.length > 0 && (
                       <div className="space-y-2 mt-4">
                         <span className="text-[10px] font-black uppercase tracking-widest text-secondary/80">Stay Requirements:</span>
@@ -1337,9 +1370,80 @@ if (!room) return <BookingSkeleton />;
           </div>
         </div>
       </section>
+      <RoomDetailModal 
+        room={viewRoom} 
+        open={!!viewRoom} 
+        onOpenChange={(open) => !open && setViewRoom(null)} 
+      />
     </div>
   );
 }
+
+const RoomDetailModal = ({ room, open, onOpenChange }) => {
+  if (!room) return null;
+  
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-[80vw] w-full max-h-[90vh] overflow-y-auto rounded-[2rem] md:rounded-[3rem] p-0 border-none shadow-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+          {/* Main Gallery Preview */}
+          <div className="relative h-[300px] lg:h-full min-h-[300px] bg-slate-100">
+            {room.images?.[0] && (
+              <Image 
+                src={room.images[0].url} 
+                alt={room.roomName} 
+                fill 
+                className="object-cover"
+              />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute bottom-8 left-8 text-white">
+              <h2 className="text-3xl md:text-4xl font-headline font-bold mb-2">{room.roomName}</h2>
+              <div className="px-4 py-2 bg-primary text-white rounded-full font-black text-sm w-fit">
+                ₹{room.pricePerNight.toLocaleString()} / Night
+              </div>
+            </div>
+          </div>
+
+          {/* Details Content */}
+          <div className="p-8 md:p-12 space-y-8 bg-white overflow-y-auto h-full">
+            <div className="space-y-4">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">About this Sanctuary</h3>
+              <p className="text-lg text-slate-600 leading-relaxed font-light italic">
+                {room.fullDescription || room.shortDescription || "No description available."}
+              </p>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-6">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Included Amenities</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {room.amenities?.map((amenity, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-secondary" />
+                    </div>
+                    <span className="text-sm font-bold text-slate-700">{amenity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-8">
+              <Button 
+                onClick={() => onOpenChange(false)}
+                className="w-full h-14 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl"
+              >
+                Close Details
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const BookingSkeleton = () => (
   <div className="bg-[#fcfcfc] min-h-screen animate-pulse">

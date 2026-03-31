@@ -59,7 +59,7 @@ const defaultFormValues = {
   description: '',
   longDescription: '',
   price: 10000,
-  extraBeddingPrice: 5000,
+  extraBeddingPrice: 1000,
   tag: 'Premium Stay',
   amenities: ['Wi-Fi', 'Room Service'],
   images: [],

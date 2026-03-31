@@ -314,8 +314,7 @@ export const amenities = [
     longDescription:
       "Experience movie magic in our exclusive mini cinema. Featuring plush, reclining seats, a state-of-the-art surround sound system, and a large, high-definition screen, it's the perfect venue for a private movie night. Choose from our extensive library of films or connect your own device to enjoy your favorite content. Popcorn and snacks are, of course, part of the experience.",
     image: "amenity-cinema",
-    imageUrl:
-      "https://images.unsplash.com/flagged/photo-1572609239482-d3a83f976aa0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxob21lJTIwdGhlYXRlcnxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    imageUrl: "/assets/images/forestgate-image/Mini-Cinema-Home-Theater.png",
     iconName: "sparkles",
   },
   {
@@ -337,8 +336,7 @@ export const amenities = [
     longDescription:
       "Fun and recreation are always on the agenda at The Forest Gate. Our indoor game room is equipped with a pool table, table tennis, carrom, and various board games. Step outside onto our lush lawns for a friendly match of badminton or cricket. We provide all the necessary equipment, so all you need to bring is your competitive spirit.",
     image: "amenity-games",
-    imageUrl:
-      "https://images.unsplash.com/photo-1636488363495-a06805603784?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxnYW1lJTIwcm9vbXxlbnwwfHx8fDE3NzAyODE2MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    imageUrl: "/assets/images/forestgate-image/Indoor&OutdoorGames.png",
     iconName: "bike",
   },
   {

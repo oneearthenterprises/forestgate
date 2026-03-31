@@ -184,16 +184,21 @@ const bookingId = useRef(
                                     </>
                                 )}
 
-                                {allocation && (
+                                {allocation && Array.isArray(allocation) && allocation.length > 0 && (
                                      <>
                                         <Separator className="my-2" />
                                         <div className="space-y-2 text-left">
                                             <p className="font-semibold text-sm uppercase tracking-wider text-muted-foreground/70">Guest Allotment</p>
                                             <div className="grid grid-cols-1 gap-2">
-                                                {Object.entries(allocation).filter(([_, details]) => details.count > 0).map(([room, details], i) => (
+                                                {allocation.map((room, i) => (
                                                     <div key={i} className="flex justify-between items-center text-sm border-b border-gray-100 last:border-0 pb-1">
-                                                        <p className="text-muted-foreground font-medium">{room}</p>
-                                                        <p className="text-primary font-bold">{details.count} Guests</p>
+                                                        <p className="text-muted-foreground font-medium">
+                                                            Room {i + 1}: {room.name} 
+                                                            <span className="text-[10px] ml-2 text-muted-foreground/60">
+                                                                ({room.adults}A, {room.children}C{room.extraBedding ? " + Extra Bed" : ""})
+                                                            </span>
+                                                        </p>
+                                                        <p className="text-primary font-bold">₹{Number(room.price).toLocaleString()}</p>
                                                     </div>
                                                 ))}
                                             </div>
