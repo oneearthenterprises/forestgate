@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import Calendar from "react-calendar";
 import Image from "next/image";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 import { cn } from "@/lib/utils";
 import { rooms } from "../lib/data";
@@ -330,14 +329,7 @@ function BookingPageContent() {
   // 🔹 Capacity Check for manual recommendations
   const isCapacityExceeded = (numAdults > 2 && numChildren > 1) || numAdults > 3 || numChildren > 2;
 
-  const { executeRecaptcha } = useGoogleReCaptcha();
-
   async function onSubmit(data) {
-    if (!executeRecaptcha) {
-      console.log("Execute recaptcha not yet available");
-      // Fallback or handle appropriately
-    }
-
     if (!user) {
       sessionStorage.setItem("tempBookingData", JSON.stringify({
         ...data,
@@ -380,10 +372,7 @@ function BookingPageContent() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...bookingData,
-          recaptchaToken: executeRecaptcha ? await executeRecaptcha('booking') : null
-        }),
+        body: JSON.stringify(bookingData),
       });
 
       if (!response.ok) {

@@ -7,8 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { MountainSnow, ArrowRight, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, Suspense, useState, useCallback } from "react";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useEffect, Suspense, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -58,17 +57,9 @@ function LoginForm() {
         }
     }, [form]);
 
-    const { executeRecaptcha } = useGoogleReCaptcha();
-
-    const onLoginSubmit = useCallback(async (values) => {
-        if (!executeRecaptcha) {
-            console.log('Execute recaptcha not yet available');
-            return;
-        }
-
+    const onLoginSubmit = async (values) => {
         try {
-            const token = await executeRecaptcha('login');
-            await login({ ...values, recaptchaToken: token }); 
+            await login(values);
 
             toast({
                 title: "Login Successful",
@@ -83,7 +74,7 @@ function LoginForm() {
                 description: err.message,
             });
         }
-    }, [executeRecaptcha, login, toast, router, callbackUrl]);
+    };
 
     return (
         <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">

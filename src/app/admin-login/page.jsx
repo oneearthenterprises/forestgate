@@ -4,8 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { useState, useCallback } from "react";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useState } from "react";
 import { MountainSnow, ArrowRight, Shield, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,17 +46,9 @@ export default function AdminLoginPage() {
     defaultValues: { email: "", password: "" },
   });
 
-    const { executeRecaptcha } = useGoogleReCaptcha();
-
 async function onLoginSubmit(data) {
-  if (!executeRecaptcha) {
-    console.log("Execute recaptcha not yet available");
-    return;
-  }
-
   try {
-    const token = await executeRecaptcha('admin_login');
-    const result = await adminlogin({ ...data, recaptchaToken: token });
+    const result = await adminlogin(data);
 
     toast({
       title: "Login Successful!",
