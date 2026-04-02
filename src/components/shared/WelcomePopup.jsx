@@ -72,10 +72,10 @@ export function WelcomePopup() {
               />
               <div className="absolute inset-0 bg-black/40 p-6 md:p-8 flex flex-col justify-start">
                 <h2 className="text-white text-2xl md:text-4xl font-medium leading-tight mb-4 md:mb-6 whitespace-pre-line">
-                  {popupData?.title || 'Book entire rental\nunit in Naggar,\nHimachal Pradesh'}
+                  {popupData?.title || 'Book entire rental\nunit in Village Tandeo. Morni Hills, Panchkula, Haryana,\nHaryana Pradesh'}
                 </h2>
                 <p className="text-white/80 text-xs md:text-sm leading-relaxed max-w-[280px] hidden md:block">
-                  {popupData?.description || "Welcome to this stunning sanctuary in the heart of Naggar - Manali, Himachal. Located at a quiet crossroads, this cozy residence is the perfect combination of comfort and style."}
+                  {popupData?.description || "Welcome to this stunning sanctuary in the heart of Village Tandeo. Morni Hills, Panchkula, Haryana - Morni Hills, Haryana. Located at a quiet crossroads, this cozy residence is the perfect combination of comfort and style."}
                 </p>
               </div>
             </div>
@@ -92,7 +92,7 @@ export function WelcomePopup() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs md:text-sm font-medium text-muted-foreground leading-tight">{popupData?.location || "Naggar, Himachal Pradesh,"}</p>
+                    <p className="text-xs md:text-sm font-medium text-muted-foreground leading-tight">{popupData?.location || "Village Tandeo. Morni Hills, Panchkula, Haryana, Haryana Pradesh,"}</p>
                     <p className="text-xs md:text-sm font-medium text-muted-foreground">{popupData?.subLocation || "India"}</p>
                   </div>
                 </div>

@@ -18,8 +18,8 @@ import Link from "next/link";
  */
 export function ManagedBySection({ 
   label = "Managed By", 
-  title = "The Himalayan Forest Development Authority", 
-  description = "Authorized Eco-Tourism Partner dedicated to sustainable luxury and nature preservation in the heart of Himachal Pradesh.",
+  title = "The Morni Hills Forest Development Authority", 
+  description = "Authorized Eco-Tourism Partner dedicated to sustainable luxury and nature preservation in the heart of Haryana Pradesh.",
   buttonText = "Contact Us",
   buttonLink = "/contact",
   imageSrc = "/assets/images/bannerpecock.png",

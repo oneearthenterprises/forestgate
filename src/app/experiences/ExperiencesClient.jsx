@@ -48,7 +48,7 @@ export default function ExperiencesClient() {
                                             src={expImage.imageUrl}
                                             alt={exp.title}
                                             fill
-                                            className="object-cover transition-transform duration-[2000ms] group-hover:scale-110"
+                                            className="object-cover transition-transform duration-[2s] group-hover:scale-110"
                                             data-ai-hint={expImage.imageHint}
                                             placeholder="blur"
                                             blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="

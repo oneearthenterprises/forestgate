@@ -107,7 +107,7 @@ export default function BlogClient() {
       {headerImage && (
         <PageHeader
           title="Our Blog"
-          subtitle="Insights, Guides, and Stories from the Heart of the Himalayas."
+          subtitle="Insights, Guides, and Stories from the Heart of the Morni Hills."
           imageUrl={headerImage.imageUrl}
           breadcrumbLabel="Blog"
         />
@@ -128,7 +128,7 @@ export default function BlogClient() {
                         <Mail className="w-16 h-16 mx-auto mb-6 text-white/90" />
                         <h3 className="font-headline text-3xl md:text-5xl font-bold mb-6 relative z-10">More stories coming soon!</h3>
                         <p className="text-white/80 font-light text-lg mb-10 max-w-xl mx-auto relative z-10">
-                            Stay tuned. Sign up for our newsletter to get notified when new insights and stories from the Himalayas are published.
+                            Stay tuned. Sign up for our newsletter to get notified when new insights and stories from the Morni Hills are published.
                         </p>
                         
                         <form onSubmit={submitNewsletter} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto relative z-10">

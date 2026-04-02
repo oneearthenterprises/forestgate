@@ -415,7 +415,7 @@ const onResetPassword = async (values) => {
           </div>
           <h2 className="text-5xl font-headline text-white font-bold leading-tight mb-4">
             Safety First in the <br/>
-            <span className="text-[#fcb101]">Himalayan</span> Wilderness.
+            <span className="text-[#fcb101]">Morni Hills</span> Wilderness.
           </h2>
           <p className="text-white/80 text-lg font-light max-w-md">
             We take your security seriously. Use our multi-step verification to safely reclaim access to your private sanctuary profile.

@@ -498,7 +498,7 @@ const handleResendOtp = async () => {
           </h2>
           <p className="text-white/80 text-lg font-light max-w-md">
             Experience the heights of hospitality. Create your account today to
-            unlock exclusive rates and tailored Himalayan itineraries.
+            unlock exclusive rates and tailored Morni Hills itineraries.
           </p>
         </div>
       </div>

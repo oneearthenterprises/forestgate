@@ -51,7 +51,7 @@ export default function ThankYouPage() {
                         <div className="w-16 h-[2px] bg-[#085d6b]/20 mx-auto rounded-full" />
                         
                         <p className="text-slate-600 text-base md:text-xl leading-relaxed max-w-xl mx-auto font-light px-4">
-                            We're delighted to have you. You are now part of our inner circle and will receive exclusive stories and offers from the heart of the Himalayas.
+                            We're delighted to have you. You are now part of our inner circle and will receive exclusive stories and offers from the heart of the Morni Hills.
                         </p>
                         
                         <div className="pt-8">

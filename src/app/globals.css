@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -56,7 +55,7 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 94 44% 47%;
-    
+
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-border: 217.2 32.6% 17.5%;
@@ -69,12 +68,14 @@
 }
 
 @layer base {
-  html, body {
+
+  html,
+  body {
     position: relative;
     width: 100%;
     scroll-behavior: auto !important;
   }
-  
+
   body {
     @apply bg-background text-foreground antialiased;
   }
@@ -84,12 +85,13 @@
   }
 
   section {
-    @apply py-10 md:py-20;
+    @apply py-8 md:py-20;
   }
 }
 
 /* Custom Animation Classes */
-.split-layer-top, .split-layer-bottom {
+.split-layer-top,
+.split-layer-bottom {
   will-change: transform, clip-path;
 }
 

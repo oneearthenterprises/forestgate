@@ -11,23 +11,23 @@ import { ReCaptchaProvider } from '@/components/providers/ReCaptchaProvider';
 export const metadata = {
   metadataBase: new URL('https://theforestgate.com'),
   title: {
-    default: 'The Forest Gate - Luxury Meets Nature in the Heart of Himachal',
+    default: 'The Forest Gate - Luxury Meets Nature in the Heart of Haryana',
     template: '%s | The Forest Gate',
   },
   description:
-    'Discover The Forest Gate, a luxury resort offering a unique blend of nature, adventure, and tranquility in Naggar, Manali. Perfect for families, couples, and corporate retreats.',
+    'Discover The Forest Gate, a luxury resort offering a unique blend of nature, adventure, and tranquility in Village Tandeo. Morni Hills, Panchkula, Haryana. Perfect for families, couples, and corporate retreats.',
   keywords: [
     'The Forest Gate',
-    'Luxury Resort Himachal',
-    'Naggar Manali Resort',
-    'Sustainable Luxury Manali',
-    'Best Resort for Families Manali',
-    'Adventure Resort Himachal',
-    'Luxury Cottage Manali',
-    'Himachal Tourism',
-    'Himalayan Sanctuary',
-    'Naggar View Resort',
-    'Luxury Stay Himachal'
+    'Luxury Resort Haryana',
+    'Village Tandeo. Morni Hills, Panchkula, Haryana Morni Hills Resort',
+    'Sustainable Luxury Morni Hills',
+    'Best Resort for Families Morni Hills',
+    'Adventure Resort Haryana',
+    'Luxury Cottage Morni Hills',
+    'Haryana Tourism',
+    'Morni Hills Sanctuary',
+    'Village Tandeo. Morni Hills, Panchkula, Haryana View Resort',
+    'Luxury Stay Haryana'
   ],
   robots: {
     index: true,
@@ -44,8 +44,8 @@ export const metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'The Forest Gate - Luxury Himalayan Resort',
-    description: 'Experience tranquility and sustainable luxury at The Forest Gate, Naggar, Manali.',
+    title: 'The Forest Gate - Luxury Morni Hills Resort',
+    description: 'Experience tranquility and sustainable luxury at The Forest Gate, Village Tandeo. Morni Hills, Panchkula, Haryana.',
     url: 'https://theforestgate.com',
     siteName: 'The Forest Gate',
     images: [
@@ -61,8 +61,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'The Forest Gate - Luxury Himalayan Resort',
-    description: 'Experience tranquility and sustainable luxury at The Forest Gate, Naggar, Manali.',
+    title: 'The Forest Gate - Luxury Morni Hills Resort',
+    description: 'Experience tranquility and sustainable luxury at The Forest Gate, Village Tandeo. Morni Hills, Panchkula, Haryana.',
     images: ['/assets/images/banner.jpeg'],
   },
 };

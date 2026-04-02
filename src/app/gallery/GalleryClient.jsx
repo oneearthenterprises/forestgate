@@ -15,7 +15,7 @@ export default function GalleryClient() {
              {headerImage && (
                 <PageHeader
                 title="Gallery"
-                subtitle="A glimpse into the beauty and serenity of Himachal Haven."
+                subtitle="A glimpse into the beauty and serenity of Haryana Haven."
                 imageUrl={headerImage.imageUrl}
                 imageHint={headerImage.imageHint}
                 />

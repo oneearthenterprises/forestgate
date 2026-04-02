@@ -139,13 +139,13 @@ export function HeroScroll() {
             <div className="absolute inset-0 bg-primary/20 z-10"></div>
             
             <div className="hero-reveal-content absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 pt-16 opacity-0">
-              <h2 className="text-5xl md:text-[6rem] lg:text-[8rem] font-bold uppercase tracking-[0.1em] mb-8 font-playfair text-white drop-shadow-2xl leading-tight">
-                THE FOREST <br className="md:hidden" /> GATE
-              </h2>
-              <p className="max-w-xl mx-auto text-lg md:text-xl font-light tracking-wide mb-12 opacity-90 drop-shadow-md text-white px-4 leading-relaxed">
-                Luxury meets nature in the heart of Himachal. Experience tranquility like never before in our sustainable Himalayan sanctuary.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <h1 className="text-4xl md:text-[3rem] lg:text-[4rem] font-bold uppercase tracking-[0.1em] mb-8 font-playfair text-white drop-shadow-2xl leading-tight w-[90%] md:w-[80%] lg:w-[50%] mx-auto">
+                FOREST GATE RETREAT <br className="md:hidden" />AND TRAILS
+              </h1>
+              {/* <p className="max-w-xl mx-auto text-lg md:text-xl font-light tracking-wide mb-12 opacity-90 drop-shadow-md text-white px-4 leading-relaxed">
+                Luxury meets nature in the heart of Haryana. Experience tranquility like never before in our sustainable Morni Hills sanctuary.
+              </p> */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-18">
                 <Link href="/booking" className="inline-flex items-center justify-center h-16 px-12 rounded-full bg-[#f9b115] hover:bg-[#e2a013] text-black font-bold text-lg hover:scale-105 transition-all active:scale-95 shadow-[0_10px_40px_-10px_rgba(249,177,21,0.5)]">
                   Book Your Stay
                 </Link>

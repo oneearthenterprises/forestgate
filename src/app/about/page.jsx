@@ -2,13 +2,13 @@ import AboutClient from './AboutClient';
 
 export const metadata = {
   title: 'Our Story & Heritage',
-  description: 'Learn about the vision behind The Forest Gate, our commitment to sustainable luxury, and our journey to creating a Himalayan sanctuary in Naggar, Manali.',
+  description: 'Learn about the vision behind The Forest Gate, our commitment to sustainable luxury, and our journey to creating a Morni Hills sanctuary in Village Tandeo. Morni Hills, Panchkula, Haryana.',
   keywords: [
     'About The Forest Gate',
     'Resort Founders',
     'Sustainable Luxury Vision',
-    'Himachal Heritage',
-    'Naggar Manali History',
+    'Haryana Heritage',
+    'Village Tandeo. Morni Hills, Panchkula, Haryana Morni Hills History',
     'Eco-friendly Resort Story'
   ],
   alternates: {

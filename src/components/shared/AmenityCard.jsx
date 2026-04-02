@@ -17,10 +17,10 @@ export function AmenityCard({ amenity }) {
     const amenityImage = amenity.imageUrl ? { imageUrl: amenity.imageUrl, imageHint: amenity.title } : PlaceHolderImages.find(
         (img) => img.id === amenity.image
     );
-    
+
     return (
         <Card className="group overflow-hidden border-none shadow-none bg-transparent hover:shadow-xl transition-all duration-500 rounded-[2.5rem]">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem]">
+            <div className="relative h-[300px] md:h-[420px] overflow-hidden rounded-[2.5rem]">
                 {/* Base Image */}
                 {amenityImage && (
                     <Image
@@ -33,9 +33,9 @@ export function AmenityCard({ amenity }) {
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                     />
                 )}
-                
+
                 {/* The Signature Gradient Overlay (Green at bottom, fading to transparent top) */}
-                <div 
+                <div
                     className="absolute inset-0 opacity-80 group-hover:opacity-90 transition-opacity duration-500"
                     style={{ background: 'linear-gradient(to top, #70ac43 0%, rgba(112, 172, 67, 0.6) 40%, transparent 100%)' }}
                 ></div>
@@ -48,7 +48,7 @@ export function AmenityCard({ amenity }) {
                     <p className="text-white/95 leading-relaxed line-clamp-3 font-medium text-sm md:text-base mb-6 drop-shadow-sm">
                         {amenity.description}
                     </p>
-                    
+
                     {/* The signature white line at the bottom */}
                     <div className="w-16 h-1.5 bg-white rounded-full opacity-90 shadow-sm transition-all duration-500 group-hover:w-24"></div>
                 </div>

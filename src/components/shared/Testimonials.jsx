@@ -7,11 +7,11 @@ import { testimonials } from "@/app/lib/data"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Star } from "lucide-react"
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils";
 import Autoplay from 'embla-carousel-autoplay';
@@ -44,7 +44,7 @@ export function Testimonials() {
                     </h2>
                 </div>
 
-                <div className="relative max-w-6xl mx-auto">
+                <div className="relative  mx-auto">
                     <Carousel
                         opts={{
                             align: "start",
@@ -57,7 +57,7 @@ export function Testimonials() {
                     >
                         <CarouselContent className="-ml-4">
                             {testimonials.map((testimonial, index) => (
-                                <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                                <CarouselItem key={index} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
                                     <Card className="h-full border border-border shadow-sm bg-card hover:shadow-md transition-shadow duration-300">
                                         <CardContent className="p-6">
                                             {/* Header with Avatar, Name, and Google Branding */}
@@ -75,12 +75,12 @@ export function Testimonials() {
                                                         </div>
                                                         <div className="flex items-center mt-1">
                                                             {[...Array(5)].map((_, i) => (
-                                                                <Star 
-                                                                    key={i} 
+                                                                <Star
+                                                                    key={i}
                                                                     className={cn(
                                                                         "w-3 h-3",
                                                                         i < (testimonial.stars || 5) ? "text-yellow-400 fill-yellow-400" : "text-muted border-muted"
-                                                                    )} 
+                                                                    )}
                                                                 />
                                                             ))}
                                                         </div>
@@ -112,11 +112,11 @@ export function Testimonials() {
                             ))}
                         </CarouselContent>
                         <div className="flex justify-center mt-8 gap-2">
-                             <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1">
                                 {testimonials.map((_, i) => (
                                     <div key={i} className={cn("w-1.5 h-1.5 rounded-full", i === 0 ? "bg-yellow-400" : "bg-muted-foreground/30")} />
                                 ))}
-                             </div>
+                            </div>
                         </div>
                         <div className="hidden lg:block">
                             <CarouselPrevious className="-left-12 h-10 w-10 shadow-sm" />
@@ -125,6 +125,6 @@ export function Testimonials() {
                     </Carousel>
                 </div>
             </div>
-      </section>
+        </section>
     )
 }

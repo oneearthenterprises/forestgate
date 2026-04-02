@@ -6,14 +6,14 @@ import { AmenityCard } from "@/components/shared/AmenityCard";
 
 export const metadata = {
   title: 'Premium Resort Amenities & Guest Facilities',
-  description: 'Explore the world-class amenities at The Forest Gate, Naggar. From our swimming pool and private cinema to cozy bonfire pits and luxury dining, we offer everything for a perfect Himalayan stay.',
+  description: 'Explore the world-class amenities at The Forest Gate, Village Tandeo. Morni Hills, Panchkula, Haryana. From our swimming pool and private cinema to cozy bonfire pits and luxury dining, we offer everything for a perfect Morni Hills stay.',
   keywords: [
-    'Naggar Swimming Pool Resort',
-    'Private Cinema Manali',
-    'Bonfire Resort Himachal',
-    'Luxury Dining Naggar',
-    'Naggar Resort Facilities',
-    'Best Amenities Manali Resort',
+    'Village Tandeo. Morni Hills, Panchkula, Haryana Swimming Pool Resort',
+    'Private Cinema Morni Hills',
+    'Bonfire Resort Haryana',
+    'Luxury Dining Village Tandeo. Morni Hills, Panchkula, Haryana',
+    'Village Tandeo. Morni Hills, Panchkula, Haryana Resort Facilities',
+    'Best Amenities Morni Hills Resort',
     'Forest Gate Facilities'
   ],
   alternates: {

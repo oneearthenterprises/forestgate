@@ -1,16 +1,16 @@
 import ContactClient from './ContactClient';
 
 export const metadata = {
-  title: 'Contact Us & Location | Naggar, Manali',
-  description: 'Get in touch with The Forest Gate, Naggar. Find our address, phone number, and location map, or send us a message for bookings and inquiries about your Himalayan stay.',
+  title: 'Contact Us & Location | Village Tandeo. Morni Hills, Panchkula, Haryana',
+  description: 'Get in touch with The Forest Gate, Village Tandeo. Morni Hills, Panchkula, Haryana. Find our address, phone number, and location map, or send us a message for bookings and inquiries about your Morni Hills stay.',
   keywords: [
-    'Contact Forest Gate Naggar',
-    'Manali Resort Phone Number',
-    'Naggar Resort Address',
-    'Book Resort Naggar',
+    'Contact Forest Gate Village Tandeo. Morni Hills, Panchkula, Haryana',
+    'Morni Hills Resort Phone Number',
+    'Village Tandeo. Morni Hills, Panchkula, Haryana Resort Address',
+    'Book Resort Village Tandeo. Morni Hills, Panchkula, Haryana',
     'Forest Gate Location Map',
-    'Himachal Tourism Enquiry',
-    'Naggar Castle Nearby Hotels'
+    'Haryana Tourism Enquiry',
+    'Village Tandeo. Morni Hills, Panchkula, Haryana Castle Nearby Hotels'
   ],
   alternates: {
     canonical: '/contact'

@@ -64,7 +64,7 @@ export function HighlightsCarouselWrapper() {
             className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
           >
             <div className="flex flex-col items-center gap-4 group md:py-12 py-5">
-              <div className="relative w-[10rem] h-[17rem] md:w-[280px] md:h-[410px] overflow-hidden rounded-full border-4 border-white/10">
+              <div className="relative w-full max-w-[160px] md:max-w-[280px] aspect-[28/41] overflow-hidden rounded-full border-4 border-white/10">
                 <Image
                   src={item.imageUrl}
                   alt={item.title}

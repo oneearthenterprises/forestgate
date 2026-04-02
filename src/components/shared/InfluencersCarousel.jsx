@@ -26,8 +26,8 @@ export function InfluencersCarousel() {
   };
 
   const autoplay = React.useMemo(
-    () => (typeof Autoplay === 'function' ? Autoplay({ 
-      delay: 3000, 
+    () => (typeof Autoplay === 'function' ? Autoplay({
+      delay: 3000,
       stopOnInteraction: false,
       stopOnMouseEnter: true
     }) : null),
@@ -35,7 +35,7 @@ export function InfluencersCarousel() {
   );
 
   const plugins = React.useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
-  
+
   const carouselOpts = React.useMemo(() => ({
     align: "start",
     loop: true,
@@ -43,7 +43,7 @@ export function InfluencersCarousel() {
 
   return (
     <section id="influencers" className="bg-muted/30">
-      <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl">
+      <div className="container mx-auto px-4 md:px-8 lg:px-12 ">
         <div className="max-w-3xl mb-16">
           <p className="mb-2" style={sectionLabelStyle}>Influencers Speak</p>
           <h2 className="text-3xl md:text-5xl mb-4 font-headline">
@@ -64,7 +64,7 @@ export function InfluencersCarousel() {
               {influencers.map((person, index) => {
                 const imageData = PlaceHolderImages.find(img => img.id === person.image);
                 return (
-                  <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                  <CarouselItem key={index} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/4">
                     <div className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[500px] shadow-lg transition-all duration-500 hover:shadow-2xl border border-border/50">
                       {/* Portrait Image */}
                       {imageData && (
@@ -72,14 +72,14 @@ export function InfluencersCarousel() {
                           src={imageData.imageUrl}
                           alt={person.name}
                           fill
-                          className="object-cover transition-transform duration-[2000ms] group-hover:scale-110"
+                          className="object-cover transition-transform duration-[2s] group-hover:scale-110"
                           data-ai-hint={imageData.imageHint}
                         />
                       )}
 
                       {/* Gradient Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80" />
-                      
+
                       {/* Play Button Icon Overlay (Visual only) */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                         <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/30 text-white transform scale-90 group-hover:scale-100 transition-transform">
@@ -96,7 +96,7 @@ export function InfluencersCarousel() {
                       </div>
 
                       {/* Content Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-8">
+                      <div className="absolute bottom-0 left-0 right-0 md:p-8 p-4">
                         <p className="text-white/90 text-sm italic mb-4 leading-relaxed line-clamp-3">
                           "{person.quote}"
                         </p>

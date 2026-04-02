@@ -31,6 +31,19 @@ const nextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        // Apply to all video files in /public
+        source: '/assets/videos/:path*',
+        headers: [
+          { key: 'Accept-Ranges', value: 'bytes' },
+          { key: 'Content-Type', value: 'video/mp4' },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

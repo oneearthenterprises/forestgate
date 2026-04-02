@@ -25,7 +25,7 @@ export const rooms = [
     description:
       "Experience unparalleled comfort in our secluded luxury cottages.",
     longDescription:
-      "Our Luxury Cottages offer the perfect blend of rustic charm and modern amenities. Each cottage features a spacious bedroom, a private fireplace, and a veranda with breathtaking views of the Himalayas. Ideal for romantic getaways or peaceful solitude.",
+      "Our Luxury Cottages offer the perfect blend of rustic charm and modern amenities. Each cottage features a spacious bedroom, a private fireplace, and a veranda with breathtaking views of the Morni Hills. Ideal for romantic getaways or peaceful solitude.",
     images: ["room-cottage-1", "room-cottage-2"],
     amenities: [
       { name: "Private Balcony" },
@@ -149,7 +149,7 @@ export const influencers = [
   {
     name: "Aarav Sharma",
     handle: "@aarav_explores",
-    quote: "The tranquility here is unmatched. A true Himalayan sanctuary.",
+    quote: "The tranquility here is unmatched. A true Morni Hills sanctuary.",
     image: "influencer-1",
   },
   {
@@ -281,7 +281,7 @@ export const detailedExperiences = [
   {
     title: "Bird Watching Zones",
     description:
-      "Himachal is a paradise for bird lovers. Our property includes several designated zones where you can spot a wide variety of native and migratory birds. Join our guides to learn more about these beautiful creatures.",
+      "Haryana is a paradise for bird lovers. Our property includes several designated zones where you can spot a wide variety of native and migratory birds. Join our guides to learn more about these beautiful creatures.",
     image: "exp-bird-watching",
     iconName: "birdwatching",
   },
@@ -301,7 +301,7 @@ export const amenities = [
     description:
       "Take a dip in our temperature-controlled swimming pool while enjoying panoramic views of the majestic mountains.",
     longDescription:
-      "Our stunning infinity pool is the centerpiece of relaxation at The Forest Gate. Heated to the perfect temperature year-round, it offers an unparalleled swimming experience with panoramic views of the snow-capped Himalayan peaks. Lounge on the comfortable sunbeds, sip a refreshing drink from the poolside bar, and let the majestic scenery wash over you. It's the perfect spot to unwind after a day of exploring.",
+      "Our stunning infinity pool is the centerpiece of relaxation at The Forest Gate. Heated to the perfect temperature year-round, it offers an unparalleled swimming experience with panoramic views of the snow-capped Morni Hills peaks. Lounge on the comfortable sunbeds, sip a refreshing drink from the poolside bar, and let the majestic scenery wash over you. It's the perfect spot to unwind after a day of exploring.",
     image: "amenity-pool",
     imageUrl: "/assets/images/forestgate-image/POOLSIDE SUNSET PARTY.jpg",
     iconName: "waves",
@@ -401,12 +401,12 @@ export const wildlifeViewpoints = [
   {
     title: "Leopard",
     description:
-      "The elusive ghost of the mountains, leopards are occasional visitors to the higher ridges, embodying the raw wilderness of Himachal.",
-    image: "/assets/images/forestgate animal photos/Leopard himachal.jpg",
+      "The elusive ghost of the mountains, leopards are occasional visitors to the higher ridges, embodying the raw wilderness of Haryana.",
+    image: "/assets/images/forestgate animal photos/Leopard.jpg",
     imageHint: "leopard mountain",
   },
   {
-    title: "Himalayan Goral",
+    title: "Morni Hills Goral",
     description:
       "These agile goat-antelopes are masters of the rocky slopes, often seen grazing on the crags during quiet dawn hours.",
     image: "/assets/images/forestgate animal photos/Himalayan Goral.jpg",
@@ -477,7 +477,7 @@ export const wildlifeViewpoints = [
   {
     title: "Small Indian Civet",
     description:
-      "A shy, nocturnal visitor, the civet plays a crucial role in seed dispersal across the Himalayan forest floor.",
+      "A shy, nocturnal visitor, the civet plays a crucial role in seed dispersal across the Morni Hills forest floor.",
     image: "/assets/images/forestgate animal photos/Small Indian Civet.png",
     imageHint: "civet nature",
   },
@@ -513,7 +513,7 @@ export const wildlifeViewpoints = [
   {
     title: "Black Kite",
     description:
-      "These skillful flyers are a constant presence in the Himalayan skies, performing acrobatic displays in the wind.",
+      "These skillful flyers are a constant presence in the Morni Hills skies, performing acrobatic displays in the wind.",
     image: "/assets/images/forestgate animal photos/Black Kite.jpg",
     imageHint: "kite bird",
   },
@@ -533,10 +533,10 @@ export const wildlifeViewpoints = [
     imageHint: "kingfisher bird",
   },
   {
-    title: "Himalayan Bulbul",
+    title: "Morni Hills Bulbul",
     description:
-      "Cheerful and vocal, the Himalayan Bulbul is one of the most common and delightful birds to spot in our gardens.",
-    image: "/assets/images/forestgate animal photos/Himalayan Bulbul.jpg",
+      "Cheerful and vocal, the Morni Hills Bulbul is one of the most common and delightful birds to spot in our gardens.",
+    image: "/assets/images/forestgate animal photos/Bulbul.jpg",
     imageHint: "bulbul bird",
   },
 
@@ -557,7 +557,7 @@ export const wildlifeViewpoints = [
   {
     title: "Rose-ringed Parakeet",
     description:
-      "Vibrant green and highly social, these parakeets add a tropical touch to our Himalayan sanctuary.",
+      "Vibrant green and highly social, these parakeets add a tropical touch to our Morni Hills sanctuary.",
     image: "/assets/images/forestgate animal photos/Rose-ringed Parakeet.jpg",
     imageHint: "parakeet bird",
   },
@@ -580,12 +580,12 @@ export const wildlifeViewpoints = [
 export const blogPosts = [
   {
     id: "blog-1",
-    slug: "exploring-naggar-castle",
-    title: "Exploring the Timeless Charm of Naggar Castle",
+    slug: "exploring-Village Tandeo. Morni Hills, Panchkula, Haryana-castle",
+    title: "Exploring the Timeless Charm of Village Tandeo. Morni Hills, Panchkula, Haryana Castle",
     excerpt:
-      "Discover the rich history and stunning architecture of the medieval Naggar Castle, just a stones throw from our resort.",
+      "Discover the rich history and stunning architecture of the medieval Village Tandeo. Morni Hills, Panchkula, Haryana Castle, just a stones throw from our resort.",
     content:
-      "Naggar Castle is a medieval castle, located in Kullu, Himachal Pradesh, India. Built by Raja Sidh Singh of Kullu in around 1460 A.D, it was taken over by the Himachal Pradesh Tourism Development Corporation (HPTDC), to run as a heritage hotel, in 1978.\n\nThe unique architecture of the castle is a blend of Himalayan and European styles. The castle was built using local stone and timber, and its intricate wood carvings and beautiful courtyards are a testament to the skilled craftsmanship of the era.\n\nVisitors can explore the castle's various rooms, which have been converted into museum galleries, showcasing local artifacts, paintings, and traditional costumes. The castle also offers stunning views of the Kullu Valley and the surrounding mountains.",
+      "Village Tandeo. Morni Hills, Panchkula, Haryana Castle is a medieval castle, located in Kullu, Haryana Pradesh, India. Built by Raja Sidh Singh of Kullu in around 1460 A.D, it was taken over by the Haryana Pradesh Tourism Development Corporation (HPTDC), to run as a heritage hotel, in 1978.\n\nThe unique architecture of the castle is a blend of Morni Hills and European styles. The castle was built using local stone and timber, and its intricate wood carvings and beautiful courtyards are a testament to the skilled craftsmanship of the era.\n\nVisitors can explore the castle's various rooms, which have been converted into museum galleries, showcasing local artifacts, paintings, and traditional costumes. The castle also offers stunning views of the Kullu Valley and the surrounding mountains.",
     author: "Editorial Team",
     date: "March 15, 2024",
     category: "Local Guide",
@@ -593,12 +593,12 @@ export const blogPosts = [
   },
   {
     id: "blog-2",
-    slug: "himalayan-wellness-retreat",
-    title: "5 Reasons to Choose a Himalayan Wellness Retreat",
+    slug: "Morni Hills-wellness-retreat",
+    title: "5 Reasons to Choose a Morni Hills Wellness Retreat",
     excerpt:
-      "Why the crisp mountain air and serene landscapes of Himachal are perfect for your next rejuvenation journey.",
+      "Why the crisp mountain air and serene landscapes of Haryana are perfect for your next rejuvenation journey.",
     content:
-      "In today's fast-paced world, finding time to unwind and reconnect with oneself is more important than ever. A wellness retreat in the Himalayas offers the perfect opportunity to do just that. Here are five reasons why you should choose the Himalayas for your next rejuvenation journey:\n\n1. Breath-taking Natural Beauty: The majestic mountains, lush forests, and sparkling rivers of the Himalayas provide a stunning backdrop for relaxation and reflection.\n\n2. Crisp Mountain Air: The clean, fresh air of the Himalayas is invigorating and can help to clear your mind and improve your overall well-being.\n\n3. Serene Landscapes: The peaceful and tranquil environment of the Himalayas is ideal for meditation, yoga, and other wellness practices.\n\n4. Authentic Experiences: You can immerse yourself in the local culture and traditions, and learn about ancient wellness practices that have been passed down through generations.\n\n5. Professional Guidance: Many wellness retreats in the Himalayas offer professional guidance from experienced practitioners, who can help you to achieve your wellness goals.",
+      "In today's fast-paced world, finding time to unwind and reconnect with oneself is more important than ever. A wellness retreat in the Morni Hills offers the perfect opportunity to do just that. Here are five reasons why you should choose the Morni Hills for your next rejuvenation journey:\n\n1. Breath-taking Natural Beauty: The majestic mountains, lush forests, and sparkling rivers of the Morni Hills provide a stunning backdrop for relaxation and reflection.\n\n2. Crisp Mountain Air: The clean, fresh air of the Morni Hills is invigorating and can help to clear your mind and improve your overall well-being.\n\n3. Serene Landscapes: The peaceful and tranquil environment of the Morni Hills is ideal for meditation, yoga, and other wellness practices.\n\n4. Authentic Experiences: You can immerse yourself in the local culture and traditions, and learn about ancient wellness practices that have been passed down through generations.\n\n5. Professional Guidance: Many wellness retreats in the Morni Hills offer professional guidance from experienced practitioners, who can help you to achieve your wellness goals.",
     author: "Wellness Expert",
     date: "March 10, 2024",
     category: "Wellness",
@@ -607,11 +607,11 @@ export const blogPosts = [
   {
     id: "blog-3",
     slug: "trekking-tips-for-beginners",
-    title: "Trekking Tips for Beginners in Manali",
+    title: "Trekking Tips for Beginners in Morni Hills",
     excerpt:
       "Everything you need to know before you hit the trails, from essential gear to the best beginner-friendly routes.",
     content:
-      "Trekking in Manali is a fantastic way to explore the stunning natural beauty of the region. If you're a beginner, here are some essential tips to help you get started:\n\n1. Choose the Right Trail: Start with a beginner-friendly trail that is well-marked and not too strenuous.\n\n2. Gear Up: Invest in a good pair of trekking boots, a comfortable backpack, and appropriate clothing for the weather conditions.\n\n3. Pack Essentials: Carry a first-aid kit, a map, a compass, a whistle, and plenty of water and snacks.\n\n4. Check the Weather: Before you head out, check the weather forecast and be prepared for changes in conditions.\n\n5. Trek with a Guide: If you're new to trekking, consider hiring a local guide who can help you navigate the trails and provide valuable information about the region.",
+      "Trekking in Morni Hills is a fantastic way to explore the stunning natural beauty of the region. If you're a beginner, here are some essential tips to help you get started:\n\n1. Choose the Right Trail: Start with a beginner-friendly trail that is well-marked and not too strenuous.\n\n2. Gear Up: Invest in a good pair of trekking boots, a comfortable backpack, and appropriate clothing for the weather conditions.\n\n3. Pack Essentials: Carry a first-aid kit, a map, a compass, a whistle, and plenty of water and snacks.\n\n4. Check the Weather: Before you head out, check the weather forecast and be prepared for changes in conditions.\n\n5. Trek with a Guide: If you're new to trekking, consider hiring a local guide who can help you navigate the trails and provide valuable information about the region.",
     author: "Adventure Guide",
     date: "March 05, 2024",
     category: "Adventure",

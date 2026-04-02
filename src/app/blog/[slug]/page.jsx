@@ -155,7 +155,7 @@ export default async function BlogDetailPage({ params }) {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-white/20 transition-all duration-700" />
                 <h3 className="font-headline text-3xl font-bold mb-4 relative z-10">Visit Our Sanctuary</h3>
                 <p className="text-white/80 font-light mb-8 relative z-10">
-                  Ready to experience the magic of the Himalayas for yourself?
+                  Ready to experience the magic of the Morni Hills for yourself?
                 </p>
                 <Button asChild variant="secondary" className="w-full h-12 rounded-full font-bold relative z-10 shadow-none text-black bg-white hover:bg-slate-100">
                   <Link href="/booking">Book Your Stay</Link>

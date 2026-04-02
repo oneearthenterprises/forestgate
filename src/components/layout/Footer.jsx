@@ -111,8 +111,8 @@ const submitValue = async (e) => {
               <img src="/assets/images/forestgatelogo.svg" alt="The Forest Gate" className="h-[7rem] w-auto" />
             </Link>
             <p className="text-foreground/70 font-light leading-relaxed">
-              Luxury Meets Nature in the Heart of Himachal. Experience
-              sustainable luxury and unparalleled tranquility in our Himalayan
+              Luxury Meets Nature in the Heart of Haryana. Experience
+              sustainable luxury and unparalleled tranquility in our Morni Hills
               sanctuary.
             </p>
             <div className="flex gap-4 mt-2">
@@ -181,7 +181,7 @@ const submitValue = async (e) => {
                 <AccordionContent>
                   <div className="flex flex-col gap-4 pb-4 text-foreground/70 text-base font-medium">
                     <p>
-                      Village Naggar, Near Manali, Himachal Pradesh, 175131,
+                      Village Village Tandeo. Morni Hills, Panchkula, Haryana, Near Morni Hills, Haryana Pradesh, 175131,
                       India
                     </p>
                     <p>Email: contact@theforestgate.com</p>
@@ -257,8 +257,8 @@ const submitValue = async (e) => {
             <h3 className="font-headline font-bold text-xl mb-8">Contact Us</h3>
             <div className="flex flex-col gap-4 text-foreground/70 font-medium leading-relaxed">
               <p>
-                Village Naggar, <br />
-                Near Manali, Himachal Pradesh, <br />
+                Village Village Tandeo. Morni Hills, Panchkula, Haryana, <br />
+                Near Morni Hills, Haryana Pradesh, <br />
                 175131, India
               </p>
               <div className="space-y-1 mt-2">

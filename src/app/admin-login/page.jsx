@@ -207,7 +207,7 @@ async function onLoginSubmit(data) {
           </div>
           <h2 className="text-5xl font-headline font-bold leading-tight mb-4">
             Excellence in <br />
-            <span className="text-[#fcb101]">Himalayan</span> Hospitality.
+            <span className="text-[#fcb101]">Morni Hills</span> Hospitality.
           </h2>
           <p className="text-white/80 text-lg font-light max-w-md">
             Manage your sanctuary with precision. Our admin portal provides all

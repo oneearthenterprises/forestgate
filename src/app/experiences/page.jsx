@@ -1,16 +1,16 @@
 import ExperiencesClient from './ExperiencesClient';
 
 export const metadata = {
-  title: 'Himalayan Adventures & Nature Experiences',
-  description: 'Discover curated activities at The Forest Gate, Naggar. From high-altitude trekking and stargazing to riverside picnics and local cultural tours, immerse yourself in the magic of Himachal.',
+  title: 'Morni Hills Adventures & Nature Experiences',
+  description: 'Discover curated activities at The Forest Gate, Village Tandeo. Morni Hills, Panchkula, Haryana. From high-altitude trekking and stargazing to riverside picnics and local cultural tours, immerse yourself in the magic of Haryana.',
   keywords: [
-    'Himalayan Trekking Naggar',
-    'Adventure Activities Manali',
-    'Nature Experiences Himachal',
-    'Stargazing Resort Manali',
-    'River Side Picnic Naggar',
-    'Naggar Cultural Tours',
-    'Outdoor Activities Himachal'
+    'Morni Hills Trekking Village Tandeo. Morni Hills, Panchkula, Haryana',
+    'Adventure Activities Morni Hills',
+    'Nature Experiences Haryana',
+    'Stargazing Resort Morni Hills',
+    'River Side Picnic Village Tandeo. Morni Hills, Panchkula, Haryana',
+    'Village Tandeo. Morni Hills, Panchkula, Haryana Cultural Tours',
+    'Outdoor Activities Haryana'
   ],
   alternates: {
     canonical: '/experiences'

@@ -150,7 +150,7 @@ export default function ContactClient() {
                              <div className="space-y-4">
                                 <div>
                                     <h3 className="font-bold flex items-center gap-2 mb-2"><MapPin className="w-5 h-5 text-primary"/> Address</h3>
-                                    <p className="text-foreground/80 ml-7">Village Naggar, <br/>Manali, Himachal Pradesh, 175131, India</p>
+                                    <p className="text-foreground/80 ml-7">Village Village Tandeo. Morni Hills, Panchkula, Haryana, <br/>Morni Hills, Haryana Pradesh, 175131, India</p>
                                 </div>
                                  <div>
                                     <h3 className="font-bold flex items-center gap-2 mb-2"><Mail className="w-5 h-5 text-primary"/> Email</h3>
@@ -180,11 +180,11 @@ export default function ContactClient() {
                     <div className="mt-8 text-center">
                         <h3 className="font-headline text-2xl font-bold mb-4">Nearby Attractions</h3>
                         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-foreground/80">
-                            <span>Naggar Castle</span>
+                            <span>Village Tandeo. Morni Hills, Panchkula, Haryana Castle</span>
                             <span>Roerich Art Gallery</span>
                             <span>Jana Waterfall</span>
                             <span>Solang Valley</span>
-                            <span>Old Manali</span>
+                            <span>Old Morni Hills</span>
                         </div>
                     </div>
                 </div>

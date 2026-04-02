@@ -2,13 +2,13 @@ import RoomsClient from './RoomsClient';
 
 export const metadata = {
   title: 'Luxury Accommodations & Private Suites',
-  description: 'Explore our collection of luxurious rooms and private suites at The Forest Gate. From cozy retreats to family-sized luxury cottages, find your perfect Himalayan sanctuary.',
+  description: 'Explore our collection of luxurious rooms and private suites at The Forest Gate. From cozy retreats to family-sized luxury cottages, find your perfect Morni Hills sanctuary.',
   keywords: [
-    'Luxury Rooms Naggar',
-    'Manali Cottage Booking',
-    'Himalayan Suite Stay',
+    'Luxury Rooms Village Tandeo. Morni Hills, Panchkula, Haryana',
+    'Morni Hills Cottage Booking',
+    'Morni Hills Suite Stay',
     'Private Resort Accommodations',
-    'Luxury Stay Manali',
+    'Luxury Stay Morni Hills',
     'Forest View Rooms'
   ],
   alternates: {

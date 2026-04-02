@@ -54,7 +54,7 @@ export default function NotFound() {
       {/* Subtle Branding Watermark */}
       <div className="absolute bottom-8 left-0 right-0 text-center opacity-20 pointer-events-none select-none">
         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
-          The Forest Gate • Naggar, Manali
+          The Forest Gate • Village Tandeo. Morni Hills, Panchkula, Haryana
         </p>
       </div>
     </div>

@@ -348,9 +348,9 @@ const getApiRooms = async () => {
       </section>
 
       <ManagedBySection 
-        label="Himalayan Hospitality"
+        label="Morni Hills Hospitality"
         title="Managed By The Forest Authority"
-        description="Experience luxury curated by the guardians of the mountains. Our partnerships ensure every stay contributes to the preservation of Himachal's ancient forest trails and biodiversity."
+        description="Experience luxury curated by the guardians of the mountains. Our partnerships ensure every stay contributes to the preservation of Haryana's ancient forest trails and biodiversity."
         buttonText="Explore Sanctuary"
         buttonLink="/experiences"
         imageSrc="/assets/images/dearimage.png"

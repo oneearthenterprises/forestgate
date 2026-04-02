@@ -18,7 +18,7 @@ export function WhatsAppButton() {
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      
+
       // Update visibility
       if (scrollY > 100) {
         setIsVisible(true);
@@ -38,7 +38,7 @@ export function WhatsAppButton() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, [hasAutoClicked]);
 
@@ -62,7 +62,7 @@ export function WhatsAppButton() {
         phoneNumber="+9304987505"
         accountName="The Forest Gate"
         statusMessage="Online"
-        chatMessage="Hello! 👋 How can we help you plan your Himalayan getaway today?"
+        chatMessage="Hello! 👋 How can we help you plan your Morni Hills getaway today?"
         placeholder="Type a message..."
         notification={true}
         notificationDelay={30}

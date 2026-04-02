@@ -13,7 +13,7 @@ export default function AboutClient() {
         {
             icon: Leaf,
             title: "Eco-Friendly Environment",
-            description: "We are committed to sustainability, with green practices integrated into every aspect of our operations to preserve the pristine beauty of Himachal."
+            description: "We are committed to sustainability, with green practices integrated into every aspect of our operations to preserve the pristine beauty of Haryana."
         },
         {
             icon: Users,
@@ -54,7 +54,7 @@ export default function AboutClient() {
                         </div>
                         <h2 className="font-headline text-4xl md:text-6xl font-bold mb-8 leading-tight">Our Story</h2>
                         <p className="text-xl text-foreground/70 mb-8 font-light leading-relaxed">
-                        The Forest Gate was born from a dream to create a luxurious sanctuary that lives in harmony with nature. Our founders, with a deep love for the Himalayas, envisioned a place where guests could escape the chaos of city life.
+                        The Forest Gate was born from a dream to create a luxurious sanctuary that lives in harmony with nature. Our founders, with a deep love for the Morni Hills, envisioned a place where guests could escape the chaos of city life.
                         </p>
                         <div className="p-8 bg-muted/30 rounded-3xl border-l-4 border-[#fcb101]">
                             <p className="text-lg text-foreground/80 font-light leading-relaxed italic">

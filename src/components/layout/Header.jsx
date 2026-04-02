@@ -245,7 +245,7 @@ export function Header() {
                           </div>
                       </div>
                       <p className="mt-5 text-[11px] text-slate-400 font-medium leading-relaxed pr-4">
-                          Experience the magic of Himachal through our lens. <br/>
+                          Experience the magic of Haryana through our lens. <br/>
                           Daily updates, guest stories, and exclusive offers.
                       </p>
                   </Link>

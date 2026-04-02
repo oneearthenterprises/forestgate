@@ -205,7 +205,7 @@ function LoginForm() {
                     </div>
                     <h2 className="text-5xl font-headline text-white font-bold leading-tight mb-4">
                         Unlock Your <br/>
-                        <span className="text-[#fcb101]">Himalayan</span> Experience.
+                        <span className="text-[#fcb101]">Morni Hills</span> Experience.
                     </h2>
                     <p className="text-white/80 text-lg font-light max-w-md">
                         Your journey to tranquility begins here. Log in to manage your reservations and explore personalized services.
