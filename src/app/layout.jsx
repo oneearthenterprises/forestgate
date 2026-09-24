@@ -97,7 +97,20 @@ export default function RootLayout({
 {/* search console  tag */} 
 
         <meta name="google-site-verification" content="y_FpaRMFt9k_vtfp-RwLuwq89XRaAxVm90jZ7tC9X-M" />
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-BGKHWNVG4N"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
+            gtag('config', 'G-BGKHWNVG4N');
+          `}
+        </Script>
 
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
