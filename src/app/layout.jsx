@@ -9,7 +9,7 @@ import { AuthContextProvider } from '@/context/AuthContext';
 import { ReCaptchaProvider } from '@/components/providers/ReCaptchaProvider';
 
 export const metadata = {
-  metadataBase: new URL('https://theforestgate.com'),
+  metadataBase: new URL('https://forestgatetrails.com'),
   title: {
     default: 'The Forest Gate - Luxury Meets Nature in the Heart of Haryana',
     template: '%s | The Forest Gate',
@@ -46,7 +46,7 @@ export const metadata = {
   openGraph: {
     title: 'The Forest Gate - Luxury Morni Hills Resort',
     description: 'Experience tranquility and sustainable luxury at The Forest Gate, Village Tandeo. Morni Hills, Panchkula, Haryana.',
-    url: 'https://theforestgate.com',
+    url: 'https://forestgatetrails.com',
     siteName: 'The Forest Gate',
     images: [
       {

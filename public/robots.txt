@@ -1,0 +1,26 @@
+User-Agent: *
+Allow: /
+Disallow: /admin-dashboard/
+Disallow: /admin-login/
+Disallow: /profile/
+Disallow: /my-bookings/
+Disallow: /login/
+Disallow: /register/
+Disallow: /forgot-password/
+Disallow: /thanks/
+Disallow: /api/
+
+User-Agent: Googlebot
+Allow: /
+Disallow: /admin-dashboard/
+Disallow: /admin-login/
+Disallow: /profile/
+Disallow: /my-bookings/
+Disallow: /login/
+Disallow: /register/
+Disallow: /forgot-password/
+Disallow: /thanks/
+Disallow: /api/
+
+Host: https://forestgatetrails.com
+Sitemap: https://forestgatetrails.com/sitemap.xml
