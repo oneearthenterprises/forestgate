@@ -117,9 +117,39 @@ export async function GET() {
       images: [],
     },
     {
-      url: `${BASE_URL}/wildwood_retreat`,
+      url: `${BASE_URL}/the-forest-retreat`,
       lastmod: formatDate(new Date()),
       images: [`${BASE_URL}/assets/images/forestgate-image/YOUR%20SANCTUARY%20IN%20THE%20MOPUNTAINS.png`],
+    },
+    {
+      url: `${BASE_URL}/forest-haven`,
+      lastmod: formatDate(new Date()),
+      images: [`${BASE_URL}/assets/images/forestgate-image/PROPERTTY.png`],
+    },
+    {
+      url: `${BASE_URL}/whispering-woods`,
+      lastmod: formatDate(new Date()),
+      images: [`${BASE_URL}/assets/images/forestgate-image/FORNT%20VIEW%20PROPERTY.png`],
+    },
+    {
+      url: `${BASE_URL}/wildwood_retreat`,
+      lastmod: formatDate(new Date()),
+      images: [`${BASE_URL}/assets/images/forestgate-image/RIVER%20VIEW.jpeg`],
+    },
+    {
+      url: `${BASE_URL}/wildwood-retreat`,
+      lastmod: formatDate(new Date()),
+      images: [`${BASE_URL}/assets/images/forestgate-image/RIVER%20VIEW.jpeg`],
+    },
+    {
+      url: `${BASE_URL}/natures-gate`,
+      lastmod: formatDate(new Date()),
+      images: [`${BASE_URL}/assets/images/forestgate-image/TREKKING.png`],
+    },
+    {
+      url: `${BASE_URL}/the-green-escape`,
+      lastmod: formatDate(new Date()),
+      images: [`${BASE_URL}/assets/images/forestgate-image/Open%20Sky%20Dining.png`],
     },
     {
       url: `${BASE_URL}/privacy-policy`,

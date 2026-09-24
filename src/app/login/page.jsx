@@ -80,12 +80,7 @@ function LoginForm() {
         <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden relative">
             {/* Subtle Textured Background for form side */}
             <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
-                <Image 
-                    src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=1200"
-                    alt="texture"
-                    fill
-                    className="object-cover"
-                />
+             
             </div>
 
             {/* Left Side: Login Form (50%) */}

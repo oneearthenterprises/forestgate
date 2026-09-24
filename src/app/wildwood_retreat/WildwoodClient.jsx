@@ -36,6 +36,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { MustExperienceSlider } from '@/components/shared/MustExperienceSlider';
 
 // --- DATA DEFINITIONS ---
 
@@ -874,6 +875,14 @@ export default function WildwoodClient() {
           </div>
         </div>
       </section>
+
+      {/* MUST-DO SANCTUARIES & EXPERIENCES SLIDER */}
+      <MustExperienceSlider
+        title="Must-do experiences"
+        description="These essential Forest Gate sanctuaries and experiences belong on every visitor's list. Don't leave without ticking off these unforgettable moments."
+        wide={true}
+        className="bg-white border-t border-slate-200"
+      />
 
       {/* 9. HIGH-CONVERSION CINEMATIC CALL TO ACTION */}
       <section className="py-24 sm:py-32 bg-slate-950 relative overflow-hidden text-white">

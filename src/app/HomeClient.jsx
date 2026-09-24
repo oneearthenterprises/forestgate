@@ -35,6 +35,7 @@ import { MobileRoomsCarouselWrapper } from '@/components/shared/MobileRoomsCarou
 import { WelcomePopup } from '@/components/shared/WelcomePopup';
 import { BoutiqueTypography } from '@/components/shared/BoutiqueTypography';
 import { AtmosphereCarousel } from '@/components/shared/AtmosphereCarousel';
+import { MustExperienceSlider } from '@/components/shared/MustExperienceSlider';
 import { API } from '@/lib/api/api';
 import { useRouter } from 'next/navigation';
 
@@ -262,6 +263,14 @@ export default function HomeClient() {
       <InteractiveMapSection />
       <BoutiqueTypography />
       <AtmosphereCarousel />
+
+      <motion.div {...fadeInUp}>
+        <MustExperienceSlider
+          title="Must-do experiences"
+          description="These essential Forest Gate sanctuaries and experiences belong on every visitor's list. Don't leave without ticking off these unforgettable moments."
+          wide={true}
+        />
+      </motion.div>
 
       <motion.section {...fadeInUp} id="experiences" className="bg-card">
         <div className="container mx-auto px-4">

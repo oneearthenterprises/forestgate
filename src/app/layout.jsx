@@ -93,6 +93,12 @@ export default function RootLayout({
             fbq('track', 'PageView');
           `}
         </Script>
+
+{/* search console  tag */}
+
+        <meta name="google-site-verification" content="y_FpaRMFt9k_vtfp-RwLuwq89XRaAxVm90jZ7tC9X-M" />
+
+
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
         <noscript>
