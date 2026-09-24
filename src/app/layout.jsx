@@ -94,7 +94,7 @@ export default function RootLayout({
           `}
         </Script>
 
-{/* search console  tag */}
+{/* search console  tag */} 
 
         <meta name="google-site-verification" content="y_FpaRMFt9k_vtfp-RwLuwq89XRaAxVm90jZ7tC9X-M" />
 

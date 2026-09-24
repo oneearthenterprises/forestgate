@@ -24,3 +24,4 @@ Disallow: /api/
 
 Host: https://forestgatetrails.com
 Sitemap: https://forestgatetrails.com/sitemap.xml
+Sitemap: https://forestgatetrails.com/sitemap.txt

@@ -3,14 +3,13 @@ import { NextResponse } from 'next/server';
 const BASE_URL = 'https://forestgatetrails.com';
 
 function formatDate(dateInput) {
-  const d = dateInput ? new Date(dateInput) : new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  const year = d.getUTCFullYear();
-  const month = pad(d.getUTCMonth() + 1);
-  const day = pad(d.getUTCDate());
-  const hours = pad(d.getUTCHours());
-  const mins = pad(d.getUTCMinutes());
-  return `${year}-${month}-${day} ${hours}:${mins} +00:00`;
+  try {
+    const d = dateInput ? new Date(dateInput) : new Date();
+    if (isNaN(d.getTime())) return new Date().toISOString();
+    return d.toISOString();
+  } catch {
+    return new Date().toISOString();
+  }
 }
 
 function escapeXml(str) {
@@ -64,27 +63,39 @@ export async function GET() {
     {
       url: `${BASE_URL}/`,
       lastmod: formatDate(new Date()),
-      images: [`${BASE_URL}/assets/images/banner.jpeg`],
+      images: [
+        `${BASE_URL}/assets/images/banner.jpeg`,
+        `${BASE_URL}/assets/images/forestgate-image/YOUR%20SANCTUARY%20IN%20THE%20MOPUNTAINS.png`,
+      ],
     },
     {
       url: `${BASE_URL}/about`,
       lastmod: formatDate(new Date()),
-      images: [],
+      images: [`${BASE_URL}/assets/images/forestgate-image/YOUR%20SANCTUARY%20IN%20THE%20MOPUNTAINS.png`],
     },
     {
       url: `${BASE_URL}/rooms`,
       lastmod: formatDate(new Date()),
-      images: [],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/ROOMS.jpeg`,
+        `${BASE_URL}/assets/images/forestgate-image/ROOM%201.jpeg`,
+      ],
     },
     {
       url: `${BASE_URL}/experiences`,
       lastmod: formatDate(new Date()),
-      images: [],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/mountain%20trekking.jpg`,
+        `${BASE_URL}/assets/images/forestgate-image/Bonfire.jpg`,
+      ],
     },
     {
       url: `${BASE_URL}/amenities`,
       lastmod: formatDate(new Date()),
-      images: [],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/POOLSIDE%20SUNSET%20PARTY.jpg`,
+        `${BASE_URL}/assets/images/forestgate-image/Mini-Cinema-Home-Theater.png`,
+      ],
     },
     {
       url: `${BASE_URL}/gallery`,
@@ -99,7 +110,7 @@ export async function GET() {
     {
       url: `${BASE_URL}/events`,
       lastmod: formatDate(new Date()),
-      images: [],
+      images: [`${BASE_URL}/assets/images/forestgate-image/POOLSIDE%20SUNSET%20PARTY.jpg`],
     },
     {
       url: `${BASE_URL}/contact`,
@@ -119,37 +130,58 @@ export async function GET() {
     {
       url: `${BASE_URL}/the-forest-retreat`,
       lastmod: formatDate(new Date()),
-      images: [`${BASE_URL}/assets/images/forestgate-image/YOUR%20SANCTUARY%20IN%20THE%20MOPUNTAINS.png`],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/YOUR%20SANCTUARY%20IN%20THE%20MOPUNTAINS.png`,
+        `${BASE_URL}/assets/images/forestgate-image/ROOMS.jpeg`,
+      ],
     },
     {
       url: `${BASE_URL}/forest-haven`,
       lastmod: formatDate(new Date()),
-      images: [`${BASE_URL}/assets/images/forestgate-image/PROPERTTY.png`],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/PROPERTTY.png`,
+        `${BASE_URL}/assets/images/forestgate-image/BIRD%20WATCHING.png`,
+      ],
     },
     {
       url: `${BASE_URL}/whispering-woods`,
       lastmod: formatDate(new Date()),
-      images: [`${BASE_URL}/assets/images/forestgate-image/FORNT%20VIEW%20PROPERTY.png`],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/FORNT%20VIEW%20PROPERTY.png`,
+        `${BASE_URL}/assets/images/forestgate-image/mountain%20trekking.jpg`,
+      ],
     },
     {
       url: `${BASE_URL}/wildwood_retreat`,
       lastmod: formatDate(new Date()),
-      images: [`${BASE_URL}/assets/images/forestgate-image/RIVER%20VIEW.jpeg`],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/RIVER%20VIEW.jpeg`,
+        `${BASE_URL}/assets/images/forestgate-image/Bonfire.jpg`,
+      ],
     },
     {
       url: `${BASE_URL}/wildwood-retreat`,
       lastmod: formatDate(new Date()),
-      images: [`${BASE_URL}/assets/images/forestgate-image/RIVER%20VIEW.jpeg`],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/RIVER%20VIEW.jpeg`,
+        `${BASE_URL}/assets/images/forestgate-image/Bonfire.jpg`,
+      ],
     },
     {
       url: `${BASE_URL}/natures-gate`,
       lastmod: formatDate(new Date()),
-      images: [`${BASE_URL}/assets/images/forestgate-image/TREKKING.png`],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/TREKKING.png`,
+        `${BASE_URL}/assets/images/forestgate-image/ADVENTURE%20ACTIVITIES.jpg`,
+      ],
     },
     {
       url: `${BASE_URL}/the-green-escape`,
       lastmod: formatDate(new Date()),
-      images: [`${BASE_URL}/assets/images/forestgate-image/Open%20Sky%20Dining.png`],
+      images: [
+        `${BASE_URL}/assets/images/forestgate-image/Open%20Sky%20Dining.png`,
+        `${BASE_URL}/assets/images/forestgate-image/MOUNTAIN.png`,
+      ],
     },
     {
       url: `${BASE_URL}/privacy-policy`,
