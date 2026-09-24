@@ -5,10 +5,14 @@ const BASE_URL = 'https://forestgatetrails.com';
 function formatDate(dateInput) {
   try {
     const d = dateInput ? new Date(dateInput) : new Date();
-    if (isNaN(d.getTime())) return new Date().toISOString();
-    return d.toISOString();
+    if (isNaN(d.getTime())) {
+      const now = new Date();
+      return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
+    }
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
   } catch {
-    return new Date().toISOString();
+    const now = new Date();
+    return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
   }
 }
 
