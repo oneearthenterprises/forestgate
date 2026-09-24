@@ -184,7 +184,7 @@ const submitValue = async (e) => {
                       Village Village Tandeo. Morni Hills, Panchkula, Haryana, Near Morni Hills, Haryana Pradesh, 175131,
                       India
                     </p>
-                    <p>Email: contact@theforestgate.com</p>
+                    <p>Email: Support@forestgatetrails.com</p>
                     <p>Phone: +91 987 654 3210</p>
                   </div>
                 </AccordionContent>
@@ -262,7 +262,7 @@ const submitValue = async (e) => {
                 175131, India
               </p>
               <div className="space-y-1 mt-2">
-                <p>Email: contact@theforestgate.com</p>
+                <p>Email: Support@forestgatetrails.com</p>
                 <p>Phone: +91 987 654 3210</p>
               </div>
             </div>
