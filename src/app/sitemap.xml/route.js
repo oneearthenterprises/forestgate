@@ -117,6 +117,11 @@ export async function GET() {
       images: [],
     },
     {
+      url: `${BASE_URL}/wildwood_retreat`,
+      lastmod: formatDate(new Date()),
+      images: [`${BASE_URL}/assets/images/forestgate-image/YOUR%20SANCTUARY%20IN%20THE%20MOPUNTAINS.png`],
+    },
+    {
       url: `${BASE_URL}/privacy-policy`,
       lastmod: formatDate(new Date()),
       images: [],
