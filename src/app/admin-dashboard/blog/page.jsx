@@ -95,12 +95,14 @@ export default function AdminBlogPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         });
+        const result = await res.json().catch(() => null);
         if (res.ok) {
           toast({ title: 'Post Updated', description: `"${data.title}" updated successfully.` });
           setEditingPost(null);
+          form.reset(defaultFormValues);
           fetchBlogs();
         } else {
-            toast({ title: 'Error', variant: 'destructive', description: "Failed to update blog." });
+          toast({ title: 'Error', variant: 'destructive', description: result?.message || "Failed to update blog." });
         }
       } else {
         const res = await fetch(API.createBlog, {
@@ -108,17 +110,18 @@ export default function AdminBlogPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         });
+        const result = await res.json().catch(() => null);
         if (res.ok) {
           toast({ title: 'Post Published', description: `"${data.title}" published successfully.` });
+          form.reset(defaultFormValues);
           fetchBlogs();
         } else {
-            toast({ title: 'Error', variant: 'destructive', description: "Failed to create blog." });
+          toast({ title: 'Error', variant: 'destructive', description: result?.message || "Failed to create blog." });
         }
       }
-      form.reset(defaultFormValues);
     } catch (err) {
       console.error(err);
-      toast({ title: 'Network Error', variant: 'destructive' });
+      toast({ title: 'Network Error', variant: 'destructive', description: 'Could not connect to server.' });
     }
   }
 
@@ -138,16 +141,40 @@ export default function AdminBlogPage() {
   const handleImageUpload = (event, fieldName) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file size to prevent 413 Payload Too Large on simple save
-      if (file.size > 2 * 1024 * 1024) { 
-        toast({ title: 'File too large', description: 'Please use an image under 2MB.', variant: 'destructive' });
+      if (file.size > 20 * 1024 * 1024) { 
+        toast({ title: 'File too large', description: 'Please use an image under 20MB.', variant: 'destructive' });
         return;
       }
       const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          form.setValue(fieldName, reader.result, { shouldValidate: true });
-        }
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1600;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          form.setValue(fieldName, compressedDataUrl, { shouldValidate: true });
+        };
+        img.onerror = () => {
+          if (typeof reader.result === 'string') {
+            form.setValue(fieldName, reader.result, { shouldValidate: true });
+          }
+        };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
       event.target.value = '';
