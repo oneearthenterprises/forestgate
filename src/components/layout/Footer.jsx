@@ -23,12 +23,13 @@ export function Footer() {
   const [email, setEmail] = useState("");
   const router = useRouter();
 
-  // Hide footer on admin pages, login, or register pages
+  // Hide footer on admin pages, login, register, or forgot-password pages
   if (
     pathname.startsWith("/admin-dashboard") ||
     pathname === "/admin-login" ||
     pathname === "/login" ||
-    pathname === "/register"
+    pathname === "/register" ||
+    pathname === "/forgot-password"
   ) {
     return null;
   }

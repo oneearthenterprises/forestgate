@@ -45,7 +45,8 @@ export function Header() {
     pathname.startsWith('/admin-dashboard') || 
     pathname === '/admin-login' || 
     pathname === '/login' || 
-    pathname === '/register'
+    pathname === '/register' ||
+    pathname === '/forgot-password'
   ) {
     return null;
   }
