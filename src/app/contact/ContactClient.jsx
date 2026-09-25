@@ -158,15 +158,15 @@ export default function ContactClient() {
                                 </div>
                                  <div>
                                     <h3 className="font-bold flex items-center gap-2 mb-2"><Phone className="w-5 h-5 text-primary"/> Phone</h3>
-                                    <Link href="tel:+9304987505" className="text-foreground/80 hover:text-primary ml-7">+91 987 654 3210</Link>
+                                    <Link href="tel:+917009984070" className="text-foreground/80 hover:text-primary ml-7">+91 70099 84070</Link>
                                 </div>
                              </div>
                              <div className="flex flex-col gap-4">
                                 <Button asChild size="lg" className="w-full">
-                                    <Link href="https://wa.me/9304987505" target="_blank">Chat on WhatsApp</Link>
+                                    <Link href="https://wa.me/917009984070" target="_blank">Chat on WhatsApp</Link>
                                 </Button>
                                 <Button asChild variant="secondary" size="lg" className="w-full">
-                                    <Link href="tel:+9304987505">Call Now</Link>
+                                    <Link href="tel:+917009984070">Call Now</Link>
                                 </Button>
                              </div>
                         </div>

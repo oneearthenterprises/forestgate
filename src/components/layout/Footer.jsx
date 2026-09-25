@@ -185,7 +185,7 @@ const submitValue = async (e) => {
                       India
                     </p>
                     <p>Email: Support@forestgatetrails.com</p>
-                    <p>Phone: +91 987 654 3210</p>
+                    <p>Phone: <a href="tel:+917009984070" className="hover:text-primary transition-colors">+91 70099 84070</a></p>
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -263,7 +263,7 @@ const submitValue = async (e) => {
               </p>
               <div className="space-y-1 mt-2">
                 <p>Email: Support@forestgatetrails.com</p>
-                <p>Phone: +91 987 654 3210</p>
+                <p>Phone: <a href="tel:+917009984070" className="hover:text-primary transition-colors">+91 70099 84070</a></p>
               </div>
             </div>
           </div>
