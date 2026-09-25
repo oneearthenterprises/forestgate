@@ -189,7 +189,7 @@ export function AuthDialog({ open, onOpenChange }) {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl bg-white">
+            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-[2.5rem] border-none  bg-white">
                 <div className="max-h-[90vh] overflow-y-auto px-8 pt-12 pb-10 space-y-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] relative">
                     
                     {/* Light Green Marquee Status */}
@@ -261,7 +261,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                         <Button
                                             type="submit"
                                             disabled={isLoading}
-                                            className="w-full h-16 rounded-2xl bg-[#085d6b] hover:bg-[#085d6b]/90 text-white text-xs font-black uppercase tracking-[0.2em] shadow-xl transition-all active:scale-[0.98]"
+                                            className="w-full h-16 rounded-2xl bg-[#085d6b] hover:bg-[#085d6b]/90 text-white text-xs font-black uppercase tracking-[0.2em]  transition-all active:scale-[0.98]"
                                         >
                                             {isLoading ? 'Verifying...' : 'Verify & Create Account'}
                                         </Button>
@@ -315,7 +315,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                         initial={false}
                                         animate={{ x: mode === 'login' ? '0%' : '100%' }}
                                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                        className="absolute left-1 w-[calc(50%-4px)] h-[calc(100%-8px)] bg-[#085d6b] rounded-full shadow-lg"
+                                        className="absolute left-1 w-[calc(50%-4px)] h-[calc(100%-8px)] bg-[#085d6b] rounded-full "
                                     />
                                 </div>
 
@@ -360,7 +360,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                                         </FormItem>
                                                     )}
                                                 />
-                                                <Button type="submit" disabled={isLoading} className="w-full h-16 rounded-2xl bg-secondary hover:bg-secondary/90 text-black text-xs font-black uppercase tracking-[0.2em] shadow-xl shadow-secondary/20 transition-all active:scale-[0.98] mt-4">
+                                                <Button type="submit" disabled={isLoading} className="w-full h-16 rounded-2xl bg-secondary hover:bg-secondary/90 text-black text-xs font-black uppercase tracking-[0.2em]  shadow-secondary/20 transition-all active:scale-[0.98] mt-4">
                                                     {isLoading ? 'Logging in...' : 'Login Now'}
                                                 </Button>
                                             </form>
@@ -430,7 +430,7 @@ export function AuthDialog({ open, onOpenChange }) {
                                                         </FormItem>
                                                     )}
                                                 />
-                                                <Button type="submit" disabled={isLoading} className="w-full h-16 rounded-2xl bg-secondary hover:bg-secondary/90 text-black text-xs font-black uppercase tracking-[0.2em] shadow-xl shadow-secondary/20 transition-all active:scale-[0.98] mt-4">
+                                                <Button type="submit" disabled={isLoading} className="w-full h-16 rounded-2xl bg-secondary hover:bg-secondary/90 text-black text-xs font-black uppercase tracking-[0.2em]  shadow-secondary/20 transition-all active:scale-[0.98] mt-4">
                                                     {isLoading ? 'Sending OTP...' : 'Send Verification Code'}
                                                 </Button>
                                             </form>

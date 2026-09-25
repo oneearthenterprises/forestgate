@@ -72,7 +72,7 @@ export default function BlogClient() {
   };
 
   const BlogSkeleton = () => (
-    <Card className="overflow-hidden border-none shadow-lg rounded-[2rem] bg-card h-full flex flex-col">
+    <Card className="overflow-hidden border-none  rounded-[2rem] bg-card h-full flex flex-col">
       {/* Image Area */}
       <Skeleton className="w-full aspect-[16/10] rounded-none" />
       
@@ -121,7 +121,7 @@ export default function BlogClient() {
               [...Array(6)].map((_, i) => <BlogSkeleton key={i} />)
             ) : blogs.length === 0 ? (
                 <div className="col-span-full py-16 flex flex-col items-center justify-center">
-                    <div className="bg-[#085d6b] rounded-[2.5rem] p-12 lg:p-16 text-center text-white w-full max-w-4xl mx-auto shadow-2xl relative overflow-hidden group">
+                    <div className="bg-[#085d6b] rounded-[2.5rem] p-12 lg:p-16 text-center text-white w-full max-w-4xl mx-auto  relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-white/20 transition-all duration-700 pointer-events-none" />
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl group-hover:bg-white/20 transition-all duration-700 pointer-events-none" />
                         
@@ -142,7 +142,7 @@ export default function BlogClient() {
                             />
                             <Button
                                 type="submit"
-                                className="h-14 px-8 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] bg-white text-[#085d6b] hover:bg-slate-100 shadow-xl transition-all hover:-translate-y-1"
+                                className="h-14 px-8 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] bg-white text-[#085d6b] hover:bg-slate-100  transition-all hover:-translate-y-1"
                             >
                                 Subscribe
                             </Button>
@@ -152,7 +152,7 @@ export default function BlogClient() {
             ) : (
               blogs.map((post) => {
                 return (
-                  <Card key={post._id} className="group overflow-hidden border-none shadow-lg rounded-[2rem] bg-card hover:shadow-2xl transition-all duration-500 flex flex-col h-full">
+                  <Card key={post._id} className="group overflow-hidden border-none  rounded-[2rem] bg-card hover: transition-all duration-500 flex flex-col h-full">
                     <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-100">
                       {post.image && (
                          <img
@@ -163,7 +163,7 @@ export default function BlogClient() {
                          />
                       )}
                       <div className="absolute top-4 left-4 z-10">
-                        <Badge className="bg-secondary text-secondary-foreground font-bold px-4 py-1 rounded-full border-none shadow-md">
+                        <Badge className="bg-secondary text-secondary-foreground font-bold px-4 py-1 rounded-full border-none ">
                           {post.category}
                         </Badge>
                       </div>

@@ -36,7 +36,7 @@ export default function NotFound() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-          <Button asChild size="lg" className="h-16 px-10 rounded-full font-bold shadow-xl transition-all hover:scale-[1.03] active:scale-95 w-full sm:w-auto">
+          <Button asChild size="lg" className="h-16 px-10 rounded-full font-bold  transition-all hover:scale-[1.03] active:scale-95 w-full sm:w-auto">
             <Link href="/">
               <Home className="mr-2 h-5 w-5" />
               Return Home

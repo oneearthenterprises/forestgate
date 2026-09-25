@@ -90,7 +90,7 @@ export function RetreatsSlider({ currentSlug = '', title, subtitle, className = 
                     key={retreat.id}
                     className="pl-4 md:pl-6 basis-full sm:basis-1/2 lg:basis-1/3"
                   >
-                    <div className="relative h-[560px] rounded-3xl overflow-hidden group/card shadow-2xl border border-white/10 transition-all duration-500 hover:border-[#ffae3e]/60 hover:shadow-[#ffae3e]/10 flex flex-col justify-between">
+                    <div className="relative h-[560px] rounded-3xl overflow-hidden group/card  border border-white/10 transition-all duration-500 hover:border-[#ffae3e]/60 hover:shadow-[#ffae3e]/10 flex flex-col justify-between">
                       {/* Background Image with Zoom */}
                       <Image
                         src={retreat.coverImage}
@@ -149,7 +149,7 @@ export function RetreatsSlider({ currentSlug = '', title, subtitle, className = 
                           className={`w-full inline-flex items-center justify-center gap-2 h-12 rounded-2xl font-bold text-sm transition-all duration-300 ${
                             isCurrent
                               ? 'bg-white/20 text-white border border-white/40 cursor-default'
-                              : 'bg-gradient-to-r from-[#ffae3e] to-[#f9b115] hover:from-[#f9b115] hover:to-[#ffae3e] text-black shadow-lg hover:shadow-[#ffae3e]/30 hover:scale-[1.02] active:scale-[0.98]'
+                              : 'bg-gradient-to-r from-[#ffae3e] to-[#f9b115] hover:from-[#f9b115] hover:to-[#ffae3e] text-black  hover:shadow-[#ffae3e]/30 hover:scale-[1.02] active:scale-[0.98]'
                           }`}
                         >
                           {isCurrent ? (
@@ -175,8 +175,8 @@ export function RetreatsSlider({ currentSlug = '', title, subtitle, className = 
             </div>
 
             <div className="hidden md:block">
-              <CarouselPrevious className="absolute -left-5 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-[#0a1820]/90 backdrop-blur-xl border border-white/20 text-white hover:bg-[#ffae3e] hover:text-black shadow-2xl transition-all" />
-              <CarouselNext className="absolute -right-5 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-[#0a1820]/90 backdrop-blur-xl border border-white/20 text-white hover:bg-[#ffae3e] hover:text-black shadow-2xl transition-all" />
+              <CarouselPrevious className="absolute -left-5 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-[#0a1820]/90 backdrop-blur-xl border border-white/20 text-white hover:bg-[#ffae3e] hover:text-black  transition-all" />
+              <CarouselNext className="absolute -right-5 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-[#0a1820]/90 backdrop-blur-xl border border-white/20 text-white hover:bg-[#ffae3e] hover:text-black  transition-all" />
             </div>
           </Carousel>
         </div>

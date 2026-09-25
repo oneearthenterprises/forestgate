@@ -68,7 +68,7 @@ export function InteractiveMapSection() {
                   <div className="absolute -left-[54px] md:-left-[57px] top-1.5 md:top-2 w-3 md:w-4 h-3 md:h-4 rounded-full bg-white border-2 md:border-4 border-[#0b2c3d] shadow-[0_0_15px_rgba(255,255,255,0.5)] z-20 group-hover:scale-125 transition-transform duration-300" />
 
                   <div className="space-y-4">
-                    <h3 className="font-headline text-2xl md:text-4xl font-bold text-white tracking-tight drop-shadow-md">
+                    <h3 className="font-headline text-2xl md:text-4xl font-bold text-white tracking-tight drop-">
                       {dest.title}
                     </h3>
                     <div className="space-y-2">

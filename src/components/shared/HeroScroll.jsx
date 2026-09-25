@@ -113,7 +113,7 @@ export function HeroScroll() {
             alt="The Forest Gate" 
             width={100}
             height={100}
-            className="h-[20rem] sm:h-[15rem] md:h-[70rem] w-auto drop-shadow-md" 
+            className="h-[20rem] sm:h-[15rem] md:h-[70rem] w-auto drop-" 
           />
         </div>
       </div>
@@ -139,10 +139,10 @@ export function HeroScroll() {
             <div className="absolute inset-0 bg-primary/20 z-10"></div>
             
             <div className="hero-reveal-content absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 pt-16 opacity-0">
-              <h1 className="text-4xl md:text-[3rem] lg:text-[4rem] font-bold uppercase tracking-[0.1em] mb-8 font-playfair text-white drop-shadow-2xl leading-tight w-[90%] md:w-[80%] lg:w-[50%] mx-auto">
+              <h1 className="text-4xl md:text-[3rem] lg:text-[4rem] font-bold uppercase tracking-[0.1em] mb-8 font-playfair text-white drop- leading-tight w-[90%] md:w-[80%] lg:w-[50%] mx-auto">
                 FOREST GATE RETREAT <br className="md:hidden" />AND TRAILS
               </h1>
-              {/* <p className="max-w-xl mx-auto text-lg md:text-xl font-light tracking-wide mb-12 opacity-90 drop-shadow-md text-white px-4 leading-relaxed">
+              {/* <p className="max-w-xl mx-auto text-lg md:text-xl font-light tracking-wide mb-12 opacity-90 drop- text-white px-4 leading-relaxed">
                 Luxury meets nature in the heart of Haryana. Experience tranquility like never before in our sustainable Morni Hills sanctuary.
               </p> */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-18">

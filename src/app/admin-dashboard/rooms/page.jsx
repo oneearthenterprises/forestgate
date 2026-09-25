@@ -30,9 +30,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, Edit, Trash2, Plus, Image as ImageIcon, X } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Plus, Image as ImageIcon, X, Eye, ExternalLink } from 'lucide-react';
 import { roomApi } from '@/lib/api/rooms';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const RoomFormSchema = z.object({
   name: z.string().min(3, 'Room name is required.'),
@@ -405,7 +406,7 @@ const handleDeleteVideo = async (index, video) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Form Section */}
         <div className="lg:col-span-1 space-y-8" ref={formRef}>
-          <Card className="rounded-[2rem] border-none shadow-lg bg-card">
+          <Card className="rounded-[2rem] border-none  bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
                 {editingRoom ? <Edit className="w-5 h-5 text-primary" /> : <PlusCircle className="w-5 h-5 text-primary" />}
@@ -496,7 +497,7 @@ const handleDeleteVideo = async (index, video) => {
                               <SelectValue placeholder="Select a tag" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="rounded-xl border-slate-100 shadow-xl">
+                          <SelectContent className="rounded-xl border-slate-100 ">
                             <SelectItem value="Premium Stay">Premium Stay</SelectItem>
                             <SelectItem value="Couple Stay">Couple Stay</SelectItem>
                             <SelectItem value="Family Gathering">Family Gathering</SelectItem>
@@ -742,7 +743,7 @@ const handleDeleteVideo = async (index, video) => {
                   <div className="flex items-center gap-2 pt-6">
                     <Button 
                       type="submit" 
-                      className="flex-1 h-14 rounded-2xl bg-secondary hover:bg-secondary/90 text-black text-xs font-black uppercase tracking-[0.2em] shadow-lg shadow-secondary/20 transition-all active:scale-[0.98]"
+                      className="flex-1 h-14 rounded-2xl bg-secondary hover:bg-secondary/90 text-black text-xs font-black uppercase tracking-[0.2em]  shadow-secondary/20 transition-all active:scale-[0.98]"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
@@ -793,7 +794,7 @@ const handleDeleteVideo = async (index, video) => {
               const roomId = room.id || `temp-${Date.now()}-${Math.random()}`;
 
               return (
-                <Card key={roomId} className="flex flex-col md:flex-row overflow-hidden rounded-[2.5rem] border-none shadow-sm hover:shadow-xl transition-all duration-500 bg-white group">
+                <Card key={roomId} className="flex flex-col md:flex-row overflow-hidden rounded-[2.5rem] border-none shadow-sm hover: transition-all duration-500 bg-white group">
                   <div className="md:w-[40%] relative shrink-0 aspect-[4/3] md:aspect-auto bg-black overflow-hidden">
                     {roomImage ? (
                       <Image 
@@ -845,6 +846,17 @@ const handleDeleteVideo = async (index, video) => {
                     </div>
                     
                     <div className="flex flex-wrap gap-3">
+                      <Button 
+                        asChild
+                        variant="outline" 
+                        size="sm" 
+                        className="rounded-full px-6 h-11 border-2 font-black uppercase tracking-widest text-[10px] border-slate-300 text-slate-700 hover:border-primary hover:text-primary hover:bg-slate-50 transition-colors shadow-none" 
+                      >
+                        <Link href={`/rooms/${room._id || room.id}`} target="_blank" rel="noopener noreferrer">
+                          <Eye className="mr-2 h-4 w-4" /> 
+                          View Listing
+                        </Link>
+                      </Button>
                       <Button 
                         variant="outline" 
                         size="sm" 

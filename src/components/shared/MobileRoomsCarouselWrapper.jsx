@@ -53,7 +53,7 @@ export function MobileRoomsCarouselWrapper({ allRoomsForCarousel, seeMoreImages 
                     <div className="p-1">
                         <Link
                             href={`/booking?roomId=${roomId}`}
-                            className="relative block group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full"
+                            className="relative block group overflow-hidden rounded-2xl  aspect-[4/5] w-full"
                         >
                             {roomImageUrl && (
                                 <Image

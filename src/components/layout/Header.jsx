@@ -26,7 +26,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuthContext } from '@/context/AuthContext';
 
 export function Header() {
-  const { user, logout } = useAuthContext();
+  const { user, logout, adminToken } = useAuthContext();
   const pathname = usePathname();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -107,7 +107,7 @@ export function Header() {
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 p-2 rounded-[1.5rem] border-slate-100 shadow-2xl">
+              <DropdownMenuContent align="end" className="w-64 p-2 rounded-[1.5rem] border-slate-100 ">
                 <div className="flex items-center gap-3 p-3">
                   <Avatar className="h-10 w-10 border border-slate-100">
                     <AvatarImage src={user.profileImage} />
@@ -124,31 +124,28 @@ export function Header() {
                 </div>
                 <DropdownMenuSeparator className="mx-2" />
                 <div className="py-1">
-                  <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
-                    <Link href="/profile" className="flex items-center w-full">
-                      <User className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
-                      <span className="text-sm font-medium">View Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
-                    <Link href="/my-bookings" className="flex items-center w-full">
-                      <BarChart3 className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
-                      <span className="text-sm font-medium">My Bookings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
-                    <Link href="/contact" className="flex items-center w-full">
-                      <LifeBuoy className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
-                      <span className="text-sm font-medium">Help Center</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="mx-2" />
-                  <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
-                    <Link href="/admin-dashboard" className="flex items-center w-full">
-                      <Shield className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
-                      <span className="text-sm font-medium">Admin Panel</span>
-                    </Link>
-                  </DropdownMenuItem>
+                  {!adminToken && (
+                    <>
+                      <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
+                        <Link href="/profile" className="flex items-center w-full">
+                          <User className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
+                          <span className="text-sm font-medium">View Profile</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
+                        <Link href="/my-bookings" className="flex items-center w-full">
+                          <BarChart3 className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
+                          <span className="text-sm font-medium">My Bookings</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="rounded-xl h-10 px-3 cursor-pointer group">
+                        <Link href="/contact" className="flex items-center w-full">
+                          <LifeBuoy className="mr-3 h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
+                          <span className="text-sm font-medium">Help Center</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </div>
                 <DropdownMenuSeparator className="mx-2" />
                 <DropdownMenuItem onClick={handleLogout} className="rounded-xl h-10 px-3 cursor-pointer group text-destructive focus:text-destructive">
@@ -216,7 +213,7 @@ export function Header() {
                     className="mt-10 w-full max-w-[300px] bg-white border border-slate-100 rounded-[2.5rem] p-5 shadow-sm relative group/insta block transition-transform hover:scale-[1.02]"
                   >
                       <div className="flex items-start gap-4">
-                          <div className="w-14 h-14 rounded-full bg-[#0b2c3d] flex items-center justify-center shrink-0 shadow-lg">
+                          <div className="w-14 h-14 rounded-full bg-[#0b2c3d] flex items-center justify-center shrink-0 ">
                               <Instagram className="w-7 h-7 text-white" />
                           </div>
                           <div className="flex flex-col pt-1 flex-1 min-w-0">
@@ -241,7 +238,7 @@ export function Header() {
                                   </div>
                               </div>
                           </div>
-                          <div className="absolute -right-3 top-8 w-10 h-10 rounded-full border border-slate-100 bg-white flex items-center justify-center text-blue-500 hover:bg-slate-50 transition-all shadow-md shrink-0 z-10">
+                          <div className="absolute -right-3 top-8 w-10 h-10 rounded-full border border-slate-100 bg-white flex items-center justify-center text-blue-500 hover:bg-slate-50 transition-all  shrink-0 z-10">
                               <Check className="w-5 h-5 stroke-[3px]" />
                           </div>
                       </div>
@@ -266,11 +263,13 @@ export function Header() {
                             <p className="text-xs text-muted-foreground">{user.email}</p>
                           </div>
                         </div>
-                        <SheetClose asChild>
-                          <Button variant="outline" className="w-full h-12 rounded-full justify-center" asChild>
-                            <Link href="/profile"><User className="mr-2 h-4 w-4" /> Profile</Link>
-                          </Button>
-                        </SheetClose>
+                        {!adminToken && (
+                          <SheetClose asChild>
+                            <Button variant="outline" className="w-full h-12 rounded-full justify-center" asChild>
+                              <Link href="/profile"><User className="mr-2 h-4 w-4" /> Profile</Link>
+                            </Button>
+                          </SheetClose>
+                        )}
                         <Button variant="destructive" className="w-full h-12 rounded-full" onClick={handleLogout}>
                           Sign Out
                         </Button>

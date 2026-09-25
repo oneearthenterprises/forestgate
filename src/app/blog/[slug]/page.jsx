@@ -69,9 +69,9 @@ export default async function BlogDetailPage({ params }) {
           <div className="grid lg:grid-cols-12 gap-12 max-w-7xl mx-auto items-start">
             {/* Main Content */}
             <div className="lg:col-span-8">
-              <div className="bg-card rounded-[2.5rem] p-8 md:p-12 lg:p-16 shadow-xl border border-border/50">
+              <div className="bg-card rounded-[2.5rem] p-8 md:p-12 lg:p-16  border border-border/50">
                 {post.image && (
-                  <div className="relative aspect-[16/9] mb-10 overflow-hidden rounded-[2rem] shadow-lg bg-slate-100">
+                  <div className="relative aspect-[16/9] mb-10 overflow-hidden rounded-[2rem]  bg-slate-100">
                     <img
                       src={post.image}
                       alt={post.title}
@@ -118,7 +118,7 @@ export default async function BlogDetailPage({ params }) {
 
             {/* Sidebar */}
             <aside className="lg:col-span-4 sticky top-32 space-y-12 self-start">
-              <div className="bg-card rounded-[2rem] p-8 shadow-lg border border-border/50">
+              <div className="bg-card rounded-[2rem] p-8  border border-border/50">
                 <h3 className="font-headline text-2xl font-bold mb-8">Recent Stories</h3>
                 <div className="space-y-8">
                   {recentPosts.length === 0 ? (
@@ -151,7 +151,7 @@ export default async function BlogDetailPage({ params }) {
                 </div>
               </div>
 
-              <div className="bg-[#085d6b] rounded-[2rem] p-10 text-white shadow-xl relative overflow-hidden group">
+              <div className="bg-[#085d6b] rounded-[2rem] p-10 text-white  relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-white/20 transition-all duration-700" />
                 <h3 className="font-headline text-3xl font-bold mb-4 relative z-10">Visit Our Sanctuary</h3>
                 <p className="text-white/80 font-light mb-8 relative z-10">

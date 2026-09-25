@@ -595,7 +595,7 @@ if (!room) return <BookingSkeleton />;
                   className="space-y-12 pt-12"
                 >
                   {/* 🔹 Interactive Guest Summary Bar (New) */}
-                  <div className="bg-white p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
+                  <div className="bg-white p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] border border-slate-100  shadow-slate-200/50 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
                     <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full md:w-auto">
                       <div className="space-y-1.5 w-full sm:w-auto">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Adults (12+ Yrs)</p>
@@ -625,7 +625,7 @@ if (!room) return <BookingSkeleton />;
                             <SelectTrigger className="w-full sm:w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
                               <SelectValue placeholder="Adults" />
                             </SelectTrigger>
-                            <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                            <SelectContent className="rounded-2xl border-slate-100 ">
                               {[...Array(11)].map((_, i) => (
                                 <SelectItem key={i+1} value={String(i+1)} className="font-medium">{i+1} {i === 0 ? 'Adult' : 'Adults'}</SelectItem>
                               ))}
@@ -663,7 +663,7 @@ if (!room) return <BookingSkeleton />;
                             <SelectTrigger className="w-full sm:w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
                               <SelectValue placeholder="Children" />
                             </SelectTrigger>
-                            <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                            <SelectContent className="rounded-2xl border-slate-100 ">
                               {[...Array(11)].map((_, i) => (
                                 <SelectItem key={i} value={String(i)} className="font-medium">{i} {i === 1 ? 'Child' : 'Children'}</SelectItem>
                               ))}
@@ -724,7 +724,7 @@ if (!room) return <BookingSkeleton />;
                                   </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent
-                                  className="p-0 border-none shadow-2xl"
+                                  className="p-0 border-none "
                                   align="start"
                                 >
                                   <Calendar
@@ -778,7 +778,7 @@ if (!room) return <BookingSkeleton />;
                                   </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent
-                                  className="p-0 border-none shadow-2xl"
+                                  className="p-0 border-none "
                                   align="start"
                                 >
                                   <Calendar
@@ -1374,7 +1374,7 @@ const RoomDetailModal = ({ room, open, onOpenChange }) => {
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-[80vw] w-full max-h-[90vh] overflow-y-auto rounded-[2rem] md:rounded-[3rem] p-0 border-none shadow-2xl">
+      <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-[80vw] w-full max-h-[90vh] overflow-y-auto rounded-[2rem] md:rounded-[3rem] p-0 border-none ">
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
           {/* Main Gallery Preview */}
           <div className="relative h-[300px] lg:h-full min-h-[300px] bg-slate-100">
@@ -1423,7 +1423,7 @@ const RoomDetailModal = ({ room, open, onOpenChange }) => {
             <div className="pt-8">
               <Button 
                 onClick={() => onOpenChange(false)}
-                className="w-full h-14 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl"
+                className="w-full h-14 rounded-2xl font-black text-sm uppercase tracking-widest "
               >
                 Close Details
               </Button>

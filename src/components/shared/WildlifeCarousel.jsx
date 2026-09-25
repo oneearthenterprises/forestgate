@@ -62,7 +62,7 @@ export function WildlifeCarousel() {
 
                 return (
                   <CarouselItem key={index} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3 xl:basis-1/3">
-                    <div className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[300px] md:h-[500px] shadow-lg transition-all duration-500 hover:shadow-2xl border border-border/50">
+                    <div className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[300px] md:h-[500px]  transition-all duration-500 hover: border border-border/50">
                       {/* Background Image */}
                       {imageSrc && (
                         <Image
@@ -79,7 +79,7 @@ export function WildlifeCarousel() {
 
                       {/* Decorative Icon Badge */}
                       {/* <div className="absolute top-6 left-6">
-                        <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 text-white shadow-xl">
+                        <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 text-white ">
                           <PawPrint className="w-6 h-6" />
                         </div>
                       </div> */}

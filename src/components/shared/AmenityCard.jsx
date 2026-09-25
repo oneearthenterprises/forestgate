@@ -19,7 +19,7 @@ export function AmenityCard({ amenity }) {
     );
 
     return (
-        <Card className="group overflow-hidden border-none shadow-none bg-transparent hover:shadow-xl transition-all duration-500 rounded-[2.5rem]">
+        <Card className="group overflow-hidden border-none shadow-none bg-transparent hover: transition-all duration-500 rounded-[2.5rem]">
             <div className="relative h-[300px] md:h-[420px] overflow-hidden rounded-[2.5rem]">
                 {/* Base Image */}
                 {amenityImage && (
@@ -42,7 +42,7 @@ export function AmenityCard({ amenity }) {
 
                 {/* Content Overlay - Text always visible at the bottom */}
                 <div className="absolute inset-0 p-8 flex flex-col justify-end text-white">
-                    <h3 className="font-headline text-3xl md:text-4xl font-bold mb-3 drop-shadow-md leading-tight">
+                    <h3 className="font-headline text-3xl md:text-4xl font-bold mb-3 drop- leading-tight">
                         {amenity.title}
                     </h3>
                     <p className="text-white/95 leading-relaxed line-clamp-3 font-medium text-sm md:text-base mb-6 drop-shadow-sm">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -126,68 +126,7 @@ const SIGNATURE_EXPERIENCES = [
   },
 ];
 
-const RETREAT_ACCOMMODATIONS = [
-  {
-    id: 'canopy-villa',
-    name: 'The Wildwood Canopy Villa',
-    badge: 'Signature Villa',
-    description:
-      'Perched on the highest private ridge, featuring wrap-around glass walls overlooking the valley, a private timber deck, and in-room fireplace.',
-    price: 14500,
-    capacity: '2 Guests + 1 Child',
-    view: 'Panoramic Pine Valley',
-    bed: 'King Size Handcrafted Bed',
-    image: '/assets/images/forestgate-image/ROOM%201.jpeg',
-    amenities: [
-      'Private Fireplace',
-      'Panoramic Balcony Deck',
-      'Artisanal Coffee & Tea Bar',
-      'Rainfall Forest Shower',
-      'High-Speed Wi-Fi',
-      '24/7 Retreat Host',
-    ],
-  },
-  {
-    id: 'creek-suite',
-    name: 'Creek-Ridge Luxury Cottage',
-    badge: 'Most Popular',
-    description:
-      'Hear the soothing murmur of the distant mountain stream from your plush outdoor daybed. Crafted with local river stone and reclaimed timber.',
-    price: 16500,
-    capacity: '2-3 Guests',
-    view: 'River Stream & Forest',
-    bed: 'Four-Poster King Bed',
-    image: '/assets/images/forestgate-image/ROOMS.jpeg',
-    amenities: [
-      'Private Sunset Veranda',
-      'Soaking Tub with View',
-      'Outdoor Daybed Lounger',
-      'Stargazing Skylight',
-      'Custom Curated Mini Bar',
-      'Chef-on-Call Service',
-    ],
-  },
-  {
-    id: 'forest-lodge',
-    name: 'The Grand Forest Haven',
-    badge: 'Family & Groups',
-    description:
-      'A sprawling two-wing luxury sanctuary designed for families and intimate friend gatherings, complete with private lawn and dedicated bonfire circle.',
-    price: 22000,
-    capacity: '4-6 Guests',
-    view: '360° Valley & Mountain Crest',
-    bed: '2 Master King Bedrooms',
-    image: '/assets/images/forestgate-image/PROPERTTY.png',
-    amenities: [
-      'Two Master Bedrooms',
-      'Private Lawn & Bonfire',
-      'Spacious Living Saloon',
-      'Dedicated Villa Butler',
-      'Barbecue Grill Setup',
-      'Kid & Pet Friendly',
-    ],
-  },
-];
+
 
 const DAILY_RHYTHM = [
   {
@@ -265,10 +204,32 @@ const FAQS = [
 
 export default function WildwoodClient() {
   const [activeFaq, setActiveFaq] = useState(null);
+  const [rooms, setRooms] = useState([]);
+  const [roomsLoading, setRoomsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms`);
+        const data = await res.json();
+        if (data && Array.isArray(data.rooms)) {
+          setRooms(data.rooms);
+        } else if (Array.isArray(data)) {
+          setRooms(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch rooms:', err);
+      } finally {
+        setRoomsLoading(false);
+      }
+    };
+    fetchRooms();
+  }, []);
 
   const toggleFaq = (idx) => {
     setActiveFaq(activeFaq === idx ? null : idx);
   };
+
 
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
@@ -297,15 +258,7 @@ export default function WildwoodClient() {
 
         {/* Hero Content */}
         <div className="relative z-10 container mx-auto px-4 pt-28 pb-20 text-center max-w-5xl">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#ffae3e] text-[11px] font-black uppercase tracking-[0.25em] mb-6 shadow-xl"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#ffae3e]" />
-            Exclusive Wilderness Sanctuary • Morni Hills
-          </motion.div>
+        
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -320,7 +273,7 @@ export default function WildwoodClient() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-headline text-5xl sm:text-7xl md:text-8xl font-black text-white tracking-tight leading-[1.05] mb-6 drop-shadow-2xl"
+            className="font-headline text-5xl sm:text-7xl md:text-8xl font-black text-white tracking-tight leading-[1.05] mb-6 drop-"
           >
             Wildwood <span className="text-[#ffae3e] italic font-serif">Retreat</span>
           </motion.h1>
@@ -344,7 +297,7 @@ export default function WildwoodClient() {
           >
             <Button
               asChild
-              className="h-14 sm:h-16 px-8 sm:px-10 rounded-full bg-[#085d6b] hover:bg-[#074f5b] text-white font-bold text-sm tracking-wider uppercase shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 border border-white/20"
+              className="h-14 sm:h-16 px-8 sm:px-10 rounded-full bg-[#085d6b] hover:bg-[#074f5b] text-white font-bold text-sm tracking-wider uppercase  transition-all duration-300 hover:scale-105 active:scale-95 border border-white/20"
             >
               <Link href="/booking" className="flex items-center gap-3">
                 Reserve Your Retreat
@@ -365,32 +318,7 @@ export default function WildwoodClient() {
           </motion.div>
 
           {/* Key Stat Badges Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto"
-          >
-            {RETREAT_HIGHLIGHTS.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={idx}
-                  className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 sm:p-5 text-left text-white shadow-lg transition-transform hover:-translate-y-1"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-[#085d6b]/80 flex items-center justify-center mb-3 text-[#ffae3e]">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="font-bold text-sm sm:text-base leading-snug mb-0.5">
-                    {item.label}
-                  </div>
-                  <div className="text-[11px] sm:text-xs text-slate-300 font-light leading-tight">
-                    {item.sub}
-                  </div>
-                </div>
-              );
-            })}
-          </motion.div>
+       
         </div>
       </section>
 
@@ -455,7 +383,7 @@ export default function WildwoodClient() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="lg:col-span-6 relative"
             >
-              <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
+              <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden  border-4 border-white">
                 <Image
                   src="/assets/images/forestgate-image/PROPERTTY.png"
                   alt="Wildwood Retreat Grounds"
@@ -465,7 +393,7 @@ export default function WildwoodClient() {
               </div>
 
               {/* Overlapping Floating Photo Card */}
-              <div className="hidden sm:block absolute -bottom-10 -left-10 w-64 aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+              <div className="hidden sm:block absolute -bottom-10 -left-10 w-64 aspect-[4/3] rounded-3xl overflow-hidden  border-4 border-white">
                 <Image
                   src="/assets/images/forestgate-image/Bonfire.jpg"
                   alt="Evening Bonfire at Wildwood"
@@ -475,7 +403,7 @@ export default function WildwoodClient() {
               </div>
 
               {/* Floating Stat Badge */}
-              <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-xl border border-slate-100 flex items-center gap-4">
+              <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-5  border border-slate-100 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[#ffae3e]/20 text-[#085d6b] flex items-center justify-center font-black text-xl">
                   ★ 4.9
                 </div>
@@ -514,7 +442,7 @@ export default function WildwoodClient() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="group bg-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-slate-100 flex flex-col"
+                className="group bg-white rounded-[2rem] overflow-hidden  hover: transition-all duration-500 hover:-translate-y-2 border border-slate-100 flex flex-col"
               >
                 {/* Image Container with Badges */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
@@ -587,91 +515,129 @@ export default function WildwoodClient() {
           </motion.div>
 
           {/* Villa Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {RETREAT_ACCOMMODATIONS.map((room, idx) => (
-              <motion.div
-                key={room.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.15 }}
-                className="bg-white rounded-[2.5rem] overflow-hidden border border-slate-200/80 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col group"
-              >
-                {/* Room Image */}
-                <div className="relative aspect-[16/11] overflow-hidden bg-slate-900">
-                  <Image
-                    src={room.image}
-                    alt={room.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/95 text-slate-900 shadow-md">
-                      {room.badge}
-                    </span>
+          {roomsLoading ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white rounded-[2.5rem] overflow-hidden border border-slate-200/80 animate-pulse flex flex-col">
+                  <div className="aspect-[16/11] bg-slate-200" />
+                  <div className="p-8 space-y-4 flex-1">
+                    <div className="h-5 bg-slate-200 rounded-full w-1/3" />
+                    <div className="h-7 bg-slate-200 rounded-xl w-3/4" />
+                    <div className="h-4 bg-slate-100 rounded-full w-full" />
+                    <div className="h-4 bg-slate-100 rounded-full w-5/6" />
+                    <div className="h-px bg-slate-200 my-4" />
+                    <div className="h-4 bg-slate-100 rounded-full w-2/3" />
+                    <div className="h-4 bg-slate-100 rounded-full w-1/2" />
+                    <div className="flex justify-between items-center mt-6">
+                      <div className="h-8 bg-slate-200 rounded-full w-28" />
+                      <div className="h-10 bg-slate-200 rounded-full w-24" />
+                    </div>
                   </div>
                 </div>
-
-                {/* Details */}
-                <div className="p-8 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-headline text-2xl sm:text-3xl font-black text-slate-900 mb-2 group-hover:text-[#085d6b] transition-colors">
-                      {room.name}
-                    </h3>
-                    <p className="text-slate-600 text-sm font-light leading-relaxed mb-6">
-                      {room.description}
-                    </p>
-
-                    {/* Room Meta Specs */}
-                    <div className="grid grid-cols-2 gap-3 py-4 border-y border-dashed border-slate-200 mb-6 text-xs text-slate-700 font-medium">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-[#085d6b]" />
-                        <span>{room.capacity}</span>
+              ))}
+            </div>
+          ) : rooms.length === 0 ? (
+            <div className="text-center py-20 text-slate-400 text-lg font-light">
+              No rooms available right now. Check back soon!
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {rooms.map((room, idx) => (
+                <motion.div
+                  key={room._id || idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.15 }}
+                  className="bg-white rounded-[2.5rem] overflow-hidden border border-slate-200/80 transition-all duration-500 hover:-translate-y-2 flex flex-col group"
+                >
+                  {/* Room Image */}
+                  <div className="relative aspect-[16/11] overflow-hidden bg-slate-900">
+                    <Image
+                      src={room.images?.[0] || room.image || '/assets/images/forestgate-image/PROPERTTY.png'}
+                      alt={room.name}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    {(room.category || room.badge) && (
+                      <div className="absolute top-4 left-4">
+                        <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/95 text-slate-900">
+                          {room.category || room.badge}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Bed className="w-4 h-4 text-[#085d6b]" />
-                        <span>{room.bed}</span>
-                      </div>
-                      <div className="flex items-center gap-2 col-span-2">
-                        <Eye className="w-4 h-4 text-[#085d6b]" />
-                        <span>{room.view}</span>
-                      </div>
-                    </div>
-
-                    {/* Amenities Checklist */}
-                    <div className="space-y-2 mb-8">
-                      {room.amenities.map((amenity, i) => (
-                        <div key={i} className="flex items-center gap-2.5 text-xs text-slate-600">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#ffae3e]" />
-                          <span>{amenity}</span>
-                        </div>
-                      ))}
-                    </div>
+                    )}
                   </div>
 
-                  {/* Pricing and Book Button */}
-                  <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
+                  {/* Details */}
+                  <div className="p-8 flex-1 flex flex-col justify-between">
                     <div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
-                        Starting From
-                      </span>
-                      <div className="text-2xl sm:text-3xl font-black text-[#085d6b]">
-                        ₹{room.price.toLocaleString()}
-                        <span className="text-xs font-normal text-slate-500"> / night</span>
+                      <h3 className="font-headline text-2xl sm:text-3xl font-black text-slate-900 mb-2 group-hover:text-[#085d6b] transition-colors">
+                        {room.name}
+                      </h3>
+                      <p className="text-slate-600 text-sm font-light leading-relaxed mb-6">
+                        {room.description}
+                      </p>
+
+                      {/* Room Meta Specs */}
+                      <div className="grid grid-cols-2 gap-3 py-4 border-y border-dashed border-slate-200 mb-6 text-xs text-slate-700 font-medium">
+                        {(room.capacity || room.maxGuests) && (
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-[#085d6b]" />
+                            <span>{room.capacity ? `${room.capacity} Guests` : `${room.maxGuests} Guests`}</span>
+                          </div>
+                        )}
+                        {(room.bedType || room.bed) && (
+                          <div className="flex items-center gap-2">
+                            <Bed className="w-4 h-4 text-[#085d6b]" />
+                            <span>{room.bedType || room.bed}</span>
+                          </div>
+                        )}
+                        {(room.view || room.location) && (
+                          <div className="flex items-center gap-2 col-span-2">
+                            <Eye className="w-4 h-4 text-[#085d6b]" />
+                            <span>{room.view || room.location}</span>
+                          </div>
+                        )}
                       </div>
+
+                      {/* Amenities Checklist */}
+                      {room.amenities && room.amenities.length > 0 && (
+                        <div className="space-y-2 mb-8">
+                          {room.amenities.slice(0, 6).map((amenity, i) => (
+                            <div key={i} className="flex items-center gap-2.5 text-xs text-slate-600">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#ffae3e]" />
+                              <span>{typeof amenity === 'object' ? (amenity.name || amenity.label || amenity.title) : amenity}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
-                    <Button
-                      asChild
-                      className="rounded-full px-6 h-12 bg-[#085d6b] hover:bg-[#06434d] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition-all"
-                    >
-                      <Link href="/booking">Book Now</Link>
-                    </Button>
+                    {/* Pricing and Book Button */}
+                    <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
+                      <div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
+                          Starting From
+                        </span>
+                        <div className="text-2xl sm:text-3xl font-black text-[#085d6b]">
+                          ₹{(room.price || room.pricePerNight || 0).toLocaleString()}
+                          <span className="text-xs font-normal text-slate-500"> / night</span>
+                        </div>
+                      </div>
+
+                      <Button
+                        asChild
+                        className="rounded-full px-6 h-12 bg-[#085d6b] hover:bg-[#06434d] text-white font-bold text-xs uppercase tracking-wider hover:scale-105 transition-all"
+                      >
+                        <Link href="/booking">Book Now</Link>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
         </div>
       </section>
 
@@ -760,7 +726,7 @@ export default function WildwoodClient() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.08 }}
-                  className="p-8 rounded-3xl bg-slate-50/80 hover:bg-[#085d6b]/5 border border-slate-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group"
+                  className="p-8 rounded-3xl bg-slate-50/80 hover:bg-[#085d6b]/5 border border-slate-100 transition-all duration-300 hover: hover:-translate-y-1 group"
                 >
                   <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-[#085d6b] group-hover:bg-[#085d6b] group-hover:text-white transition-all duration-300">
                     <Icon className="w-7 h-7" />
@@ -801,7 +767,7 @@ export default function WildwoodClient() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition-all"
+                className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover: transition-all"
               >
                 <div className="text-xs font-black uppercase tracking-wider text-[#085d6b] mb-1">
                   From
@@ -898,10 +864,7 @@ export default function WildwoodClient() {
 
         <div className="relative z-10 container mx-auto px-4 max-w-5xl text-center">
           <motion.div {...fadeInUp} className="space-y-8">
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#ffae3e]/20 border border-[#ffae3e]/40 text-[#ffae3e] text-xs font-black uppercase tracking-[0.2em]">
-              <Sparkles className="w-4 h-4" />
-              Limited Stays Available
-            </div>
+          
 
             <h2 className="font-headline text-4xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight">
               Ready to Escape to <br className="hidden sm:inline" />
@@ -916,7 +879,7 @@ export default function WildwoodClient() {
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-4">
               <Button
                 asChild
-                className="h-16 px-10 rounded-full bg-[#ffae3e] hover:bg-[#f09e2b] text-slate-950 font-black text-sm uppercase tracking-widest shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
+                className="h-16 px-10 rounded-full bg-[#ffae3e] hover:bg-[#f09e2b] text-slate-950 font-black text-sm uppercase tracking-widest  transition-all duration-300 hover:scale-105 active:scale-95"
               >
                 <Link href="/booking" className="flex items-center gap-3">
                   Check Availability & Book

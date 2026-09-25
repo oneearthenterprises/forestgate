@@ -55,7 +55,7 @@ export default function ThankYouPage() {
                         </p>
                         
                         <div className="pt-8">
-                            <Button asChild className="h-16 px-14 rounded-full bg-primary hover:bg-primary/90 text-white transition-all hover:shadow-2xl hover:scale-105 group text-lg">
+                            <Button asChild className="h-16 px-14 rounded-full bg-primary hover:bg-primary/90 text-white transition-all hover: hover:scale-105 group text-lg">
                                 <LinkNext href="/" className="flex items-center gap-3">
                                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
                                     Back to Home

@@ -40,7 +40,7 @@ export default function ExperiencesClient() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[550px] shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-border/50"
+                                    className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[550px]  transition-all duration-500 hover: hover:-translate-y-2 border border-border/50"
                                 >
                                     {/* Background Image */}
                                     {expImage && (
@@ -60,7 +60,7 @@ export default function ExperiencesClient() {
                                     
                                     {/* Content Overlay */}
                                     <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-                                        <h3 className="font-headline text-2xl sm:text-4xl font-bold text-white mb-4 leading-tight tracking-tight drop-shadow-md">
+                                        <h3 className="font-headline text-2xl sm:text-4xl font-bold text-white mb-4 leading-tight tracking-tight drop-">
                                             {exp.title}
                                         </h3>
                                         

@@ -128,13 +128,13 @@ const getApiRooms = async () => {
             <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-16 h-14 p-1.5 rounded-full bg-muted/50 border border-border/50">
               <TabsTrigger 
                 value="accommodations" 
-                className="rounded-full h-11 text-base font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:shadow-lg"
+                className="rounded-full h-11 text-base font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:"
               >
                 Accommodations
               </TabsTrigger>
               <TabsTrigger 
                 value="gallery" 
-                className="rounded-full h-11 text-base font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:shadow-lg"
+                className="rounded-full h-11 text-base font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:"
               >
                 Gallery
               </TabsTrigger>
@@ -158,7 +158,7 @@ const getApiRooms = async () => {
               </motion.div>
 
               {/* 🔹 Dynamic Guest Search Bar */}
-              <div className="max-w-4xl mx-auto mb-16 bg-white p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+              <div className="max-w-4xl mx-auto mb-16 bg-white p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] border border-slate-100  shadow-slate-200/50 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
                 <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full md:w-auto">
                   <div className="space-y-1.5 w-full sm:w-auto">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Adults (12+ Yrs)</p>
@@ -173,7 +173,7 @@ const getApiRooms = async () => {
                       <SelectTrigger className="w-full sm:w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
                         <SelectValue placeholder="Adults" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                      <SelectContent className="rounded-2xl border-slate-100 ">
                         {[...Array(11)].map((_, i) => (
                           <SelectItem key={i+1} value={String(i+1)} className="font-medium">{i+1} {i === 0 ? 'Adult' : 'Adults'}</SelectItem>
                         ))}
@@ -194,7 +194,7 @@ const getApiRooms = async () => {
                       <SelectTrigger className="w-full sm:w-32 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold">
                         <SelectValue placeholder="Children" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                      <SelectContent className="rounded-2xl border-slate-100 ">
                         {[...Array(11)].map((_, i) => (
                           <SelectItem key={i} value={String(i)} className="font-medium">{i} {i === 1 ? 'Child' : 'Children'}</SelectItem>
                         ))}
@@ -303,7 +303,7 @@ const getApiRooms = async () => {
 
                       {/* Right: Actions */}
                       <div className="w-full md:w-auto flex flex-col gap-3 shrink-0 md:min-w-[180px] md:pl-6 md:border-l md:border-dashed items-center md:items-start">
-                        <Button asChild className="rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold w-full max-w-[160px] border-none shadow-lg transition-transform hover:scale-105 active:scale-95">
+                        <Button asChild className="rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold w-full max-w-[160px] border-none  transition-transform hover:scale-105 active:scale-95">
                           <Link href={`/booking?roomId=${room._id}&guests=${adults}&children=${childrenCount}`}>Book Now</Link>
                         </Button>
                         <Button asChild variant="ghost" className="h-12 font-bold text-sm hover:bg-muted/50 group/btn w-full">

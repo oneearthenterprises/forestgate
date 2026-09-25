@@ -618,7 +618,7 @@ export default function UsersPage() {
 
       {/* Detail Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="sm:max-w-[600px] p-0 flex flex-col border-l shadow-2xl overflow-hidden">
+        <SheetContent className="sm:max-w-[600px] p-0 flex flex-col border-l  overflow-hidden">
           <SheetHeader className="p-6 border-b bg-white">
             <SheetTitle className="text-xl font-bold">User Details & Booking</SheetTitle>
             <SheetDescription>
@@ -887,7 +887,7 @@ export default function UsersPage() {
 
                              {/* Pricing Calculation (New) */}
                              {editData.tempManualCheckIn && editData.tempManualCheckOut && (
-                                 <div className="p-4 rounded-2xl bg-gray-900 shadow-lg relative overflow-hidden">
+                                 <div className="p-4 rounded-2xl bg-gray-900  relative overflow-hidden">
                                      <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl -mr-12 -mt-12" />
                                      <div className="flex justify-between items-center relative z-10">
                                          <div>
@@ -910,7 +910,7 @@ export default function UsersPage() {
                              )}
 
                              <Button 
-                                 className="w-full h-10 font-bold rounded-xl shadow-md shadow-primary/10"
+                                 className="w-full h-10 font-bold rounded-xl  shadow-primary/10"
                                  onClick={async () => {
                                      if (!editData.tempManualRoom) {
                                          toast({ title: "Error", description: "Please select/enter a room.", variant: "destructive" });
@@ -1019,7 +1019,7 @@ export default function UsersPage() {
                                 <div
                                     key={booking._id}
                                     onClick={() => handleHistoryItemClick(booking)}
-                                    className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-primary/30 hover:shadow-md cursor-pointer transition-all group active:scale-[0.98]"
+                                    className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-primary/30 hover: cursor-pointer transition-all group active:scale-[0.98]"
                                 >
                                     <div className="flex justify-between items-start mb-2">
                                         <div>
@@ -1082,7 +1082,7 @@ export default function UsersPage() {
           setIsBookingDetailOpen(open);
           if (!open) setIsEditingBooking(false);
       }}>
-        <DialogContent className="max-w-5xl bg-white p-0 overflow-hidden border-none shadow-2xl rounded-3xl">
+        <DialogContent className="max-w-5xl bg-white p-0 overflow-hidden border-none  rounded-3xl">
           <DialogHeader className={cn(
               "p-6 text-white transition-colors duration-300",
               isEditingBooking ? "bg-amber-600" : "bg-primary"
@@ -1756,7 +1756,7 @@ export default function UsersPage() {
                     const totalAmount = displayTotal;
 
                     return (
-                        <div className={`p-5 rounded-3xl shadow-lg relative overflow-hidden group transition-all duration-300 ${isEditingBooking ? 'bg-primary/5 border border-primary/20' : 'bg-gray-900 text-white'}`}>
+                        <div className={`p-5 rounded-3xl  relative overflow-hidden group transition-all duration-300 ${isEditingBooking ? 'bg-primary/5 border border-primary/20' : 'bg-gray-900 text-white'}`}>
                             {isEditingBooking ? (
                                 <div className="space-y-3 relative z-10">
                                     <div className="flex justify-between items-center border-b border-primary/10 pb-2">
@@ -1847,7 +1847,7 @@ export default function UsersPage() {
                         Cancel
                     </Button>
                     <Button
-                        className="flex-2 w-full max-w-[200px] rounded-xl h-11 font-bold shadow-lg shadow-primary/20"
+                        className="flex-2 w-full max-w-[200px] rounded-xl h-11 font-bold  shadow-primary/20"
                         onClick={handleUpdateBooking}
                         disabled={isUpdatingBooking}
                     >
@@ -1864,7 +1864,7 @@ export default function UsersPage() {
                         Delete Booking
                     </Button>
                     <Button
-                        className="flex-1 rounded-xl h-11 font-bold shadow-md"
+                        className="flex-1 rounded-xl h-11 font-bold "
                         onClick={() => setIsBookingDetailOpen(false)}
                     >
                         Close Details

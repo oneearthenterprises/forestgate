@@ -58,7 +58,7 @@ export function Testimonials() {
                         <CarouselContent className="-ml-4">
                             {testimonials.map((testimonial, index) => (
                                 <CarouselItem key={index} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
-                                    <Card className="h-full border border-border shadow-sm bg-card hover:shadow-md transition-shadow duration-300">
+                                    <Card className="h-full border border-border shadow-sm bg-card hover: transition-shadow duration-300">
                                         <CardContent className="p-6">
                                             {/* Header with Avatar, Name, and Google Branding */}
                                             <div className="flex justify-between items-start mb-4">

@@ -65,7 +65,7 @@ export function InfluencersCarousel() {
                 const imageData = PlaceHolderImages.find(img => img.id === person.image);
                 return (
                   <CarouselItem key={index} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/4">
-                    <div className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[500px] shadow-lg transition-all duration-500 hover:shadow-2xl border border-border/50">
+                    <div className="relative group overflow-hidden rounded-[2.5rem] bg-card h-[500px]  transition-all duration-500 hover: border border-border/50">
                       {/* Portrait Image */}
                       {imageData && (
                         <Image

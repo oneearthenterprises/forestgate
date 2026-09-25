@@ -55,7 +55,7 @@ export function AtmosphereCarousel() {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
                                 <div className="absolute bottom-10 left-0 right-0 text-center px-4">
-                                    <h3 className="text-white text-2xl font-bold tracking-tight drop-shadow-md">
+                                    <h3 className="text-white text-2xl font-bold tracking-tight drop-">
                                         {item.name}
                                     </h3>
                                 </div>
@@ -66,10 +66,10 @@ export function AtmosphereCarousel() {
                 
                 {/* Navigation Controls */}
                 <div className="absolute top-1/2 left-6 z-20 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500">
-                    <CarouselPrevious className="static translate-y-0 h-14 w-14 rounded-full bg-white/10 backdrop-blur-xl border-none text-white hover:bg-secondary hover:text-black shadow-2xl transition-all" />
+                    <CarouselPrevious className="static translate-y-0 h-14 w-14 rounded-full bg-white/10 backdrop-blur-xl border-none text-white hover:bg-secondary hover:text-black  transition-all" />
                 </div>
                 <div className="absolute top-1/2 right-6 z-20 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500">
-                    <CarouselNext className="static translate-y-0 h-14 w-14 rounded-full bg-white/10 backdrop-blur-xl border-none text-white hover:bg-secondary hover:text-black shadow-2xl transition-all" />
+                    <CarouselNext className="static translate-y-0 h-14 w-14 rounded-full bg-white/10 backdrop-blur-xl border-none text-white hover:bg-secondary hover:text-black  transition-all" />
                 </div>
             </Carousel>
         </section>

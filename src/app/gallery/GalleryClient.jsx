@@ -27,7 +27,7 @@ export default function GalleryClient() {
                     <TabsList className="flex flex-wrap items-center justify-center gap-2 mx-auto max-w-5xl h-auto p-2 rounded-full bg-muted/50 border border-border/50 mb-12">
                         <TabsTrigger 
                             value="all" 
-                            className="rounded-full px-6 py-2.5 text-sm font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:shadow-md"
+                            className="rounded-full px-6 py-2.5 text-sm font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:"
                         >
                             All
                         </TabsTrigger>
@@ -35,7 +35,7 @@ export default function GalleryClient() {
                              <TabsTrigger 
                                 key={category} 
                                 value={category} 
-                                className="rounded-full px-6 py-2.5 text-sm font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:shadow-md"
+                                className="rounded-full px-6 py-2.5 text-sm font-bold transition-all data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground data-[state=active]:"
                             >
                                 {category}
                             </TabsTrigger>
@@ -47,7 +47,7 @@ export default function GalleryClient() {
                             {galleryImages.map(image => {
                                 return (
                                     <div key={image.id} className="break-inside-avoid">
-                                        <Image src={image.imageUrl} alt={image.description} width={500} height={500} className="w-full h-auto rounded-[2rem] shadow-md" data-ai-hint={image.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg==" />
+                                        <Image src={image.imageUrl} alt={image.description} width={500} height={500} className="w-full h-auto rounded-[2rem] " data-ai-hint={image.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg==" />
                                     </div>
                                 )
                             })}
@@ -62,7 +62,7 @@ export default function GalleryClient() {
                                 {filteredImages.map(image => {
                                     return (
                                         <div key={image.id} className="break-inside-avoid">
-                                            <Image src={image.imageUrl} alt={image.description} width={500} height={500} className="w-full h-auto rounded-[2rem] shadow-md" data-ai-hint={image.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="/>
+                                            <Image src={image.imageUrl} alt={image.description} width={500} height={500} className="w-full h-auto rounded-[2rem] " data-ai-hint={image.imageHint} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="/>
                                         </div>
                                     )
                                 })}

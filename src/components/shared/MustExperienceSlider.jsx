@@ -189,7 +189,7 @@ export function MustExperienceSlider({
                 aria-label="Next experiences"
                 className={`w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center transition-all ${
                   canScrollRight
-                    ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-md active:scale-95'
+                    ? 'bg-slate-900 hover:bg-slate-800 text-white  active:scale-95'
                     : 'bg-slate-50 text-slate-300 cursor-not-allowed border-slate-100'
                 }`}
               >
@@ -226,7 +226,7 @@ export function MustExperienceSlider({
                   >
                     <CardWrapper
                       href={item.href || '#'}
-                      className="block w-full h-full relative rounded-[28px] sm:rounded-[32px] md:rounded-[38px] overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500"
+                      className="block w-full h-full relative rounded-[28px] sm:rounded-[32px] md:rounded-[38px] overflow-hidden group  hover: transition-all duration-500"
                     >
                       <Image
                         src={item.image}
@@ -250,7 +250,7 @@ export function MustExperienceSlider({
 
                       {/* Bottom Text Content */}
                       <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 z-10">
-                        <h3 className="text-xl sm:text-2xl md:text-[1.75rem] font-bold text-white tracking-tight leading-snug drop-shadow-md">
+                        <h3 className="text-xl sm:text-2xl md:text-[1.75rem] font-bold text-white tracking-tight leading-snug drop-">
                           {item.title}
                         </h3>
 
@@ -282,7 +282,7 @@ export function MustExperienceSlider({
                       <div key={itemIdx} className="flex-1 h-[calc(50%-8px)] md:h-[calc(50%-10px)]">
                         <CardWrapper
                           href={item.href || '#'}
-                          className="block w-full h-full relative rounded-[28px] sm:rounded-[32px] md:rounded-[38px] overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500"
+                          className="block w-full h-full relative rounded-[28px] sm:rounded-[32px] md:rounded-[38px] overflow-hidden group  hover: transition-all duration-500"
                         >
                           <Image
                             src={item.image}
@@ -306,7 +306,7 @@ export function MustExperienceSlider({
 
                           {/* Bottom Text Content */}
                           <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7 z-10">
-                            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight leading-snug drop-shadow-md">
+                            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight leading-snug drop-">
                               {item.title}
                             </h3>
 
@@ -336,7 +336,7 @@ export function MustExperienceSlider({
                 >
                   <CardWrapper
                     href={item.href || '#'}
-                    className="block w-full h-full relative rounded-[28px] sm:rounded-[32px] md:rounded-[36px] overflow-hidden group shadow-md hover:shadow-xl transition-all duration-500"
+                    className="block w-full h-full relative rounded-[28px] sm:rounded-[32px] md:rounded-[36px] overflow-hidden group  hover: transition-all duration-500"
                   >
                     <Image
                       src={item.image}

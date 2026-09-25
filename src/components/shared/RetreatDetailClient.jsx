@@ -99,7 +99,7 @@ export default function RetreatDetailClient({ retreat }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl sm:text-6xl md:text-7xl font-bold font-headline tracking-tight leading-[1.1] mb-6 drop-shadow-lg"
+            className="text-4xl sm:text-6xl md:text-7xl font-bold font-headline tracking-tight leading-[1.1] mb-6 drop-"
           >
             {retreat.name}
           </motion.h1>
@@ -123,7 +123,7 @@ export default function RetreatDetailClient({ retreat }) {
           >
             <Button
               asChild
-              className="h-14 sm:h-16 px-8 sm:px-10 rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold text-sm tracking-wider uppercase shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 border-none"
+              className="h-14 sm:h-16 px-8 sm:px-10 rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold text-sm tracking-wider uppercase  transition-all duration-300 hover:scale-105 active:scale-95 border-none"
             >
               <Link href="/booking" className="flex items-center gap-3">
                 Reserve Your Stay
@@ -144,28 +144,7 @@ export default function RetreatDetailClient({ retreat }) {
           </motion.div>
 
           {/* Key Stat Badges Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto"
-          >
-            {retreat.highlights.map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 sm:p-5 text-left text-white shadow-lg transition-transform hover:-translate-y-1"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#085d6b]/80 flex items-center justify-center mb-3 text-[#ffae3e]">
-                  {idx === 0 && <Mountain className="w-5 h-5" />}
-                  {idx === 1 && <Flame className="w-5 h-5" />}
-                  {idx === 2 && <Trees className="w-5 h-5" />}
-                  {idx === 3 && <Sparkles className="w-5 h-5" />}
-                </div>
-                <div className="font-bold text-base sm:text-lg">{item.label}</div>
-                <div className="text-xs text-white/70 mt-0.5">{item.sub}</div>
-              </div>
-            ))}
-          </motion.div>
+  
         </div>
       </section>
 
@@ -207,7 +186,7 @@ export default function RetreatDetailClient({ retreat }) {
 
             {/* Collage Visuals */}
             <motion.div {...fadeInUp} className="relative">
-              <div className="relative h-[420px] sm:h-[480px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+              <div className="relative h-[420px] sm:h-[480px] rounded-3xl overflow-hidden  border-4 border-white">
                 <Image
                   src={retreat.gallery?.[0] || retreat.coverImage}
                   alt={`${retreat.name} grounds`}
@@ -218,7 +197,7 @@ export default function RetreatDetailClient({ retreat }) {
               </div>
 
               {retreat.gallery?.[1] && (
-                <div className="hidden sm:block absolute -bottom-8 -left-8 w-56 h-56 rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                <div className="hidden sm:block absolute -bottom-8 -left-8 w-56 h-56 rounded-2xl overflow-hidden  border-4 border-white">
                   <Image
                     src={retreat.gallery[1]}
                     alt={`${retreat.name} detail view`}
@@ -229,7 +208,7 @@ export default function RetreatDetailClient({ retreat }) {
                 </div>
               )}
 
-              <div className="absolute top-6 right-6 bg-[#085d6b] text-white px-4 py-2 rounded-xl shadow-lg text-xs font-semibold uppercase tracking-wider">
+              <div className="absolute top-6 right-6 bg-[#085d6b] text-white px-4 py-2 rounded-xl  text-xs font-semibold uppercase tracking-wider">
                 Pure Mountain Air
               </div>
             </motion.div>
@@ -259,7 +238,7 @@ export default function RetreatDetailClient({ retreat }) {
                 key={exp.id || idx}
                 {...fadeInUp}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-[#ffae3e]/60 transition-all duration-300 group hover:-translate-y-1.5 shadow-xl"
+                className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-[#ffae3e]/60 transition-all duration-300 group hover:-translate-y-1.5 "
               >
                 <div>
                   <div className="relative h-48 w-full overflow-hidden">
@@ -328,7 +307,7 @@ export default function RetreatDetailClient({ retreat }) {
               <motion.div
                 key={idx}
                 {...fadeInUp}
-                className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-xl flex flex-col justify-between group hover:shadow-2xl transition-all duration-300"
+                className="bg-white rounded-3xl overflow-hidden border border-slate-200  flex flex-col justify-between group hover: transition-all duration-300"
               >
                 <div>
                   <div className="relative h-72 sm:h-80 w-full overflow-hidden">
@@ -509,7 +488,7 @@ export default function RetreatDetailClient({ retreat }) {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Button
               asChild
-              className="h-14 px-10 rounded-full bg-[#ffae3e] hover:bg-[#f29f27] text-black font-bold text-sm tracking-wider uppercase shadow-2xl transition-all hover:scale-105"
+              className="h-14 px-10 rounded-full bg-[#ffae3e] hover:bg-[#f29f27] text-black font-bold text-sm tracking-wider uppercase  transition-all hover:scale-105"
             >
               <Link href="/booking">Book Your Dates Now</Link>
             </Button>

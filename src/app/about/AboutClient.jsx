@@ -70,7 +70,7 @@ export default function AboutClient() {
                                 alt="Resort Founders"
                                 width={600}
                                 height={700}
-                                className="rounded-[3rem] shadow-2xl aspect-[3/4] object-cover relative z-10 transition-transform duration-700 group-hover:scale-[1.02]"
+                                className="rounded-[3rem]  aspect-[3/4] object-cover relative z-10 transition-transform duration-700 group-hover:scale-[1.02]"
                                 data-ai-hint="portrait nature"
                                 placeholder="blur"
                                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
@@ -89,7 +89,7 @@ export default function AboutClient() {
                     {/* Line 1: IT'S ALL + Image */}
                     <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-12 w-full justify-center lg:justify-start lg:pl-20">
                         <h2 className="text-4xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tighter leading-none text-slate-900 uppercase">IT'S ALL</h2>
-                        <div className="relative w-24 h-14 sm:w-40 sm:h-24 md:w-64 md:h-36 lg:w-[450px] lg:h-[220px] bg-pink-100 rounded-3xl sm:rounded-[3rem] overflow-hidden shrink-0 shadow-xl rotate-3">
+                        <div className="relative w-24 h-14 sm:w-40 sm:h-24 md:w-64 md:h-36 lg:w-[450px] lg:h-[220px] bg-pink-100 rounded-3xl sm:rounded-[3rem] overflow-hidden shrink-0  rotate-3">
                             <Image 
                                 src="https://images.unsplash.com/photo-1503220317375-aaad61436b1b?auto=format&fit=crop&q=80&w=800" 
                                 alt="Backpacker" 
@@ -102,7 +102,7 @@ export default function AboutClient() {
 
                     {/* Line 2: Image + ABOUT */}
                     <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-12 w-full justify-center">
-                        <div className="relative w-24 h-14 sm:w-40 sm:h-24 md:w-64 md:h-36 lg:w-[450px] lg:h-[220px] bg-blue-100 rounded-3xl sm:rounded-[3rem] overflow-hidden shrink-0 shadow-xl -rotate-2">
+                        <div className="relative w-24 h-14 sm:w-40 sm:h-24 md:w-64 md:h-36 lg:w-[450px] lg:h-[220px] bg-blue-100 rounded-3xl sm:rounded-[3rem] overflow-hidden shrink-0  -rotate-2">
                             <Image 
                                 src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&q=80&w=800" 
                                 alt="Traveler with passport" 
@@ -117,7 +117,7 @@ export default function AboutClient() {
                     {/* Line 3: TRAVEL + Image */}
                     <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-12 w-full justify-center lg:justify-end lg:pr-20">
                         <h2 className="text-4xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tighter leading-none text-slate-900 uppercase">TRAVEL</h2>
-                        <div className="relative w-24 h-14 sm:w-40 sm:h-24 md:w-64 md:h-36 lg:w-[450px] lg:h-[220px] bg-orange-100 rounded-3xl sm:rounded-[3rem] overflow-hidden shrink-0 shadow-xl rotate-2">
+                        <div className="relative w-24 h-14 sm:w-40 sm:h-24 md:w-64 md:h-36 lg:w-[450px] lg:h-[220px] bg-orange-100 rounded-3xl sm:rounded-[3rem] overflow-hidden shrink-0  rotate-2">
                             <Image 
                                 src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800" 
                                 alt="Traveling couple" 
@@ -148,9 +148,9 @@ export default function AboutClient() {
                     {features.map((feature, idx) => (
                         <div 
                             key={feature.title} 
-                            className="bg-background p-10 rounded-[2.5rem] shadow-xl shadow-black/5 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group flex flex-col items-start text-left h-full border border-border/50"
+                            className="bg-background p-10 rounded-[2.5rem]  shadow-black/5 hover: hover:-translate-y-2 transition-all duration-500 group flex flex-col items-start text-left h-full border border-border/50"
                         >
-                            <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#fcb101] group-hover:shadow-lg group-hover:shadow-[#fcb101]/20 transition-all duration-500">
+                            <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#fcb101] group-hover: group-hover:shadow-[#fcb101]/20 transition-all duration-500">
                                 <feature.icon className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-500" />
                             </div>
                             <h3 className="font-headline text-2xl font-bold mb-4 group-hover:text-primary transition-colors duration-300">

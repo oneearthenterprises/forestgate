@@ -196,7 +196,7 @@ function ProfileForm() {
 
   if (loading) {
     return (
-      <Card className="border-none shadow-lg bg-white/80 backdrop-blur-sm">
+      <Card className="border-none  bg-white/80 backdrop-blur-sm">
         <CardHeader className="flex flex-row items-center gap-4">
           <Skeleton className="h-16 w-16 rounded-full" />
           <div className="space-y-2">
@@ -230,7 +230,7 @@ function ProfileForm() {
   }
 
   return (
-    <Card className="border-none shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden">
+    <Card className="border-none  bg-white/80 backdrop-blur-sm overflow-hidden">
       <CardHeader className="flex flex-row items-center gap-6 p-8 border-b bg-white/50">
         <div className="relative group">
           <input
@@ -240,7 +240,7 @@ function ProfileForm() {
             accept="image/*"
             onChange={handleImageChange}
           />
-          <Avatar className="h-24 w-24 border-4 border-white shadow-xl bg-white relative overflow-hidden">
+          <Avatar className="h-24 w-24 border-4 border-white  bg-white relative overflow-hidden">
             <AvatarImage src={imagePreview} className="object-cover" />
             <AvatarFallback className="bg-primary/5 text-primary font-bold text-2xl">
               {form.getValues("name")?.substring(0, 2).toUpperCase() || (
@@ -260,7 +260,7 @@ function ProfileForm() {
             <Button
               variant="destructive"
               size="icon"
-              className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full shadow-lg"
+              className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full "
               onClick={() => {
                 setImageFile(null);
                 fetchProfile(); // Reset to original
@@ -522,7 +522,7 @@ function ProfileForm() {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full md:w-auto px-12 h-12 text-base font-semibold shadow-md"
+                className="w-full md:w-auto px-12 h-12 text-base font-semibold "
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting

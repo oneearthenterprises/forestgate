@@ -863,7 +863,7 @@ export default function AdminOrdersPage() {
                   </p>
                   <div className={`relative rounded-xl border-2 overflow-hidden transition-all ${
                     selectedRoomId === (bookedRoom._id || 'booked')
-                      ? 'border-blue-500 shadow-md shadow-blue-100'
+                      ? 'border-blue-500  shadow-blue-100'
                       : 'border-blue-200'
                   }`}>
                     {/* Room Image */}

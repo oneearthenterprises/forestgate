@@ -63,7 +63,7 @@ export function ExperiencesCarousel() {
               <div className="p-1">
                   <Link
                   href="/experiences"
-                  className="block relative group overflow-hidden rounded-xl shadow-lg aspect-[3/4]"
+                  className="block relative group overflow-hidden rounded-xl  aspect-[3/4]"
                   >
                   {expImage && (
                       <Image

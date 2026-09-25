@@ -40,7 +40,7 @@ export function ScrollToTop() {
       variant="secondary"
       size="icon"
       className={cn(
-        'fixed bottom-24 right-6 z-50 rounded-full shadow-lg transition-all duration-300 border border-border bg-card text-foreground hover:bg-accent',
+        'fixed bottom-24 right-6 z-50 rounded-full  transition-all duration-300 border border-border bg-card text-foreground hover:bg-accent',
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'
       )}
       onClick={scrollToTop}

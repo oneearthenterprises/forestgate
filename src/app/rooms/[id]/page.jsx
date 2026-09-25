@@ -165,7 +165,7 @@ export default function RoomDetailPage() {
                     onClick={() => setActiveTab('images')}
                     className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
                       activeTab === 'images'
-                        ? 'bg-primary text-white shadow-xl scale-105 hover:bg-secondary'
+                        ? 'bg-primary text-white  scale-105 hover:bg-secondary'
                         : 'bg-[#f8fafc] text-[#64748b] hover:bg-slate-100'
                     }`}
                   >
@@ -176,7 +176,7 @@ export default function RoomDetailPage() {
                       onClick={() => setActiveTab('video')}
                       className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
                         activeTab === 'video'
-                          ? 'bg-primary text-white shadow-xl scale-105 hover:bg-secondary'
+                          ? 'bg-primary text-white  scale-105 hover:bg-secondary'
                           : 'bg-[#f8fafc] text-[#64748b] hover:bg-slate-100'
                       }`}
                     >
@@ -193,7 +193,7 @@ export default function RoomDetailPage() {
                         <CarouselContent>
                           {room.images.map((img, idx) => (
                             <CarouselItem key={idx}>
-                              <div className="relative aspect-[16/9] rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-100">
+                              <div className="relative aspect-[16/9] rounded-[2.5rem] overflow-hidden  border border-slate-100">
                                 <Image
                                   src={img.url}
                                   alt={`${room.roomName} ${idx + 1}`}
@@ -221,7 +221,7 @@ export default function RoomDetailPage() {
                   ) : (
                     <div className="grid gap-8">
                       {room.videos.map((video, idx) => (
-                        <div key={idx} className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-200 bg-black group transition-all duration-500 hover:scale-[1.01]">
+                        <div key={idx} className="relative aspect-video rounded-[2.5rem] overflow-hidden  border border-slate-200 bg-black group transition-all duration-500 hover:scale-[1.01]">
                           <video
                             src={video.url}
                             controls
@@ -274,7 +274,7 @@ export default function RoomDetailPage() {
 
                 <Button
                   onClick={() => window.location.href = `/booking?roomId=${room._id}`}
-                  className="w-full h-16 rounded-full text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full h-16 rounded-full text-[11px] font-black uppercase tracking-[0.2em]  transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Book Now Today
                 </Button>
@@ -313,7 +313,7 @@ export default function RoomDetailPage() {
                   .map((simRoom) => (
                     <CarouselItem key={simRoom._id} className="pl-4 md:basis-1/2 lg:basis-1/3">
                       <Link href={`/rooms/${simRoom._id}`} className="group block h-full">
-                        <div className="bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:border-primary/20 hover:-translate-y-2 h-full flex flex-col">
+                        <div className="bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm transition-all duration-500 hover: hover:border-primary/20 hover:-translate-y-2 h-full flex flex-col">
                           <div className="relative aspect-[4/3] overflow-hidden">
                             <Image
                               src={simRoom.images?.[0]?.url || '/fallback.jpg'}
@@ -357,8 +357,8 @@ export default function RoomDetailPage() {
                   ))}
               </CarouselContent>
               <div className="flex items-center justify-center gap-4 mt-12">
-                <CarouselPrevious className="relative static translate-y-0 translate-x-0 w-12 h-12 bg-white shadow-xl border-none hover:bg-primary hover:text-white transition-all disabled:opacity-30" />
-                <CarouselNext className="relative static translate-y-0 translate-x-0 w-12 h-12 bg-white shadow-xl border-none hover:bg-primary hover:text-white transition-all disabled:opacity-30" />
+                <CarouselPrevious className="relative static translate-y-0 translate-x-0 w-12 h-12 bg-white  border-none hover:bg-primary hover:text-white transition-all disabled:opacity-30" />
+                <CarouselNext className="relative static translate-y-0 translate-x-0 w-12 h-12 bg-white  border-none hover:bg-primary hover:text-white transition-all disabled:opacity-30" />
               </div>
             </Carousel>
           </div>

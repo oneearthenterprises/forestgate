@@ -25,8 +25,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { rooms } from '@/app/lib/data';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, Edit, Trash2, Plus, Video, Image as ImageIcon, X } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Plus, Video, Image as ImageIcon, X, Eye } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const RoomFormSchema = z.object({
@@ -489,6 +490,11 @@ export default function AdminRoomsPage() {
                                 <p className="text-sm text-muted-foreground line-clamp-2">{room.longDescription}</p>
                             </CardContent>
                             <CardFooter className="gap-2">
+                                <Button variant="outline" size="sm" asChild>
+                                  <Link href={`/rooms/${room.id || room._id}`} target="_blank" rel="noopener noreferrer">
+                                    <Eye className="mr-2 h-4 w-4" /> View Listing
+                                  </Link>
+                                </Button>
                                 <Button variant="outline" size="sm" onClick={() => setEditingRoom(room)}><Edit className="mr-2 h-4 w-4" /> Edit</Button>
                                 <Button variant="destructive" size="sm" onClick={() => handleDeleteRoom(room.id)}><Trash2 className="mr-2 h-4 w-4" /> Delete</Button>
                             </CardFooter>

@@ -164,7 +164,7 @@ export default function AdminBlogPage() {
       <h1 className="text-3xl font-bold font-headline">Manage Blog</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-1 space-y-8" ref={formRef}>
-            <Card className="rounded-[2rem] border-none shadow-lg bg-card border border-slate-100">
+            <Card className="rounded-[2rem] border-none  bg-card border border-slate-100">
                 <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                     {editingPost ? <Edit className="w-5 h-5 text-primary" /> : <PlusCircle className="w-5 h-5 text-primary" />}
@@ -321,7 +321,7 @@ export default function AdminBlogPage() {
                     />
 
                     <div className="flex items-center gap-2 pt-4">
-                         <Button type="submit" className="flex-1 h-14 rounded-2xl bg-[#085d6b] hover:bg-[#06424d] text-white text-xs font-black uppercase tracking-[0.2em] shadow-lg transition-all active:scale-[0.98]">
+                         <Button type="submit" className="flex-1 h-14 rounded-2xl bg-[#085d6b] hover:bg-[#06424d] text-white text-xs font-black uppercase tracking-[0.2em]  transition-all active:scale-[0.98]">
                             {editingPost ? 'Save Changes' : 'Publish Post'}
                         </Button>
                         {editingPost && (
@@ -345,7 +345,7 @@ export default function AdminBlogPage() {
              ) : (
                 posts.map((post) => {
                     return (
-                        <Card key={post._id} className="flex flex-col md:flex-row overflow-hidden rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 bg-white group">
+                        <Card key={post._id} className="flex flex-col md:flex-row overflow-hidden rounded-[2.5rem] border border-slate-100 shadow-sm hover: transition-all duration-500 bg-white group">
                             <div className="md:w-[40%] relative shrink-0 aspect-[4/3] md:aspect-auto overflow-hidden">
                                 {post.image ? (
                                     <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />

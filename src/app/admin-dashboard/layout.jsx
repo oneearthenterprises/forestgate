@@ -244,9 +244,6 @@ const { logout ,adminEmail  } = useAuthContext();
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                         <DropdownMenuItem asChild><Link href="/profile">Profile</Link></DropdownMenuItem>
-                         <DropdownMenuItem>Settings</DropdownMenuItem>
-                         <DropdownMenuSeparator />
                          <DropdownMenuItem onClick={() => setIsLogoutDialogOpen(true)} className="text-destructive">
                            <LogOut className="mr-2 h-4 w-4" />
                            Logout

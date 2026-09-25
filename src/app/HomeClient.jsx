@@ -163,7 +163,7 @@ export default function HomeClient() {
               <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {rooms[0] && (
                   <Link href={`/booking?roomId=${rooms[0]._id}`}
-                    className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/5] w-full"
+                    className="relative group overflow-hidden rounded-2xl  aspect-[4/5] w-full"
                   >
                     <Image
                       src={rooms[0].images?.[0]?.url}
@@ -176,7 +176,7 @@ export default function HomeClient() {
                     <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                       <h3 className="text-3xl font-bold">{rooms[0].roomName}</h3>
                       <p className="mb-4">₹{rooms[0].pricePerNight} / per night</p>
-                      <Button className="rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold h-12 px-10 border-none shadow-lg transition-transform hover:scale-105 active:scale-95">
+                      <Button className="rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold h-12 px-10 border-none  transition-transform hover:scale-105 active:scale-95">
                         Book Now
                       </Button>
                     </div>
@@ -186,7 +186,7 @@ export default function HomeClient() {
                 <div className="grid grid-cols-2 gap-4">
                   {rooms.slice(1, 5).map((room) => (
                     <Link key={room._id} href={`/booking?roomId=${room._id}`}
-                      className="relative group overflow-hidden rounded-2xl shadow-lg aspect-square w-full"
+                      className="relative group overflow-hidden rounded-2xl  aspect-square w-full"
                     >
                       <Image
                         src={room.images?.[0]?.url}
@@ -248,7 +248,7 @@ export default function HomeClient() {
                 width={800}
                 height={600}
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="rounded-lg w-full h-[300px] md:h-[500px] shadow-lg transition-transform duration-700 group-hover:scale-105 object-cover"
+                className="rounded-lg w-full h-[300px] md:h-[500px]  transition-transform duration-700 group-hover:scale-105 object-cover"
                 data-ai-hint="deep forest"
                 placeholder="blur"
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
