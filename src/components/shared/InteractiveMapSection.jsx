@@ -8,17 +8,32 @@ const destinations = [
   {
     id: 'Village Tandeo. Morni Hills, Panchkula, Haryana',
     title: 'Village Tandeo. Morni Hills, Panchkula, Haryana',
-    points: ['Village Tandeo. Morni Hills, Panchkula, Haryana Castle', 'Roerich Art Gallery', 'Jana Waterfall'],
+    points: [
+      'Village Tandeo. Morni Hills, Panchkula, Haryana Castle',
+      'Roerich Art Gallery',
+      'Jana Waterfall'
+    ],
   },
   {
     id: 'Morni Hills',
     title: 'Morni Hills',
-    points: ['Hadimba Temple', 'Old Morni Hills', 'Vashisht Hot Springs'],
+    points: [
+      'Hadimba Temple',
+      'Old Morni Hills',
+      'Vashisht Hot Springs'
+    ],
   },
   {
-    id: 'solang',
-    title: 'Solang Valley',
-    points: ['Paragliding', 'Ziplining', 'Solang Ropeway'],
+    id: 'resort-experiences',
+    title: 'Resort Experiences',
+    points: [
+      'Luxury Resort Stay',
+      'Bird Watching',
+      'Swimming Pool',
+      'Relaxing Nature Walks',
+      'Bonfire & Evening Relaxation',
+      'Scenic Mountain Views'
+    ],
   }
 ];
 
