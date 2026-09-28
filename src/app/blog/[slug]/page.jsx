@@ -57,19 +57,14 @@ export default async function BlogDetailPage({ params }) {
   const recentPosts = await getRecentPosts(params.slug);
 
   return (
-    <article className="bg-[#fcfcfc]">
-      <PageHeader
-        title={post.title}
-        imageUrl={post.image || '/assets/images/gallery-nature-1.jpg'}
-        breadcrumbLabel="Blog Post"
-      />
+ 
 
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-12 gap-12 max-w-7xl mx-auto items-start">
             {/* Main Content */}
             <div className="lg:col-span-8">
-              <div className="bg-card rounded-[2.5rem] p-8 md:p-12 lg:p-16  border border-border/50">
+              <div className="bg-card rounded-[2.5rem] p-4  border border-border/50">
                 {post.image && (
                   <div className="relative aspect-[16/9] mb-10 overflow-hidden rounded-[2rem]  bg-slate-100">
                     <img
@@ -165,6 +160,6 @@ export default async function BlogDetailPage({ params }) {
           </div>
         </div>
       </section>
-    </article>
+
   );
 }

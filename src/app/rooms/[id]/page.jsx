@@ -161,7 +161,7 @@ export default function RoomDetailPage() {
         )}
       </AnimatePresence>
 
-      <div className="container mx-auto px-4 max-w-6xl pt-6 md:pt-10">
+      <div className="container mx-auto px-4  pt-6 md:pt-10">
         {/* 1. Header with Breadcrumb & Action Buttons */}
         <div className="mb-6">
           <nav className="flex items-center gap-1.5 text-xs text-slate-400 font-medium mb-3">
@@ -559,8 +559,8 @@ export default function RoomDetailPage() {
 
       {/* 6. Similar Accommodations Carousel */}
       {allRooms.filter((r) => r._id !== room._id).length > 0 && (
-        <div className="py-16 md:py-20 mt-16 bg-slate-50/60 border-t border-slate-100">
-          <div className="container mx-auto px-4 max-w-6xl">
+        <div className="py-8 md:py-8 mt-16 bg-slate-50/60 border-t border-slate-100">
+          <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
               <div>
                 <p className="font-kaushan text-[#ffae3e] text-2xl mb-1">Discover More</p>
