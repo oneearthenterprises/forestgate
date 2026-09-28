@@ -63,43 +63,11 @@ const homeSchema = {
       },
     },
 
-    // 3. WEBSITE (WITH SITELINKS & SEARCHBOX)
+    // 3. WEBSITE
     {
       '@type': 'WebSite',
       name: 'The Forest Gate',
       url: 'https://forestgatetrails.com/',
-      hasPart: [
-        {
-          '@type': 'WebPage',
-          name: 'Contact Us',
-          url: 'https://forestgatetrails.com/contact',
-          description: 'Get in touch with The Forest Gate in Village Tandeo, Morni Hills for bookings, directions, and inquiries.',
-        },
-        {
-          '@type': 'WebPage',
-          name: 'Luxury Rooms & Suites',
-          url: 'https://forestgatetrails.com/rooms',
-          description: 'Explore our private suites and luxury cottages nestled in Morni Hills with mountain views.',
-        },
-        {
-          '@type': 'WebPage',
-          name: 'About Us',
-          url: 'https://forestgatetrails.com/about',
-          description: 'Learn about the vision, story, and sustainable luxury philosophy of The Forest Gate.',
-        },
-        {
-          '@type': 'WebPage',
-          name: 'Experiences',
-          url: 'https://forestgatetrails.com/experiences',
-          description: 'Guided nature trails, riverbed safaris, stargazing decks, bonfires, and mountain adventure.',
-        },
-        {
-          '@type': 'WebPage',
-          name: 'Amenities',
-          url: 'https://forestgatetrails.com/amenities',
-          description: 'Scenic swimming pool with mountain view, open-sky dining, mini cinema, and private lawns.',
-        },
-      ],
     },
 
     // 4. SITELINKS (SITE NAVIGATION)

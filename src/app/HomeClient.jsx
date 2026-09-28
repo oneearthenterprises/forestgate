@@ -1,5 +1,6 @@
 'use client';
 
+// The Forest Gate - Home Client
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -31,10 +32,9 @@ import { ManagedBySection } from '@/components/shared/ManagedBySection';
 import { WildlifeCarousel } from '@/components/shared/WildlifeCarousel';
 import { InfluencersCarousel } from '@/components/shared/InfluencersCarousel';
 import { HighlightsCarouselWrapper } from '@/components/shared/HighlightsCarouselWrapper';
-import { MobileRoomsCarouselWrapper } from '@/components/shared/MobileRoomsCarouselWrapper';
 import { WelcomePopup } from '@/components/shared/WelcomePopup';
-import { BoutiqueTypography } from '@/components/shared/BoutiqueTypography';
 import { AtmosphereCarousel } from '@/components/shared/AtmosphereCarousel';
+import { RoomsSlider } from '@/components/shared/RoomsSlider';
 import { MustExperienceSlider } from '@/components/shared/MustExperienceSlider';
 import { API } from '@/lib/api/api';
 import { useRouter } from 'next/navigation';
@@ -43,10 +43,6 @@ export default function HomeClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [rooms, setRooms] = useState([]);
   const router = useRouter();
-
-  const seeMoreImages = galleryImages
-    .slice(0, 4)
-    .filter(img => !!img.imageUrl);
 
   const highlightsWithImages = highlights.map(highlight => {
     let imageId = '';
@@ -88,26 +84,6 @@ export default function HomeClient() {
     transition: { duration: 0.8, ease: "easeOut" }
   };
 
-  const RoomsSkeleton = () => (
-    <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4 animate-pulse">
-      {/* Large Card Skeleton */}
-      <div className="bg-slate-100 rounded-2xl aspect-[4/5] w-full" />
-
-      {/* 2x2 Grid Skeleton */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-slate-100 rounded-2xl aspect-square w-full" />
-        <div className="bg-slate-100 rounded-2xl aspect-square w-full" />
-        <div className="bg-slate-100 rounded-2xl aspect-square w-full" />
-        <div className="bg-slate-100 rounded-2xl aspect-square w-full" />
-      </div>
-    </div>
-  );
-
-  const MobileRoomsSkeleton = () => (
-    <div className="lg:hidden animate-pulse">
-      <div className="bg-slate-100 rounded-2xl aspect-[4/5] w-full" />
-    </div>
-  );
 
   useEffect(() => {
     const getRooms = async () => {
@@ -144,81 +120,6 @@ export default function HomeClient() {
       >
         <div className="container mx-auto px-0">
           <HighlightsCarouselWrapper highlightsWithImages={highlightsWithImages} />
-        </div>
-      </motion.section>
-      <motion.section {...fadeInUp} id="rooms" className="bg-card">
-        <div className="container mx-auto px-4">
-          <p className="mb-2 text-left" style={sectionLabelStyle}>Accommodations</p>
-          <h2 className="text-left text-3xl md:text-4xl font-bold mb-10 font-headline">
-            Our Rooms
-          </h2>
-
-          {isLoading ? (
-            <>
-              <RoomsSkeleton />
-              <MobileRoomsSkeleton />
-            </>
-          ) : (
-            <>
-              <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {rooms[0] && (
-                  <Link href={`/booking?roomId=${rooms[0]._id}`}
-                    className="relative group overflow-hidden rounded-2xl  aspect-[4/5] w-full"
-                  >
-                    <Image
-                      src={rooms[0].images?.[0]?.url}
-                      alt={rooms[0].roomName}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h3 className="text-3xl font-bold">{rooms[0].roomName}</h3>
-                      <p className="mb-4">₹{rooms[0].pricePerNight} / per night</p>
-                      <Button className="rounded-full bg-[#82c244] hover:bg-[#70a83a] text-white font-bold h-12 px-10 border-none  transition-transform hover:scale-105 active:scale-95">
-                        Book Now
-                      </Button>
-                    </div>
-                  </Link>
-                )}
-
-                <div className="grid grid-cols-2 gap-4">
-                  {rooms.slice(1, 5).map((room) => (
-                    <Link key={room._id} href={`/booking?roomId=${room._id}`}
-                      className="relative group overflow-hidden rounded-2xl  aspect-square w-full"
-                    >
-                      <Image
-                        src={room.images?.[0]?.url}
-                        alt={room.roomName}
-                        fill
-                        sizes="(max-width: 1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
-                      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                        <h4 className="text-xl font-bold">{room.roomName}</h4>
-                        <p className="mb-3">₹{room.pricePerNight} / per night</p>
-                        <Button size="sm" className="rounded-full font-bold h-9 px-6 bg-white/20 hover:bg-white text-white hover:text-primary backdrop-blur-md border border-white/30 transition-all">
-                          Book Now
-                        </Button>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="lg:hidden space-y-4">
-                <MobileRoomsCarouselWrapper allRoomsForCarousel={rooms} seeMoreImages={seeMoreImages} />
-              </div>
-            </>
-          )}
-
-          <div className="text-center mt-12">
-            <Button asChild size="lg">
-              <Link href="/rooms">View All Rooms</Link>
-            </Button>
-          </div>
         </div>
       </motion.section>
 
@@ -261,7 +162,9 @@ export default function HomeClient() {
 
 
       <InteractiveMapSection />
-      <BoutiqueTypography />
+      <motion.div {...fadeInUp}>
+        <RoomsSlider rooms={rooms} isLoading={isLoading} />
+      </motion.div>
       <AtmosphereCarousel />
 
       <motion.div {...fadeInUp}>
