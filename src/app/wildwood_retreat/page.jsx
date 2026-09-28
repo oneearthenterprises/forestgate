@@ -39,9 +39,9 @@ export const metadata = {
 const wildwoodSchema = {
   '@context': 'https://schema.org',
   '@graph': [
-    // 1. HOTEL / RESORT SCHEMA
+    // 1. RESORT SCHEMA
     {
-      '@type': ['Hotel', 'Resort'],
+      '@type': 'Resort',
       '@id': 'https://forestgatetrails.com/wildwood_retreat#resort',
       name: 'Wildwood Retreat at The Forest Gate Trails',
       alternateName: 'Wildwood Eco-Luxury Haven Morni Hills',
@@ -63,6 +63,19 @@ const wildwoodSchema = {
       checkinTime: '14:00',
       checkoutTime: '11:00',
       petsAllowed: true,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Village Tandeo, Morni Hills',
+        addressLocality: 'Panchkula',
+        addressRegion: 'Haryana',
+        postalCode: '134205',
+        addressCountry: 'IN',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 30.6972,
+        longitude: 77.0869,
+      },
       amenityFeature: [
         { '@type': 'LocationFeatureSpecification', name: 'Private Forest Lawn', value: true },
         { '@type': 'LocationFeatureSpecification', name: 'Stargazing Deck', value: true },
@@ -73,6 +86,48 @@ const wildwoodSchema = {
         { '@type': 'LocationFeatureSpecification', name: 'Pet Friendly', value: true },
         { '@type': 'LocationFeatureSpecification', name: 'Free Secured Parking', value: true },
       ],
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.9',
+        reviewCount: '128',
+        bestRating: '5',
+        worstRating: '1',
+      },
+      review: [
+        {
+          '@type': 'Review',
+          author: {
+            '@type': 'Person',
+            name: 'Rohit Sharma',
+          },
+          datePublished: '2026-08-14',
+          reviewRating: {
+            '@type': 'Rating',
+            ratingValue: '5',
+            bestRating: '5',
+          },
+          reviewBody:
+            'Wildwood Retreat gave us the peace and serenity we were desperately craving. The private cottage, mountain views, and firepit under the stars were pure magic.',
+        },
+        {
+          '@type': 'Review',
+          author: {
+            '@type': 'Person',
+            name: 'Dr. Ananya Verma',
+          },
+          datePublished: '2026-09-02',
+          reviewRating: {
+            '@type': 'Rating',
+            ratingValue: '5',
+            bestRating: '5',
+          },
+          reviewBody:
+            'Easily the most peaceful retreat near Chandigarh and Delhi NCR. Delicious organic food and wonderful pet-friendly open spaces.',
+        },
+      ],
+      parentOrganization: {
+        '@id': 'https://forestgatetrails.com/#organization',
+      },
     },
 
     // 2. LOCAL BUSINESS / LODGING BUSINESS SCHEMA
@@ -128,6 +183,9 @@ const wildwoodSchema = {
       name: 'Wildwood Private Forest Villa & Suites',
       description:
         'Luxury secluded forest cottages and suites featuring private sit-outs, open forest decks, king-size beds, personal firepit, and panoramic Morni Hills valley views.',
+      containedInPlace: {
+        '@id': 'https://forestgatetrails.com/wildwood_retreat#resort',
+      },
       bed: {
         '@type': 'BedDetails',
         numberOfBeds: 1,
@@ -227,55 +285,6 @@ const wildwoodSchema = {
           item: 'https://forestgatetrails.com/wildwood_retreat',
         },
       ],
-    },
-
-    // 6. AGGREGATERATING & REVIEWS SCHEMA
-    {
-      '@type': 'AggregateRating',
-      '@id': 'https://forestgatetrails.com/wildwood_retreat#rating',
-      itemReviewed: {
-        '@id': 'https://forestgatetrails.com/wildwood_retreat#resort',
-      },
-      ratingValue: '4.9',
-      reviewCount: '128',
-      bestRating: '5',
-      worstRating: '1',
-    },
-    {
-      '@type': 'Review',
-      itemReviewed: {
-        '@id': 'https://forestgatetrails.com/wildwood_retreat#resort',
-      },
-      author: {
-        '@type': 'Person',
-        name: 'Rohit Sharma',
-      },
-      datePublished: '2026-08-14',
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: '5',
-        bestRating: '5',
-      },
-      reviewBody:
-        'Wildwood Retreat gave us the peace and serenity we were desperately craving. The private cottage, mountain views, and firepit under the stars were pure magic.',
-    },
-    {
-      '@type': 'Review',
-      itemReviewed: {
-        '@id': 'https://forestgatetrails.com/wildwood_retreat#resort',
-      },
-      author: {
-        '@type': 'Person',
-        name: 'Dr. Ananya Verma',
-      },
-      datePublished: '2026-09-02',
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: '5',
-        bestRating: '5',
-      },
-      reviewBody:
-        'Easily the most peaceful retreat near Chandigarh and Delhi NCR. Delicious organic food and wonderful pet-friendly open spaces.',
     },
   ],
 };
