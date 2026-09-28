@@ -25,33 +25,34 @@ export const metadata = {
 const homeSchema = {
   '@context': 'https://schema.org',
   '@graph': [
+    // 1. ORGANIZATION
     {
-      '@type': 'Resort',
-      '@id': 'https://forestgatetrails.com/#resort',
-      name: 'The Forest Gate Trails',
-      alternateName: 'The Forest Gate - Luxury Resort & Sanctuary',
-      description:
-        'Discover The Forest Gate, a luxury resort offering a unique blend of nature, adventure, and tranquility in Village Tandeo, Morni Hills, Panchkula, Haryana. Perfect for families, couples, and corporate retreats.',
+      '@type': 'Organization',
+      name: 'The Forest Gate',
+      alternateName: 'The Forest Gate Trails',
       url: 'https://forestgatetrails.com/',
       logo: 'https://forestgatetrails.com/assets/images/forestgatelogo.svg',
-      image: [
-        'https://forestgatetrails.com/assets/images/banner.jpeg',
-        'https://forestgatetrails.com/assets/images/forestgate-image/YOUR%20SANCTUARY%20IN%20THE%20MOPUNTAINS.png',
-        'https://forestgatetrails.com/assets/images/forestgate-image/FORNT%20VIEW%20PROPERTY.png',
-      ],
-      telephone: '+91 70099 84070',
-      email: 'Support@forestgatetrails.com',
-      priceRange: '₹₹₹',
-      currenciesAccepted: 'INR',
-      paymentAccepted: 'Cash, Credit Card, Debit Card, UPI, Net Banking',
-      starRating: {
-        '@type': 'Rating',
-        ratingValue: '5',
-        bestRating: '5',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: '+917009984070',
+        contactType: 'customer service',
+        areaServed: 'IN',
+        availableLanguage: ['English', 'Hindi', 'Punjabi'],
       },
-      checkinTime: '14:00',
-      checkoutTime: '11:00',
-      petsAllowed: true,
+      sameAs: [
+        'https://www.facebook.com/profile.php?id=61588259480467#',
+        'https://www.instagram.com/forestgate.retreat/?hl=en',
+      ],
+    },
+
+    // 2. RESORT
+    {
+      '@type': 'Resort',
+      name: 'The Forest Gate',
+      url: 'https://forestgatetrails.com/',
+      image: 'https://forestgatetrails.com/assets/images/banner.jpeg',
+      telephone: '+917009984070',
+      priceRange: '₹₹₹',
       address: {
         '@type': 'PostalAddress',
         streetAddress: 'Village Tandeo, Morni Hills',
@@ -60,75 +61,118 @@ const homeSchema = {
         postalCode: '134205',
         addressCountry: 'IN',
       },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: 30.6972,
-        longitude: 77.0869,
-      },
-      openingHoursSpecification: [
-        {
-          '@type': 'OpeningHoursSpecification',
-          dayOfWeek: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday',
-          ],
-          opens: '00:00',
-          closes: '23:59',
-        },
-      ],
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: '4.9',
-        reviewCount: '128',
-        bestRating: '5',
-        worstRating: '1',
-      },
-      amenityFeature: [
-        { '@type': 'LocationFeatureSpecification', name: 'Private Mountain View Lawns', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Stargazing Decks', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Bonfire & Firepits', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Complimentary High-speed Wi-Fi', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Farm-to-Fork Mountain Dining', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Guided Nature & River Trails', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Pet Friendly Resort', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Free Secured Parking', value: true },
-      ],
-      sameAs: [
-        'https://www.facebook.com/profile.php?id=61588259480467#',
-        'https://www.instagram.com/forestgate.retreat/?hl=en',
-      ],
     },
+
+    // 3. WEBSITE (WITH SITELINKS & SEARCHBOX)
     {
       '@type': 'WebSite',
-      '@id': 'https://forestgatetrails.com/#website',
-      url: 'https://forestgatetrails.com/',
       name: 'The Forest Gate',
-      description: 'Luxury Meets Nature in the Heart of Haryana',
-      publisher: {
-        '@id': 'https://forestgatetrails.com/#resort',
-      },
-    },
-    {
-      '@type': 'Organization',
-      '@id': 'https://forestgatetrails.com/#organization',
-      name: 'The Forest Gate Trails',
       url: 'https://forestgatetrails.com/',
-      logo: 'https://forestgatetrails.com/assets/images/forestgatelogo.svg',
-      contactPoint: {
-        '@type': 'ContactPoint',
-        telephone: '+91 70099 84070',
-        contactType: 'reservations',
-        areaServed: 'IN',
-        availableLanguage: ['en', 'hi'],
-      },
-      sameAs: [
-        'https://www.facebook.com/profile.php?id=61588259480467#',
-        'https://www.instagram.com/forestgate.retreat/?hl=en',
+      hasPart: [
+        {
+          '@type': 'WebPage',
+          name: 'Contact Us',
+          url: 'https://forestgatetrails.com/contact',
+          description: 'Get in touch with The Forest Gate in Village Tandeo, Morni Hills for bookings, directions, and inquiries.',
+        },
+        {
+          '@type': 'WebPage',
+          name: 'Luxury Rooms & Suites',
+          url: 'https://forestgatetrails.com/rooms',
+          description: 'Explore our private suites and luxury cottages nestled in Morni Hills with mountain views.',
+        },
+        {
+          '@type': 'WebPage',
+          name: 'About Us',
+          url: 'https://forestgatetrails.com/about',
+          description: 'Learn about the vision, story, and sustainable luxury philosophy of The Forest Gate.',
+        },
+        {
+          '@type': 'WebPage',
+          name: 'Experiences',
+          url: 'https://forestgatetrails.com/experiences',
+          description: 'Guided nature trails, riverbed safaris, stargazing decks, bonfires, and mountain adventure.',
+        },
+        {
+          '@type': 'WebPage',
+          name: 'Amenities',
+          url: 'https://forestgatetrails.com/amenities',
+          description: 'Scenic swimming pool with mountain view, open-sky dining, mini cinema, and private lawns.',
+        },
+      ],
+    },
+
+    // 4. SITELINKS (SITE NAVIGATION)
+    {
+      '@type': 'ItemList',
+      name: 'Main Sitelinks',
+      itemListElement: [
+        {
+          '@type': 'SiteNavigationElement',
+          position: 1,
+          name: 'Contact Us',
+          description: 'Get in touch with The Forest Gate in Village Tandeo, Morni Hills for bookings, directions, and inquiries.',
+          url: 'https://forestgatetrails.com/contact',
+        },
+        {
+          '@type': 'SiteNavigationElement',
+          position: 2,
+          name: 'Luxury Rooms & Suites',
+          description: 'Explore our private suites and luxury cottages nestled in Morni Hills with mountain views.',
+          url: 'https://forestgatetrails.com/rooms',
+        },
+        {
+          '@type': 'SiteNavigationElement',
+          position: 3,
+          name: 'About Us',
+          description: 'Learn about the vision, story, and sustainable luxury philosophy of The Forest Gate.',
+          url: 'https://forestgatetrails.com/about',
+        },
+        {
+          '@type': 'SiteNavigationElement',
+          position: 4,
+          name: 'Experiences & Activities',
+          description: 'Guided nature trails, riverbed safaris, stargazing decks, bonfires, and mountain adventure.',
+          url: 'https://forestgatetrails.com/experiences',
+        },
+        {
+          '@type': 'SiteNavigationElement',
+          position: 5,
+          name: 'Resort Amenities',
+          description: 'Scenic swimming pool with mountain view, open-sky dining, mini cinema, and private lawns.',
+          url: 'https://forestgatetrails.com/amenities',
+        },
+      ],
+    },
+
+    // 5. FAQPAGE
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What are the check-in and check-out times?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Check-in time is 2:00 PM and check-out time is 11:00 AM.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is the resort pet-friendly?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes, The Forest Gate is a pet-friendly resort.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Where is the resort located?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'The Forest Gate is located in Village Tandeo, Morni Hills, Panchkula, Haryana.',
+          },
+        },
       ],
     },
   ],
