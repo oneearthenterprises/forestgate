@@ -63,14 +63,16 @@ export function WelcomePopup() {
             </button>
 
             {/* Left Column: Visual & Heading Overlay */}
-            <div className="relative w-full md:w-2/5 h-56 md:h-full group shrink-0">
-              <Image
-                src={popupData?.imageUrl || heroImage?.imageUrl || "https://images.unsplash.com/photo-1540346941493-3f8d5d87e169?auto=format&fit=crop&q=80&w=1200"}
-                alt="The Forest Gate"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black/40 p-6 md:p-8 flex flex-col justify-start">
+            <div className="relative w-full md:w-2/5 h-56 md:h-full group shrink-0 bg-[#085d6b] bg-gradient-to-br from-[#085d6b] via-[#053d46] to-[#032025]">
+              {popupData?.imageUrl && (
+                <Image
+                  src={popupData.imageUrl}
+                  alt="The Forest Gate"
+                  fill
+                  className="object-cover"
+                />
+              )}
+              <div className={`absolute inset-0 ${popupData?.imageUrl ? 'bg-black/40' : 'bg-black/10'} p-6 md:p-8 flex flex-col justify-start`}>
                 <h2 className="text-white text-2xl md:text-4xl font-medium leading-tight mb-4 md:mb-6 whitespace-pre-line">
                   {popupData?.title || 'Book entire rental\nunit in Village Tandeo. Morni Hills, Panchkula, Haryana,\nHaryana Pradesh'}
                 </h2>

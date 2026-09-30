@@ -70,6 +70,7 @@ export const API = {
   // welcome popup api
   GetWelcomePopup: `${API_BASE_URL}/api/welcome-popup`,
   UpdateWelcomePopup: `${API_BASE_URL}/api/welcome-popup`,
+  DeleteWelcomePopupImage: `${API_BASE_URL}/api/welcome-popup/image`,
 
   // blogs api
   getBlogs: `${API_BASE_URL}/api/blogs`,

@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { API } from '@/lib/api/api';
-import { Loader2, UploadCloud, Save } from 'lucide-react';
+import { Loader2, UploadCloud, Save, Trash2, Image as ImageIcon, RefreshCw } from 'lucide-react';
 import Image from 'next/image';
 
 export default function PopupSettingsPage() {
@@ -24,6 +24,7 @@ export default function PopupSettingsPage() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
+  const [removeImage, setRemoveImage] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
@@ -40,6 +41,7 @@ export default function PopupSettingsPage() {
       const json = await res.json();
       if (json.success && json.data) {
         setData(json.data);
+        setRemoveImage(false);
       }
     } catch (error) {
       console.error('Error fetching popup data:', error);
@@ -52,7 +54,7 @@ export default function PopupSettingsPage() {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Create preview
+      setRemoveImage(false);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -60,6 +62,18 @@ export default function PopupSettingsPage() {
       reader.readAsDataURL(file);
       setImageFile(file);
     }
+  };
+
+  const handleDeleteImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    setRemoveImage(true);
+    setData(prev => ({ ...prev, imageUrl: '' }));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    toast({ 
+      title: 'Image removed', 
+      description: "Click 'Save Configuration' below to save changes." 
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -73,6 +87,8 @@ export default function PopupSettingsPage() {
       
       if (imageFile) {
         formData.append('image', imageFile);
+      } else if (removeImage || !data.imageUrl) {
+        formData.append('removeImage', 'true');
       }
 
       const res = await fetch(API.UpdateWelcomePopup, {
@@ -86,6 +102,7 @@ export default function PopupSettingsPage() {
         setData(json.data);
         setImageFile(null);
         setImagePreview('');
+        setRemoveImage(false);
         if (fileInputRef.current) fileInputRef.current.value = '';
       } else {
         toast({ title: 'Error', description: json.message || 'Failed to update', variant: 'destructive' });
@@ -97,6 +114,8 @@ export default function PopupSettingsPage() {
       setIsSaving(false);
     }
   };
+
+  const currentImage = (!removeImage && (imagePreview || data.imageUrl)) ? (imagePreview || data.imageUrl) : null;
 
   if (isLoading) {
     return (
@@ -159,46 +178,122 @@ export default function PopupSettingsPage() {
                     onChange={(e) => setData({ ...data, description: e.target.value })}
                   />
                 </div>
-
-
               </div>
 
               {/* Image Content */}
               <div className="space-y-4">
-                <Label>Background Image</Label>
-                <div 
-                  className="border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <div className="relative w-full aspect-[4/5] bg-muted rounded-lg overflow-hidden mb-4">
-                    {(imagePreview || data.imageUrl) ? (
+                <div className="flex items-center justify-between">
+                  <Label>Background Image</Label>
+                  {currentImage && (
+                    <button
+                      type="button"
+                      onClick={handleDeleteImage}
+                      className="text-xs font-semibold text-destructive hover:underline flex items-center gap-1 transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Delete Image
+                    </button>
+                  )}
+                </div>
+
+                {currentImage ? (
+                  <div className="space-y-3">
+                    <div className="relative w-full aspect-[4/5] bg-muted rounded-xl overflow-hidden border shadow-sm group">
                       <Image 
-                        src={imagePreview || data.imageUrl} 
+                        src={currentImage} 
                         alt="Popup preview" 
                         fill 
                         className="object-cover"
                       />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-muted-foreground">No image provided</span>
+                      {/* Top-right quick delete button */}
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2 h-8 w-8 rounded-full shadow-md z-10 hover:scale-105 transition-transform"
+                        onClick={handleDeleteImage}
+                        title="Delete Image"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+
+                      {/* Hover Overlay */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          className="rounded-full shadow text-xs font-medium"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          <UploadCloud className="w-4 h-4 mr-1.5" />
+                          Change
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          className="rounded-full shadow text-xs font-medium"
+                          onClick={handleDeleteImage}
+                        >
+                          <Trash2 className="w-4 h-4 mr-1.5" />
+                          Delete
+                        </Button>
                       </div>
-                    )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 rounded-lg text-xs"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <UploadCloud className="w-4 h-4 mr-1.5 text-primary" />
+                        Upload New Image
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="rounded-lg text-xs"
+                        onClick={handleDeleteImage}
+                      >
+                        <Trash2 className="w-4 h-4 mr-1.5" />
+                        Delete Image
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm font-medium text-primary">
-                    <UploadCloud className="w-4 h-4" />
-                    Upload New Image
+                ) : (
+                  <div 
+                    className="border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition-colors aspect-[4/5] bg-muted/20"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className="p-4 bg-muted rounded-full mb-3 text-muted-foreground">
+                      <ImageIcon className="w-8 h-8" />
+                    </div>
+                    <p className="font-semibold text-sm text-foreground">No image set</p>
+                    <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">
+                      A brand dark gradient background will be used on the welcome popup.
+                    </p>
+                    <div className="flex items-center gap-2 text-sm font-medium text-primary mt-4 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors">
+                      <UploadCloud className="w-4 h-4" />
+                      Upload Image
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-2">
+                      JPG, PNG, WEBP (Max 5MB)
+                    </p>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    JPG, PNG, WEBP (Max 5MB)
-                  </p>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    className="hidden" 
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </div>
+                )}
+
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
               </div>
             </div>
 
