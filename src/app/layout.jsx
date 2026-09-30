@@ -65,6 +65,15 @@ export const metadata = {
     description: 'Experience tranquility and sustainable luxury at The Forest Gate, Village Tandeo. Morni Hills, Panchkula, Haryana.',
     images: ['/assets/images/banner.jpeg'],
   },
+  icons: {
+    icon: [
+      { url: '/assets/images/forestgateflatelogo.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: ['/assets/images/forestgateflatelogo.svg'],
+    apple: [
+      { url: '/assets/images/forestgateflatelogo.svg', type: 'image/svg+xml' },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -73,6 +82,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/assets/images/forestgateflatelogo.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/assets/images/forestgateflatelogo.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
